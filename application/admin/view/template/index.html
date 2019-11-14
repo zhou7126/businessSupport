@@ -1,0 +1,66 @@
+{extend name='main'}
+
+{block name="button"}
+
+{if auth("add")}
+<button data-modal='{:url("add")}' data-title="添加用户" class='layui-btn layui-btn-sm layui-btn-primary'>添加用户</button>
+{/if}
+
+{/block}
+
+{block name="content"}
+<div class="think-box-shadow">
+    {include file='user/index_search'}
+    <table class="layui-table margin-top-10" lay-skin="line">
+        {notempty name='list'}
+        <thead>
+        <tr>
+            <th class='list-table-check-td think-checkbox'>
+                <label><input data-auto-none data-check-target='.list-check-box' type='checkbox'></label>
+            </th>
+            <th class='text-left nowrap'>模板名称</th>
+            <th class='text-left nowrap'>效果展示</th>
+            <th class='text-center nowrap'>模板分组</th>
+            <th class='text-left nowrap'>创建时间</th>
+            <th class='text-left nowrap'>操作</th>
+        </tr>
+        </thead>
+        {/notempty}
+        <tbody>
+        {foreach $list as $key=>$vo}
+        <tr data-dbclick>
+            <td class='list-table-check-td think-checkbox'>
+                <label><input class="list-check-box" value='{$vo.id}' type='checkbox'></label>
+            </td>
+            <td class='text-left nowrap'>{$vo.name|default=''}</td>
+            <td class='text-left nowrap'>--</td>
+            <td class='text-center nowrap'>{$vo.classname|default=''}</td>
+            <td class='text-left nowrap'>{$vo.created_at|format_datetime}</td>
+            <td class='text-left nowrap'>
+
+                {if auth("pass")}
+                <a class="layui-btn layui-btn-normal layui-btn-sm" data-title="设置密码"
+                   data-modal='{:url("pass")}?id={$vo.id}'>修 改</a>
+                {/if}
+
+                {if auth("edit")}
+                <a data-dbclick class="layui-btn layui-btn-sm" data-title="编辑用户"
+                   data-modal='{:url("edit")}?id={$vo.id}'>配 置</a>
+                {/if}
+
+                {if auth("remove")}
+                <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要删除该用户吗？"
+                   data-action="{:url('remove')}" data-value="id#{$vo.id}" data-csrf="{:systoken('remove')}">删 除</a>
+                {/if}
+
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+
+    {empty name='list'}<span class="notdata">没有记录哦</span>{else}{$pagehtml|raw|default=''}{/empty}
+
+</div>
+
+{/block}
