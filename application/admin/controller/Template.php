@@ -55,46 +55,76 @@ class Template extends Controller
 //        $this->fetch();
 
         $this->title = '模板管理';
+        $classData = Db::name('SystemTemplateClass')->order('created_at desc')->select();
+        $this->className = array_column($classData, 'name', 'id');
         $query = $this->_query($this->table)->like('name')->equal('class_id');
-        $query->dateBetween('create_at')->where(['is_deleted' => '0'])->order('id desc')->page();
-        exit();
-        dump($query);
-        exit();
+        $query->dateBetween('created_at')->where(['is_deleted' => '0'])->order('id desc')->page();
     }
 
     public function add()
     {
         $this->applyCsrfToken();
         $this->_form($this->table, 'form');
-//        var_dump($vo);
+    }
+
+    /**
+     * 编辑模板
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
+    public function edit()
+    {
+        $this->applyCsrfToken();
+        $this->_form($this->table, 'form');
     }
 
     public function _form_filter(&$data)
     {
         if ($this->request->isPost()) {
-            $data['created_at'] = time();
             $data['class_id'] = intval($data['class_id']);
             if (Db::name('SystemTemplateClass')->where(['id' => $data['class_id']])->count() < 1) {
                 $this->error('模板分组不存在');
             }
-            $file = str_replace('\\', '/', env('root_path') . "safefile/" . $data['package']);
-            $savePath = str_replace('\\', '/', env('root_path') . 'tpl/' . $data['class_id'] . '/' . md5_file($file));
-            if (!file_exists($file)) {
-                $this->error('上传的压缩文件找不到');
-            }
-            $zip = new ZipArchive;
-            if ($zip->open($file) === TRUE) {
-                $zip->extractTo($savePath);
-                $zip->close();//关闭处理的zip文件
+            if (isset($data['package']) && !empty($data['package'])) {
+                $file = str_replace('\\', '/', env('root_path') . "safefile/" . $data['package']);
+                if (!is_file($file)) {
+                    $this->error('上传的压缩文件找不到');
+                }
+                $savePath = str_replace('\\', '/', env('root_path') . 'tpl/' . $data['class_id'] . '/' . md5_file($file));
+                $zip = new ZipArchive;
+                if ($zip->open($file) === TRUE) {
+                    $zip->extractTo($savePath);
+                    $zip->close();//关闭处理的zip文件
+                } else {
+                    $this->error('压缩文件格式错误或已损坏');
+                }
+                $data['package'] = $data['class_id'] . '/' . md5_file($file);
             } else {
-                $this->error('压缩文件格式错误或已损坏');
+                unset($data['package']);
             }
-            $data['package'] = $data['class_id'] . '/' . md5_file($file);
+            if (isset($data['id'])) {
+                $data['updated_at'] = time();
+            } else {
+                $data['created_at'] = time();
+            }
         } else {
             $this->tempCate = Db::name('SystemTemplateClass')->order('created_at desc')->select();
         }
     }
 
+    /**
+     * 删除模板
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
+     */
+    public function remove()
+    {
+        $this->applyCsrfToken();
+        $this->_delete($this->table);
+    }
 
     /**
      * 模板分组列表

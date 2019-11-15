@@ -3,14 +3,14 @@
 {block name="button"}
 
 {if auth("add")}
-<button data-modal='{:url("add")}' data-title="添加用户" class='layui-btn layui-btn-sm layui-btn-primary'>添加用户</button>
+<button data-modal='{:url("add")}' data-title="添加模板" class='layui-btn layui-btn-sm layui-btn-primary'>添加模板</button>
 {/if}
 
 {/block}
 
 {block name="content"}
 <div class="think-box-shadow">
-    {include file='user/index_search'}
+    {include file='template/index_search'}
     <table class="layui-table margin-top-10" lay-skin="line">
         {notempty name='list'}
         <thead>
@@ -34,7 +34,7 @@
             </td>
             <td class='text-left nowrap'>{$vo.name|default=''}</td>
             <td class='text-left nowrap'>--</td>
-            <td class='text-center nowrap'>{$vo.classname|default=''}</td>
+            <td class='text-center nowrap'>{$className[$vo.class_id]|default=''}</td>
             <td class='text-left nowrap'>{$vo.created_at|format_datetime}</td>
             <td class='text-left nowrap'>
 
