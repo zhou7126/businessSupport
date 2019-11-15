@@ -38,18 +38,13 @@
             <td class='text-left nowrap'>{$vo.created_at|format_datetime}</td>
             <td class='text-left nowrap'>
 
-                {if auth("pass")}
-                <a class="layui-btn layui-btn-normal layui-btn-sm" data-title="设置密码"
-                   data-modal='{:url("pass")}?id={$vo.id}'>修 改</a>
-                {/if}
-
                 {if auth("edit")}
-                <a data-dbclick class="layui-btn layui-btn-sm" data-title="编辑用户"
-                   data-modal='{:url("edit")}?id={$vo.id}'>配 置</a>
+                <a data-dbclick class="layui-btn layui-btn-sm" data-title="修改模板"
+                   data-modal='{:url("edit")}?id={$vo.id}'>修 改</a>
                 {/if}
 
                 {if auth("remove")}
-                <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要删除该用户吗？"
+                <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要删除该模板吗？"
                    data-action="{:url('remove')}" data-value="id#{$vo.id}" data-csrf="{:systoken('remove')}">删 除</a>
                 {/if}
 

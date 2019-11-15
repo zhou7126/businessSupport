@@ -33,14 +33,56 @@
             <p class="help-block">请选择模板所在分组。</p>
         </div>
 
+        <div class="layui-form-item">
+            <label class="relative block">
+                <span class="color-green font-w7">模板压缩包</span>
+                <span class="color-desc margin-left-5">Zip</span>
+            </label>
+            <div class="layui-clear">
+                <label class="layui-col-xs8 think-form-group-left">
+                    <input name="package" required placeholder="请上传模板压缩包"
+                           class="layui-input" readonly>
+                </label>
+                <button type="button" class="layui-btn" id="package" data-field="package">
+                    <i class="layui-icon">&#xe67c;</i>上传
+                </button>
+            </div>
+            <p class="help-block">将模板根目录的所有文件打包成zip格式的压缩包。</p>
+        </div>
+
     </div>
 
     <div class="hr-line-dashed"></div>
     {notempty name='vo.id'}<input type='hidden' value='{$vo.id}' name='id'>{/notempty}
 
     <div class="layui-form-item text-center">
-        <button class="layui-btn" type='submit'>保存数据</button>
-        <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+        <button class="layui-btn" type='submit'>保存</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-close>取消</button>
     </div>
 
 </form>
+<script>
+    layui.use(['upload'], function(){
+        var upload = layui.upload;
+        upload.render({
+            elem: '#package'
+            , url: 'admin/api.plugs/upload/'
+            , exts: 'zip'
+            , accept: 'file'
+            , acceptMime: "application/zip"
+            , data:{safe: '1'}
+            , progress: function (n) {
+                var percent = n + '%' //获取进度百分比
+            }
+            ,done: function(ret, index, upload){
+                this.multiple || $.msg.close(this.proindex);
+                if (ret.uploaded) {
+                    $('input[name="package"]').val(ret.url);
+                    layer.msg('上传成功');
+                } else {
+                    $.msg.error(ret.info || ret.error.message || '文件上传出错！');
+                }
+            }
+        });
+    });
+</script>

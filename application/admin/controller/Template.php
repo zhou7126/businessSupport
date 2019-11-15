@@ -18,9 +18,11 @@ namespace app\admin\controller;
 use app\admin\service\NodeService;
 use library\Controller;
 use library\tools\Data;
+use ZipArchive;
 use think\Console;
 use think\Db;
 use think\exception\HttpResponseException;
+
 
 /**
  * 模板管理控制器
@@ -31,6 +33,14 @@ class Template extends Controller
 {
 
     protected $table = 'systemTemplate';
+
+    public function __construct()
+    {
+        parent::__construct();
+        if (!NodeService::islogin()) {
+            $this->error('访问授权失败，请重新登录授权再试！');
+        }
+    }
 
     /**
      * 模板列表
@@ -62,10 +72,26 @@ class Template extends Controller
     public function _form_filter(&$data)
     {
         if ($this->request->isPost()) {
-//            dump($data);
             $data['created_at'] = time();
+            $data['class_id'] = intval($data['class_id']);
+            if (Db::name('SystemTemplateClass')->where(['id' => $data['class_id']])->count() < 1) {
+                $this->error('模板分组不存在');
+            }
+            $file = str_replace('\\', '/', env('root_path') . "safefile/" . $data['package']);
+            $savePath = str_replace('\\', '/', env('root_path') . 'tpl/' . $data['class_id'] . '/' . md5_file($file));
+            if (!file_exists($file)) {
+                $this->error('上传的压缩文件找不到');
+            }
+            $zip = new ZipArchive;
+            if ($zip->open($file) === TRUE) {
+                $zip->extractTo($savePath);
+                $zip->close();//关闭处理的zip文件
+            } else {
+                $this->error('压缩文件格式错误或已损坏');
+            }
+            $data['package'] = $data['class_id'] . '/' . md5_file($file);
         } else {
-            $this->tempCate = Db::name('SystemTemplateClass')->order('created_at')->select();
+            $this->tempCate = Db::name('SystemTemplateClass')->order('created_at desc')->select();
         }
     }
 
