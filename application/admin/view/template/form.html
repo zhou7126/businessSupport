@@ -40,7 +40,7 @@
             </label>
             <div class="layui-clear">
                 <label class="layui-col-xs8 think-form-group-left">
-                    <input name="package" required placeholder="请上传模板压缩包"
+                    <input name="package" {if !isset($vo.id)}required{/if} placeholder="请上传模板压缩包"
                            class="layui-input" readonly>
                 </label>
                 <button type="button" class="layui-btn" id="package" data-field="package">

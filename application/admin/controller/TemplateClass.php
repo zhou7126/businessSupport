@@ -25,14 +25,14 @@ use think\exception\HttpResponseException;
 
 
 /**
- * 模板管理控制器
+ * 模板分组控制器
  * Class Index
  * @package app\admin\controller
  */
-class Template extends Controller
+class TemplateClass extends Controller
 {
 
-    protected $table = 'systemTemplate';
+    protected $table = 'SystemTemplateClass';
 
     public function __construct()
     {
@@ -43,7 +43,7 @@ class Template extends Controller
     }
 
     /**
-     * 模板列表
+     * 模板分组列表
      * @throws \ReflectionException
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
@@ -51,13 +51,8 @@ class Template extends Controller
      */
     public function index()
     {
-//        $this->title = '模板管理';
-//        $this->fetch();
-
-        $this->title = '模板管理';
-        $classData = Db::name('SystemTemplateClass')->order('created_at desc')->select();
-        $this->className = array_column($classData, 'name', 'id');
-        $query = $this->_query($this->table)->like('name')->equal('class_id');
+        $this->title = '模板分组';
+        $query = $this->_query($this->table)->like('name');
         $query->timeBetween('created_at')->where(['is_deleted' => '0'])->order('id desc')->page();
     }
 
@@ -84,34 +79,13 @@ class Template extends Controller
     public function _form_filter(&$data)
     {
         if ($this->request->isPost()) {
-            $data['class_id'] = intval($data['class_id']);
-            if (Db::name('SystemTemplateClass')->where(['id' => $data['class_id']])->count() < 1) {
-                $this->error('模板分组不存在');
-            }
-            if (isset($data['package']) && !empty($data['package'])) {
-                $file = str_replace('\\', '/', env('root_path') . "safefile/" . $data['package']);
-                if (!is_file($file)) {
-                    $this->error('上传的压缩文件找不到');
-                }
-                $savePath = str_replace('\\', '/', env('root_path') . 'tpl/' . $data['class_id'] . '/' . md5_file($file));
-                $zip = new ZipArchive;
-                if ($zip->open($file) === TRUE) {
-                    $zip->extractTo($savePath);
-                    $zip->close();//关闭处理的zip文件
-                } else {
-                    $this->error('压缩文件格式错误或已损坏');
-                }
-                $data['package'] = $data['class_id'] . '/' . md5_file($file);
-            } else {
-                unset($data['package']);
-            }
             if (isset($data['id'])) {
                 $data['updated_at'] = time();
             } else {
                 $data['created_at'] = time();
             }
         } else {
-            $this->tempCate = Db::name('SystemTemplateClass')->order('created_at desc')->select();
+            //$this->tempCate = Db::name('SystemTemplateClass')->order('created_at desc')->select();
         }
     }
 
@@ -126,26 +100,4 @@ class Template extends Controller
         $this->_delete($this->table);
     }
 
-    /**
-     * 模板分组列表
-     */
-    public function cate()
-    {
-
-    }
-
-    public function cate_add()
-    {
-
-    }
-
-    public function cate_edit()
-    {
-
-    }
-
-    public function cate_del()
-    {
-
-    }
 }
