@@ -1,0 +1,41 @@
+<form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post" autocomplete="off">
+    <div class="layui-card-body padding-left-40">
+
+        <div class="layui-form-item">
+            <label class="relative block">
+                <span class="color-green font-w7">访问域名</span>
+                <span class="color-desc margin-left-5">CallDomain</span>
+                <textarea placeholder="请输入访问域名，例：https://www.baidu.com/" class="layui-textarea" required
+                          name="call_domain">{$vo.call_domain|default=""}</textarea>
+            </label>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="relative block">
+                <span class="color-green font-w7">跳转域名</span>
+                <span class="color-desc margin-left-5">JumpDomain</span>
+                <textarea placeholder="请输入跳转域名，例：https://www.google.com/ code88888" class="layui-textarea" required
+                          name="jump_domain">{$vo.jump_domain|default=""}</textarea>
+            </label>
+            <p class="help-block">访问域名和跳转域名支持多行添加，一一对应，跳转域名可带参数值，用空格隔开。</p>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="relative block">
+                <span class="color-green font-w7">备注</span>
+                <span class="color-desc margin-left-5">Remark</span>
+                <textarea placeholder="请输入备注" class="layui-textarea"
+                          name="remark">{$vo.remark|default=""}</textarea>
+            </label>
+        </div>
+
+    </div>
+
+    <div class="hr-line-dashed"></div>
+    {notempty name='vo.id'}<input type='hidden' value='{$vo.id}' name='id'>{/notempty}
+
+    <div class="layui-form-item text-center">
+        <button class="layui-btn" type='submit'>保存</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-close>取消</button>
+    </div>
+</form>
