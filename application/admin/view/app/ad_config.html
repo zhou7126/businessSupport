@@ -1,0 +1,66 @@
+<div class="layui-tab-item">
+    <form class="layui-form" onsubmit="return configSubmit(this);" action="{:url('changeAdConfig')}"  method="post" >
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择安装方式</label>
+            <div class="layui-input-block">
+                <input type="radio" name="ad_config_install_type" value="1" title="托管APK" {$row.ad_config_install_type == 1 ? 'checked' : ''}>
+                <input type="radio" name="ad_config_install_type" value="2" title="外部APK" {$row.ad_config_install_type == 2 ? 'checked' : ''}>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择托管的APK包</label>
+            <div class="layui-input-block">
+                <select name="ad_config_trust_apk_id" lay-verify="">
+                    <option value=""></option>
+                    {foreach $apks as $key=>$vo}
+                    <option value="{$vo.id}" {$vo.id == $row.ad_config_trust_apk_id ? 'selected' : ''}>序号：{$vo.id} &nbsp;&nbsp;&nbsp;&nbsp;上传时间：{$vo.created_at|format_datetime}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">apk文件的下载地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="ad_config_install_url" value="{$row.ad_config_install_url}"  lay-verify="" placeholder="apk文件的下载地址" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-filter="formDemo">立即提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    //Demo
+    form.render();
+    function configSubmit(formObj) {
+        var ad_config_install_type = $(formObj).find("input[name='ad_config_install_type']:checked").val();
+        var ad_config_trust_apk_id = $(formObj).find("select[name='ad_config_trust_apk_id']").val();
+        var ad_config_install_url = $(formObj).find("input[name='ad_config_install_url']").val();
+
+        $.ajax({
+            type: "post",
+            url: "{:url('changeAdConfig')}",
+            data:{
+                ad_config_install_type : ad_config_install_type,
+                ad_config_trust_apk_id : ad_config_trust_apk_id,
+                ad_config_install_url : ad_config_install_url,
+                id : {$row.id},
+            },
+            beforeSend: function(request) {
+                request.setRequestHeader("User-Token-Csrf", "{:systoken('changeAdConfig')}");
+            },
+            success: function(rJson) {
+                if(rJson.code === 1){
+                    layer.msg(rJson.info, {icon: 1});
+                }else {
+                    layer.msg(rJson.info, {icon: 5});
+                }
+            }
+        });
+
+        return false;
+    }
+</script>

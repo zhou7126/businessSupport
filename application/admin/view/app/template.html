@@ -1,0 +1,95 @@
+{extend name='main'}
+
+{block name="style"}
+<style>
+    .app-detail-right{
+        float: left;
+        width: 73%;
+        margin: 0 33px 0 33px;
+        min-height: 700px;
+        border: 1px #000000 solid;
+    }
+    .duan-input{
+        width: 53%;
+        height: 30px;
+        display: inline-block;
+        margin-right: 33px;
+        margin-left: 19px;
+    }
+    .app-detail .peizhi-title{
+        width: 14%;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .app-upload{
+        margin-left: 18px;
+    }
+</style>
+{/block}
+{block name="button"}
+
+{if auth("add")}
+<button data-modal='{:url("add")}' data-title="添加APP" class='layui-btn layui-btn-sm layui-btn-primary'>添加APP</button>
+{/if}
+
+{if auth("remove")}
+<button data-action='{:url("remove")}' data-rule="id#{key}" data-csrf="{:systoken('remove')}" data-confirm="确定要删除这些APP吗？" class='layui-btn layui-btn-sm layui-btn-primary'>删除APP</button>
+{/if}
+
+{/block}
+
+{block name="content"}
+    <div class="think-box-shadow">
+        <div class="app-detail">
+            {include file="app/left" /}
+            <div class="app-detail-right">
+                <form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post" autocomplete="off">
+                    <div class="layui-card-body padding-left-40">
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">webTitle</span>
+                                <input name="web_title" value='{$row.web_title}' class="layui-input duan-input">
+                                <span class="help-block">网页title</span>
+                            </label>
+                        </div>
+
+                        <div class="layui-form-item"><span class="color-green font-w7 peizhi-title">imgLogo</span>
+                            <span width="90px" class="text-center app-upload">
+                                <input name="img_logo" type="hidden" value="{$row.img_logo}" autocomplete="off">
+                            </span>
+                            <script>
+                                $('[name="img_logo"]').uploadOneImage()
+                            </script>
+                            <span class="help-block">大小不超过200KB,尺寸200*200PNG格式</span>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">kefuUrl</span>
+                                <input name="kefu_url" value='{$row.kefu_url}' class="layui-input duan-input">
+                                <span class="help-block">客服地址</span>
+
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">defaultChannelCode</span>
+                                <input name="default_channel_code" value='{$row.default_channel_code}' class="layui-input duan-input">
+                                <span class="help-block">默认渠道号</span>
+                            </label>
+                        </div>
+                        <input type='hidden' value='{$row.id}' name='id'>
+                    </div>
+                    <div class="layui-form-item text-center">
+                        <button class="layui-btn" type='submit'>保存数据</button>
+                    </div>
+                </form>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+{/block}
+{block name='script'}
+
+{/block}

@@ -1,0 +1,206 @@
+{extend name='main'}
+
+{block name="style"}
+<style>
+    .app-detail-left{
+        width: 20%;
+        min-height: 700px;
+        background-color: #2C333D;
+        float: left;
+        margin-left: 20px;
+    }
+    .app-left-top{
+        margin-top: 10px;
+        text-align: center;
+    }
+    .app-left-top img{
+        width: 32%;
+    }
+    .app-left-top .app-name{
+        font-size: 16px;
+        color: #fff;
+        margin: 17px 0 6px 0;
+    }
+    .app-left-top .app-key{
+        font-size: 17px;
+        color: #fff;
+    }
+    .app-left-botton{
+        margin-top: 31px;
+        margin-left: 20px;
+    }
+    .app-left-botton-1{
+        font-size: 16px;
+        color: #7c7c7c;
+    }
+    .app-left-botton-title{
+        font-size: 17px;
+        color: #fff;
+    }
+    .yuan{
+        width: 14px;
+        height: 14px;
+        border-radius: 8px;
+        background-color: #ccc;
+        margin-right: 7px;
+        display: inline-block;
+    }
+    .app-left-botton-title-text{
+        line-height: 34px;
+        cursor:pointer;
+    }
+    .app-detail-right{
+        float: left;
+        width: 73%;
+        margin: 0 33px 0 33px;
+        min-height: 700px;
+        border: 1px #000000 solid;
+    }
+    .duan-input{
+        width: 24%;
+        height: 30px;
+        display: inline-block;
+        margin-right: 33px;
+        margin-left: 19px;
+    }
+
+    .d-submit{
+        width: 8%;
+        height: 30px;
+        border-radius: 3px;
+        border: 1px #000 solid;
+        background-color: #fff;
+    }
+    .chang-input{
+        width: 60%;
+        display: inline-block;
+        margin-left: 67px;
+        margin-right: 33px;
+    }
+    .fabu{
+        display: inline-block;
+        margin-left: 19px;
+    }
+    .app-upload{
+        margin-left: 19px;
+    }
+    .app-upload-text{
+        margin: 0 19px;
+    }
+    .shangchuan{
+        margin-left: 68px;
+    }
+</style>
+{/block}
+{block name="button"}
+
+{if auth("add")}
+<button data-modal='{:url("add")}' data-title="添加APP" class='layui-btn layui-btn-sm layui-btn-primary'>添加APP</button>
+{/if}
+
+{if auth("remove")}
+<button data-action='{:url("remove")}' data-rule="id#{key}" data-csrf="{:systoken('remove')}" data-confirm="确定要删除这些APP吗？" class='layui-btn layui-btn-sm layui-btn-primary'>删除APP</button>
+{/if}
+
+{/block}
+
+{block name="content"}
+<div class="think-box-shadow">
+    <table class="layui-table margin-top-10" lay-skin="line">
+        <div class="app-detail">
+            {include file="app/left" /}
+
+            <div class="app-detail-right">
+                <form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post" autocomplete="off">
+                    <div class="layui-card-body padding-left-40">
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7">应用名称</span>
+                                <input value='{$row.name}' name="name" class="layui-input duan-input app-value">
+                                <button class="d-submit" onclick="submitApp(this,1)">修改名称</button>
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7">创建时间</span>
+                                <input value='{$row.created_at|format_datetime}' class="layui-input duan-input" disabled>
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7">AppKey</span>
+                                <input value='{$row.app_key}' class="layui-input duan-input" disabled>
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block label-required-prev" style="float: left">
+                                <span class="color-green font-w7">应用图标</span>
+                            </label>
+                            <div class="shangchuan">
+                                <input name="img" type="hidden" value="{$row.img}" class="app-value">
+                                <span class="app-upload-text">请上传你的应用图标(大小不超过1M)</span>
+                                <button class="d-submit" onclick="submitApp(this,1)">修改图标</button>
+                                <script>
+                                    $('[name="img"]').uploadOneImage()
+                                </script>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7">应用状态</span>
+                                <p class="fabu">
+                                    <span>
+<!--                                        <img src="">-->
+                                        <span>已发布</span>
+                                    </span>
+                                    <span>
+<!--                                        <img src="">-->
+                                        <span>未发布</span>
+                                    </span>
+                                </p>
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7" style="position: absolute">域名</span>
+                                <textarea placeholder="请输入域名" class="layui-textarea chang-input app-value" name="domain">{$row.domain}</textarea>
+                                <button class="d-submit" style="position: absolute" onclick="submitApp(this,2)">保存</button>
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7" style="position: absolute">统计代码</span>
+                                <textarea placeholder="请输入统计代码" class="layui-textarea chang-input app-value" name="statistics_code">{$row.statistics_code}</textarea>
+                                <button class="d-submit" style="position: absolute" onclick="submitApp(this,2)">保存</button>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </table>
+</div>
+
+{/block}
+{block name='script'}
+<script>
+    function submitApp(obj,type) {
+        var inputObj = $(obj).parents('.layui-form-item').find('.app-value');
+        var field = inputObj.attr('name');
+        var  value = inputObj.val();
+
+        var id = {$row.id};
+        $.ajax({
+            type: "post",
+            url: "{:url('change')}",
+            data:{id:id,field:field,value:value},
+            beforeSend: function(request) {
+                request.setRequestHeader("User-Token-Csrf", "{:systoken('change')}");
+            },
+            success: function(rJson) {
+                alert(rJson.info);
+            }
+        });
+    }
+</script>
+{/block}

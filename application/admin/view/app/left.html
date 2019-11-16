@@ -1,0 +1,108 @@
+<style>
+    .app-detail-left{
+        width: 20%;
+        min-height: 700px;
+        background-color: #2C333D;
+        float: left;
+        margin-left: 20px;
+    }
+    .app-left-top{
+        margin-top: 10px;
+        text-align: center;
+    }
+    .app-left-top img{
+        width: 32%;
+    }
+    .app-left-top .app-name{
+        font-size: 16px;
+        color: #fff;
+        margin: 17px 0 6px 0;
+    }
+    .app-left-top .app-key{
+        font-size: 17px;
+        color: #fff;
+    }
+    .app-left-botton{
+        margin-top: 31px;
+        margin-left: 20px;
+    }
+    .app-left-botton-1{
+        font-size: 16px;
+        color: #7c7c7c;
+    }
+    .app-left-botton-title{
+        font-size: 17px;
+        color: #fff;
+    }
+    .yuan{
+        width: 14px;
+        height: 14px;
+        border-radius: 8px;
+        background-color: #ccc;
+        margin-right: 7px;
+        display: inline-block;
+    }
+    .app-left-botton-title-text{
+        line-height: 34px;
+        cursor:pointer;
+
+    }
+    .clear{
+        clear: both;
+    }
+</style>
+<div class="app-detail-left">
+    <div class="app-left-top">
+        <div><img src="{$row.img}"></div>
+        <p class="app-name">{$row.name}</p>
+        <p class="app-key">AppKey:{$row.app_key}</p>
+    </div>
+    <div class="app-left-botton">
+        <div class="app-left-botton-1">
+            <p class="app-left-botton-title">应用信息</p>
+            <p class="app-left-botton-title-text jichu"><span class="yuan"></span><span data-open="{:url('base')}?id={$row.id}" data-menu-node="app-jichu-{:time()}">基础信息</span></p>
+            <p class="app-left-botton-title-text moban"><span class="yuan"></span><span data-open="{:url('template')}?id={$row.id}" data-menu-node="app-moban-{:time()}">模板配置</span></p>
+        </div>
+        <div class="app-left-botton-1" style="margin-top: 10px;">
+            <p class="app-left-botton-title">应用集成</p>
+            <p class="app-left-botton-title-text ad"><span class="yuan"></span><span data-open="{:url('ad')}?id={$row.id}" data-menu-node="app-ad-{:time()}">Android集成</span></p>
+            <p class="app-left-botton-title-text ios"><span class="yuan"></span><span data-open="{:url('ios')}?id={$row.id}" data-menu-node="app-ios-{:time()}">IOS集成</span></p>
+        </div>
+    </div>
+</div>
+<script>
+    try {
+        var param = GetRequest();
+        if(param.spm.indexOf("app-jichu") !== -1 ){
+            $('.jichu').css('color','#5D8AFF');
+            $('.jichu .yuan').css('background-color','#5D8AFF');
+        }else if (param.spm.indexOf("app-moban") !== -1 ){
+            $('.moban').css('color','#5D8AFF');
+            $('.moban .yuan').css('background-color','#5D8AFF');
+        }else if (param.spm.indexOf("app-ad") !== -1 ){
+            $('.ad').css('color','#5D8AFF');
+            $('.ad .yuan').css('background-color','#5D8AFF');
+        }else if (param.spm.indexOf("app-ios") !== -1 ){
+            $('.ios').css('color','#5D8AFF');
+            $('.ios .yuan').css('background-color','#5D8AFF');
+        }
+    }catch (e) {
+        console.log(e);
+    }
+
+
+    function GetRequest() {
+        const url = window.location.href; //获取url中"?"符后的字串
+        let index = url.indexOf("?");
+        if(index === -1){
+            return false;
+        }
+        let param = url.substr(index + 1);
+        let theRequest = new Object();
+        let strs = param.split("&");
+        for(let i = 0; i < strs.length; i ++) {
+            theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+        }
+        return theRequest;
+    }
+</script>

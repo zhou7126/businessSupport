@@ -1,0 +1,36 @@
+<form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post" autocomplete="off">
+    <div class="layui-card-body padding-left-40">
+        <div class="layui-form-item">
+            <label class="relative block">
+                <span class="color-green font-w7">应用名称</span>
+                <input name="name" value='' required  placeholder="应用名称" class="layui-input">
+            </label>
+            <p class="help-block"></p>
+        </div>
+        <div class="layui-form-item">
+            <label class="relative block label-required-prev">
+                <span class="color-green font-w7">应用图标</span>
+            </label>
+            <input name="img" type="hidden" value="" >
+            <script>
+                $('[name="img"]').uploadOneImage()
+            </script>
+        </div>
+        <div class="layui-form-item">
+            <label class="relative block">
+                <span class="color-green font-w7">AppKey</span>
+                <input name="app_key" value='' required  placeholder="" class="layui-input">
+            </label>
+            <p class="help-block"></p>
+        </div>
+
+    </div>
+
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        <button class="layui-btn" type='submit'>保存数据</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-close>取消编辑</button>
+    </div>
+
+</form>
