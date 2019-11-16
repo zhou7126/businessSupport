@@ -1,11 +1,13 @@
 {extend name='main'}
 
-{block name="button"}
 
+{block name="left-button"}
 <a data-open='{:url("template_class/index")}'>
-    <button class='layui-btn-sm layui-btn-primary'>模板分组</button>
+    <button class='layui-btn layui-btn-sm layui-btn-primary'>模板分组</button>
 </a>
+{/block}
 
+{block name="button"}
 {if auth("add")}
 <button data-modal='{:url("add")}' data-title="添加模板" class='layui-btn layui-btn-sm layui-btn-primary'>添加模板</button>
 {/if}

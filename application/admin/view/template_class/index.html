@@ -1,11 +1,15 @@
 {extend name='main'}
 
-{block name="button"}
+{block name="left-button"}
+<a data-open='{:url("template/index")}'>
+    <button class='layui-btn layui-btn-sm layui-btn-primary'>返回</button>
+</a>
+{/block}
 
+{block name="button"}
 {if auth("add")}
 <button data-modal='{:url("add")}' data-title="添加分组" class='layui-btn layui-btn-sm layui-btn-primary'>添加分组</button>
 {/if}
-
 {/block}
 
 {block name="content"}
