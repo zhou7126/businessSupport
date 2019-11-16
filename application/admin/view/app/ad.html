@@ -1,0 +1,84 @@
+{extend name='main'}
+
+{block name="style"}
+<style>
+
+    .app-detail-right{
+        float: left;
+        width: 73%;
+        min-height: 700px;
+        /*border: 1px #000000 solid;*/
+    }
+    .layui-card-body{
+        padding-top: 0;
+    }
+    .duan-input{
+        width: 24%;
+        height: 30px;
+        display: inline-block;
+        margin-right: 33px;
+        margin-left: 19px;
+    }
+
+    .d-submit{
+        width: 8%;
+        height: 30px;
+        border-radius: 3px;
+        border: 1px #000 solid;
+        background-color: #fff;
+    }
+    .chang-input{
+        width: 60%;
+        display: inline-block;
+        margin-left: 67px;
+        margin-right: 33px;
+    }
+    .fabu{
+        display: inline-block;
+        margin-left: 19px;
+    }
+    .app-upload{
+        margin-left: 19px;
+    }
+    .app-upload-text{
+        margin: 0 19px;
+    }
+</style>
+{/block}
+{block name="button"}
+
+{if auth("add")}
+<button data-modal='{:url("add")}' data-title="添加APP" class='layui-btn layui-btn-sm layui-btn-primary'>添加APP</button>
+{/if}
+
+{if auth("remove")}
+<button data-action='{:url("remove")}' data-rule="id#{key}" data-csrf="{:systoken('remove')}" data-confirm="确定要删除这些APP吗？" class='layui-btn layui-btn-sm layui-btn-primary'>删除APP</button>
+{/if}
+
+{/block}
+
+{block name="content"}
+<div class="think-box-shadow">
+        <div class="app-detail">
+            {include file="app/left" /}
+            <div class="app-detail-right">
+                <div class="layui-card-body layui-anim layui-anim-upbit">
+                    <div class="layui-tab layui-tab-card think-bg-white">
+                        <ul class="layui-tab-title notselect">
+                            <li data-type="store-config-type-params" class="layui-this">APK包</li>
+                            <li data-type="store-config-type-sms1" class="">Android下载设置</li>
+                        </ul>
+                        <div class="layui-tab-content">
+                            {include file="app/apk" /}
+                            {include file="app/ad_config" /}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+</div>
+
+{/block}
+

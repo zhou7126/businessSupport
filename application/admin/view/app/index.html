@@ -1,0 +1,56 @@
+{extend name='main'}
+
+{block name="button"}
+
+{if auth("add")}
+<button data-modal='{:url("add")}' data-title="添加APP" class='layui-btn layui-btn-sm layui-btn-primary'>添加APP</button>
+{/if}
+
+{if auth("remove")}
+<button data-action='{:url("remove")}' data-rule="id#{key}" data-csrf="{:systoken('remove')}" data-confirm="确定要删除这些APP吗？" class='layui-btn layui-btn-sm layui-btn-primary'>删除APP</button>
+{/if}
+
+{/block}
+
+{block name="content"}
+<div class="think-box-shadow">
+    <table class="layui-table margin-top-10" lay-skin="line">
+        {notempty name='list'}
+        <thead>
+        <tr>
+            <th class='list-table-check-td think-checkbox'>
+                <label><input data-auto-none data-check-target='.list-check-box' type='checkbox'></label>
+            </th>
+            <th class='text-left nowrap'>名称</th>
+            <th class='text-left nowrap'>图标</th>
+            <th class='text-center nowrap'>AppKey</th>
+            <th class='text-left nowrap'>操作</th>
+        </tr>
+        </thead>
+        {/notempty}
+        <tbody>
+        {foreach $list as $key=>$vo}
+        <tr data-dbclick>
+            <td class='list-table-check-td think-checkbox'>
+                <label><input class="list-check-box" value='{$vo.id}' type='checkbox'></label>
+            </td>
+            <td class='text-left nowrap'>{$vo.name|default=''}</td>
+            <td class='text-left nowrap'><img src="{$vo.img}"></td>
+            <td class='text-center nowrap'>{$vo.app_key|default=''}</td>
+            <td class='text-left nowrap'>
+                <a data-open="{:url('base')}?id={$vo.id}" data-menu-node="app-jichu-{$vo.id}"  class="layui-btn layui-btn-sm" data-title="详情">详情</a>
+                {if auth("remove")}
+                <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要删除该APP吗？" data-action="{:url('remove')}" data-value="id#{$vo.id}" data-csrf="{:systoken('remove')}">删 除</a>
+                {/if}
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    {empty name='list'}<span class="notdata">没有记录哦</span>{else}{$pagehtml|raw|default=''}{/empty}
+</div>
+
+{/block}
+{block name='script'}
+
+{/block}

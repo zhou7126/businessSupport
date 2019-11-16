@@ -1,0 +1,161 @@
+<style>
+    .ipa_body{
+        padding: 10px;
+    }
+    .zhong{
+        border-top: 2px #000000 solid;
+        border-bottom: 2px #000000 solid;
+        padding: 10px 0;
+        font-size: 14px;
+    }
+    .shang{
+        padding-bottom: 20px;
+        font-size: 14px;
+    }
+    .ipa_logo{
+        margin-right: 20px;
+        width: 90px;
+        height: 90px;
+        float: left;
+    }
+    .ipa_s_l_r{
+        float: left;
+    }
+
+    .ipa_s_l_r_1{
+        margin-bottom: 35px;
+    }
+    .ipa_s_r{
+        float: right;
+    }
+    .ipa_s_r_1{
+        margin-bottom: 35px;
+    }
+    .zhong_l{
+        float: left;
+    }
+    .zhong_l p{
+        line-height: 46px;
+    }
+    .zhong_r{
+        float: right;
+    }
+    .zhong_r p{
+        line-height: 46px;
+    }
+    .x_anniu{
+        text-align: right;
+        margin: 10px 0;
+    }
+    .x_anniu button{
+        width: 81px;
+        padding: 4px;
+        background-color: #fff;
+        border: 1px #000 solid;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .xia{
+        position: relative;
+    }
+    .clear{
+        clear: both;
+    }
+    .layui-tab-content{
+        min-height: 637px;
+    }
+</style>
+<div class="layui-tab-item layui-show">
+    <div class="ipa_body">
+        <div class="shang">
+            <div class="ipa_s_l">
+                <img src="" class="ipa_logo">
+                <div class="ipa_s_l_r">
+                    <p class="ipa_s_l_r_1">序号：{$ipa.id}</p>
+                    <p class="ipa_s_l_r_2">文件大小：{$ipa.size}</p>
+                </div>
+            </div>
+            <div class="ipa_s_r">
+                <p class="ipa_s_r_1">应用名：{$row.name}</p>
+                <p class="ipa_s_r_r">上传时间：{$ipa.created_at ? $ipa.created_at|format_datetime : ''}</p>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="zhong">
+            <div class="zhong_l">
+                <p class="zhong_l_1">appKey:{$row.app_key}</p>
+                <p class="zhong_l_2">版本号(versionName)：{$ipa.data ? $ipa.data.versionName : ''}</p>
+            </div>
+            <div class="zhong_r">
+                <p class="zhong_r_1">包名(applicationld):{$ipa.data ? $ipa.data.package  : ''}</p>
+                <p class="zhong_r_2">内部版本号(versionCode):{$ipa.data ? $ipa.data.versionCode  : ''}</p>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="xia">
+            <div class="x_anniu">
+                <input name="ipa" value="" type="hidden">
+                <button data-file="btn" data-uptype="local" data-safe="true" data-type="ipa" data-field="ipa" type="button" class="layui-btn-primary margin-right-5">
+                    <i class="layui-icon layui-icon-vercode font-s14"></i> 上传
+                </button>
+            </div>
+            <table class="layui-table" >
+                <colgroup>
+                    <col width="150">
+                    <col width="200">
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>版本号</th>
+                    <th>内部版本号</th>
+                    <th>文件大小</th>
+                    <th>上传日期</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $key=>$vo}
+                <tr>
+                    <td>{$vo.id}</td>
+                    <td>{$vo.data.versionName}</td>
+                    <td>{$vo.data.versionCode}</td>
+                    <td>{$vo.size}</td>
+                    <td>{$ipa.created_at|format_datetime}</td>
+                    <td>
+                        <a href="{$vo.path}" class="layui-btn layui-btn-sm" >测试</a>
+                        <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要删除该ipa吗？" data-action="{:url('removePackage')}" data-value="id#{$vo.id}" data-csrf="{:systoken('removePackage')}">删 除</a>
+                    </td>
+                </tr>
+                {/foreach}
+
+                </tbody>
+            </table>
+            {empty name='list'}<span class="notdata">没有记录哦</span>{else}{$pagehtml|raw|default=''}{/empty}
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.x_anniu button').uploadFile(function (rJson) {
+        if (typeof rJson !== 'string' && rJson.length < 5) {
+            alert('上传失败');
+            return false;
+        }
+
+        $.ajax({
+            type: "post",
+            url: "{:url('addIpa')}",
+            data:{path : rJson,appId:{$row.id}},
+            beforeSend: function(request) {
+                request.setRequestHeader("User-Token-Csrf", "{:systoken('addIpa')}");
+            },
+            success: function(rJson) {
+                alert(rJson.info);
+                if(rJson.code === 1) location.reload();
+            }
+        });
+    });
+</script>
