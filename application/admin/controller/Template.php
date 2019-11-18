@@ -61,37 +61,14 @@ class Template extends Controller
         $query->timeBetween('created_at')->where(['is_deleted' => '0'])->order('id desc')->page();
     }
 
-
     protected function _index_page_filter(&$data)
     {
         foreach ($data as &$vo) {
-            $vo['preview_img'] = url("preview", '', '') . "?id=" . $vo['id']; // 预览缩略图url
-            $vo['preview_url'] = 'http://' . gethostbyname($_SERVER["SERVER_NAME"]) . '/' . $vo['package']; //预览页面url
+            $vo['preview_img'] = $vo['package'] . '/index.png'; // 预览缩略图url
+            $vo['preview_url'] = $vo['package']; //预览页面url
         }
     }
 
-    /**
-     * 效果预览图
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    public function preview()
-    {
-        $id = input('id');
-        $tmpInfo = Db::name('SystemTemplate')->where('id', $id)->find();
-        if (empty($tmpInfo)) {
-            exit('模板不存在');
-        }
-        $path = env('root_path') . 'tpl/' . $tmpInfo['package'] . '/index.png';
-        if (!is_file($path)) {
-            exit('图片文件找不到');
-        }
-        $img = file_get_contents(str_replace('\\', '/', $path));
-        header("Content-Type: image/png; charset=utf-8");
-        echo $img;
-        exit();
-    }
 
     public function add()
     {
@@ -120,12 +97,12 @@ class Template extends Controller
             if (Db::name('SystemTemplateClass')->where(['id' => $data['class_id']])->count() < 1) {
                 $this->error('模板分组不存在');
             }
-            if (isset($data['package']) && !empty($data['package'])) {
+            if (isset($data['package']) && !empty($data['package'])) { // 新增
                 $file = str_replace('\\', '/', env('root_path') . "safefile/" . $data['package']);
                 if (!is_file($file)) {
                     $this->error('上传的压缩文件找不到');
                 }
-                $savePath = str_replace('\\', '/', env('root_path') . 'tpl/' . $data['class_id'] . '/' . md5_file($file));
+                $savePath = str_replace('\\', '/', env('root_path') . 'public/tpl/' . $data['class_id'] . '/' . md5_file($file));
                 $zip = new ZipArchive;
                 if ($zip->open($file) === TRUE) {
                     $zip->extractTo($savePath);
@@ -133,8 +110,8 @@ class Template extends Controller
                 } else {
                     $this->error('压缩文件格式错误或已损坏');
                 }
-                $data['package'] = $data['class_id'] . '/' . md5_file($file);
-            } else {
+                $data['package'] = 'tpl/' . $data['class_id'] . '/' . md5_file($file);
+            } else { // 修改
                 unset($data['package']);
             }
             if (isset($data['id'])) {
