@@ -90,6 +90,22 @@
     .shangchuan{
         margin-left: 68px;
     }
+    .layui-form-switch{
+        margin-top: 0;
+    }
+    .layui-input-block {
+        margin-left: 67px;
+    }
+    .layui-form-radio{
+        margin-top: 0;
+    }
+    .fanhui{
+        margin-left: 20px;
+        margin-bottom: 10px;
+        height: 29px;
+        padding: 0 36px;
+        line-height: 29px;
+    }
 </style>
 {/block}
 {block name="button"}
@@ -106,10 +122,10 @@
 
 {block name="content"}
 <div class="think-box-shadow">
-    <table class="layui-table margin-top-10" lay-skin="line">
-        <div class="app-detail">
-            {include file="app/left" /}
+    <button type="button" class="layui-btn layui-btn-primary fanhui" onclick="history.go(-1)"><&nbsp;&nbsp;&nbsp;返回</button>
 
+    <div class="app-detail">
+            {include file="app/left" /}
             <div class="app-detail-right">
                 <form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post" autocomplete="off">
                     <div class="layui-card-body padding-left-40">
@@ -146,19 +162,22 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7">应用状态</span>
-                                <p class="fabu">
-                                    <span>
-<!--                                        <img src="">-->
-                                        <span>已发布</span>
-                                    </span>
-                                    <span>
-<!--                                        <img src="">-->
-                                        <span>未发布</span>
-                                    </span>
-                                </p>
+                            <label class="relative block" style="float: left">
+                                <span class="color-green font-w7">下载方式</span>
                             </label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="download_type" value="1" title="链接下载" lay-filter="download_type"   {$row.download_type == 1 ? 'checked' : ''}>
+                                <input type="radio" name="download_type" value="2" title="openInstall" lay-filter="download_type"  {$row.download_type == 2 ? 'checked' : ''}>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="relative block" style="float: left">
+                                <span class="color-green font-w7">开关</span>
+                            </label>
+                            <div class="layui-input-block">
+                                <input class="app-value" type="checkbox" value="1" name="status" lay-skin="switch" lay-text="开启|关闭" lay-filter="status"  {$row.status == 1 ? 'checked' : ''}>
+                            </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="relative block">
@@ -177,19 +196,50 @@
                     </div>
                 </form>
             </div>
+            <div class="clear"></div>
         </div>
-    </table>
 </div>
+<script>
 
+</script>
 {/block}
 {block name='script'}
 <script>
+    form.render();
+    var id = {$row.id};
+
+    form.on('switch(status)', function(switchData){
+        $.ajax({
+            type: "post",
+            url: "{:url('change')}",
+            data:{id:id,field:'status',value:switchData.elem.checked ? switchData.value : 0},
+            beforeSend: function(request) {
+                request.setRequestHeader("User-Token-Csrf", "{:systoken('change')}");
+            },
+            success: function(rJson) {
+                console.log(rJson.info);
+            }
+        });
+    });
+
+    form.on('radio(download_type)', function(callbackData){
+        $.ajax({
+            type: "post",
+            url: "{:url('change')}",
+            data:{id:id,field:'download_type',value:callbackData.value},
+            beforeSend: function(request) {
+                request.setRequestHeader("User-Token-Csrf", "{:systoken('change')}");
+            },
+            success: function(rJson) {
+                console.log(rJson.info);
+            }
+        });
+    });
+
     function submitApp(obj,type) {
         var inputObj = $(obj).parents('.layui-form-item').find('.app-value');
         var field = inputObj.attr('name');
         var  value = inputObj.val();
-
-        var id = {$row.id};
         $.ajax({
             type: "post",
             url: "{:url('change')}",

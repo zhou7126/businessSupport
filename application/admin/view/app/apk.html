@@ -69,7 +69,7 @@
     <div class="apk_body">
         <div class="shang">
             <div class="apk_s_l">
-                <img src="" class="apk_logo">
+                <img src="{$apk.data.iconimage ?? '' }" class="apk_logo">
                 <div class="apk_s_l_r">
                     <p class="apk_s_l_r_1">序号：{$apk.id}</p>
                     <p class="apk_s_l_r_2">文件大小：{$apk.size}</p>
@@ -95,7 +95,10 @@
         <div class="xia">
             <div class="x_anniu">
                 <input name="apk" value="" type="hidden">
-                <button data-file="btn" data-uptype="local" data-safe="true" data-type="apk" data-field="apk" type="button" class="layui-btn-primary margin-right-5">
+               <!-- <button id="upload" data-file="btn" data-uptype="local" data-safe="true" data-type="apk" data-field="apk" type="button" class="layui-btn-primary margin-right-5">
+                    <i class="layui-icon layui-icon-vercode font-s14"></i> 上传
+                </button>-->
+                <button type="button" id="upload" class="layui-btn layui-btn-primary margin-right-5">
                     <i class="layui-icon layui-icon-vercode font-s14"></i> 上传
                 </button>
             </div>
@@ -124,7 +127,7 @@
                     <td>{$vo.size}</td>
                     <td>{$apk.created_at|format_datetime}</td>
                     <td>
-                        <a  class="layui-btn layui-btn-sm" >测试</a>
+                        <a href="javascript:;" class="layui-btn layui-btn-sm app_ceshi" data-url="{$vo.path}">测试</a>
                         <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要删除该apk吗？" data-action="{:url('removePackage')}" data-value="id#{$vo.id}" data-csrf="{:systoken('removePackage')}">删 除</a>
                     </td>
                 </tr>
@@ -137,25 +140,62 @@
         </div>
     </div>
 </div>
+<span id="qrcode" style="width: 100px; height: 100px" hidden></span>
 
+<script src="__ROOT__/static/plugs/qrcode/jquery.qrcode.js"></script>
+<script src="__ROOT__/static/plugs/qrcode/qrcode.js"></script>
 <script>
-    $('.x_anniu button').uploadFile(function (rJson) {
-        if (typeof rJson !== 'string' && rJson.length < 5) {
-            alert('上传失败');
-            return false;
+    $('.app_ceshi').click(function () {
+        jQuery('#qrcode').html('');
+        var url = $(this).data('url');
+        jQuery('#qrcode').qrcode(url);
+        layer.open({
+            type : 1,
+            title: '扫描二维码',
+            content: jQuery('#qrcode'),
+            shade:0,
+        });
+
+    });
+
+    var upload = layui.upload;
+    upload.render({
+        elem: '#upload'
+        ,url: 'http://www.armshores.com/admin/ajax/package_upload'
+        ,accept: 'file' //允许上传的文件类型
+        ,size: 5000000 //最大允许上传的文件大小
+        ,data:{
+            domain : 'https://www.apposg.com'
+        }
+        ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+            layer.load(); //上传loading
+        }
+        ,done: function(res, index, upload){ //上传后的回调
+            if (res.code !== 1) {
+                alert('上传失败');
+                return false;
+            }
+            $.ajax({
+                type: "post",
+                url: "{:url('addApk')}",
+                data:{updateData : res.data,appId:{$row.id}},
+                beforeSend: function(request) {
+                    request.setRequestHeader("User-Token-Csrf", "{:systoken('addApk')}");
+                },
+                success: function(rJson) {
+                    alert(rJson.info);
+                    if(rJson.code === 1) location.reload();
+                }
+            });
         }
 
-        $.ajax({
-            type: "post",
-            url: "{:url('addApk')}",
-            data:{path : rJson,appId:{$row.id}},
-            beforeSend: function(request) {
-                request.setRequestHeader("User-Token-Csrf", "{:systoken('addApk')}");
-            },
-            success: function(rJson) {
-                alert(rJson.info);
-                if(rJson.code === 1) location.reload();
-            }
-        });
+        ,error: function(index, upload){
+            console.log(index);
+            console.log(upload);
+        }
     });
 </script>
+
+
+
+

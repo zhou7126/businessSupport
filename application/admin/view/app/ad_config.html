@@ -1,27 +1,27 @@
 <div class="layui-tab-item">
-    <form class="layui-form" onsubmit="return configSubmit(this);" action="{:url('changeAdConfig')}"  method="post" >
+    <form class="layui-form" onsubmit="return configSubmit(this);" action="{:url('changeAdConfig')}"  method="post" lay-filter="payment">
         <div class="layui-form-item">
             <label class="layui-form-label">选择安装方式</label>
             <div class="layui-input-block">
-                <input type="radio" name="ad_config_install_type" value="1" title="托管APK" {$row.ad_config_install_type == 1 ? 'checked' : ''}>
-                <input type="radio" name="ad_config_install_type" value="2" title="外部APK" {$row.ad_config_install_type == 2 ? 'checked' : ''}>
+                <input type="radio" name="ad_config_install_type" value="1" title="托管APK" lay-filter="data-mch-type"  {$row.ad_config_install_type == 1 ? 'checked' : ''}>
+                <input type="radio" name="ad_config_install_type" value="2" title="外部APK" lay-filter="data-mch-type" {$row.ad_config_install_type == 2 ? 'checked' : ''}>
             </div>
         </div>
-        <div class="layui-form-item">
+        <div class="layui-form-item" data-mch-type="1">
             <label class="layui-form-label">选择托管的APK包</label>
             <div class="layui-input-block">
-                <select name="ad_config_trust_apk_id" lay-verify="">
+                <select name="apk_id" lay-verify="">
                     <option value=""></option>
                     {foreach $apks as $key=>$vo}
-                    <option value="{$vo.id}" {$vo.id == $row.ad_config_trust_apk_id ? 'selected' : ''}>序号：{$vo.id} &nbsp;&nbsp;&nbsp;&nbsp;上传时间：{$vo.created_at|format_datetime}</option>
+                    <option value="{$vo.id}" {$vo.id == $row.ad_config_data.apk_id ? 'selected' : ''}>序号：{$vo.id} &nbsp;&nbsp;&nbsp;&nbsp;上传时间：{$vo.created_at|format_datetime}</option>
                     {/foreach}
                 </select>
             </div>
         </div>
-        <div class="layui-form-item">
+        <div class="layui-form-item" data-mch-type="2">
             <label class="layui-form-label">apk文件的下载地址</label>
             <div class="layui-input-block">
-                <input type="text" name="ad_config_install_url" value="{$row.ad_config_install_url}"  lay-verify="" placeholder="apk文件的下载地址" autocomplete="off" class="layui-input">
+                <input type="text" name="download_url" value="{$row.ad_config_data.download_url}"  lay-verify="" placeholder="apk文件的下载地址" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -34,19 +34,31 @@
 
 <script>
     //Demo
-    form.render();
-    function configSubmit(formObj) {
-        var ad_config_install_type = $(formObj).find("input[name='ad_config_install_type']:checked").val();
-        var ad_config_trust_apk_id = $(formObj).find("select[name='ad_config_trust_apk_id']").val();
-        var ad_config_install_url = $(formObj).find("input[name='ad_config_install_url']").val();
+    (new function () {
+        form.render();
+        this.type = {$row.ad_config_install_type ? $row.ad_config_install_type : 1};
+        form.val('payment', {ad_config_install_type: this.type});
+        form.on('radio(data-mch-type)', function (data) {
+            apply(data.value);
+        });
+        apply.call(this, this.type);
 
+        function apply(type) {
+            $('[data-mch-type="' + type + '"]').show().siblings('[data-mch-type]').hide();
+        };
+    });
+    function configSubmit(formObj) {
+        var ad_config_install_type = $(formObj).find("input[name='ad_config_install_type']:checked").val() - 0;
+        var ad_config_install_data = {};
+        ad_config_install_data['apk_id'] = ad_config_install_type === 1 ? $(formObj).find("select[name='apk_id']").val() : '';
+        ad_config_install_data['download_url'] = ad_config_install_type === 2 ? $(formObj).find("input[name='download_url']").val() : '';
+        ad_config_install_data = JSON.stringify(ad_config_install_data);
         $.ajax({
             type: "post",
             url: "{:url('changeAdConfig')}",
             data:{
                 ad_config_install_type : ad_config_install_type,
-                ad_config_trust_apk_id : ad_config_trust_apk_id,
-                ad_config_install_url : ad_config_install_url,
+                ad_config_install_data : ad_config_install_data,
                 id : {$row.id},
             },
             beforeSend: function(request) {
