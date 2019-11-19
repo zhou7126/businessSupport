@@ -64,7 +64,7 @@ class Template extends Controller
     protected function _index_page_filter(&$data)
     {
         foreach ($data as &$vo) {
-            $vo['preview_img'] = $vo['package'] . '/index.png'; // 预览缩略图url
+            $vo['preview_img'] = $vo['package_img']; // 预览缩略图url
             $vo['preview_url'] = $vo['package']; //预览页面url
         }
     }
@@ -97,7 +97,7 @@ class Template extends Controller
             if (Db::name('SystemTemplateClass')->where(['id' => $data['class_id']])->count() < 1) {
                 $this->error('模板分组不存在');
             }
-            if (isset($data['package']) && !empty($data['package'])) { // 新增
+            if (isset($data['package']) && !empty($data['package'])) { // 有上传压缩包
                 $file = str_replace('\\', '/', env('root_path') . "safefile/" . $data['package']);
                 if (!is_file($file)) {
                     $this->error('上传的压缩文件找不到');
@@ -106,12 +106,13 @@ class Template extends Controller
                 $zip = new ZipArchive;
                 if ($zip->open($file) === TRUE) {
                     $zip->extractTo($savePath);
-                    $zip->close();//关闭处理的zip文件
+                    $zip->close();
                 } else {
                     $this->error('压缩文件格式错误或已损坏');
                 }
                 $data['package'] = 'tpl/' . $data['class_id'] . '/' . md5_file($file);
-            } else { // 修改
+                $data['package_img'] = $data['package'] . '/index.png';
+            } else { // 未上传压缩包
                 unset($data['package']);
             }
             if (isset($data['id'])) {
