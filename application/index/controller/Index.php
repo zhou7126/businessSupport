@@ -16,19 +16,91 @@
 namespace app\index\controller;
 
 use library\Controller;
+use think\Db;
+use think\exception\HttpException;
+use think\Request;
 
 /**
- * 应用入口
+ * 模板路由控制器
  * Class Index
  * @package app\index\controller
  */
 class Index extends Controller
 {
     /**
-     * 入口跳转链接
+     * 入口域名判断
      */
     public function index()
     {
-        $this->redirect('@admin/login');
+        $domain = $this->request->host();
+        $schemeDomain = $this->request->domain();
+        //dump($domain);
+        //dump($schemeDomain);
+
+        // 域名跳转
+        $jumpData = Db::name('SystemDomain')->where(['call_domain' => $domain, 'status' => 1])->find();
+        //dump($jumpData);
+        if (!empty($jumpData) && !empty($jumpData['jump_domain'])) {
+            $jumpUrl = stripos($jumpData['jump_domain'], 'http') !== false ? $jumpData['jump_domain'] : "http://" . $jumpData['jump_domain'];
+            $this->redirect($jumpUrl);
+        }
+
+        // 域名绑定
+        $bindData = Db::name('SystemApp')->where([
+            ['domain', 'like', "%{$domain}%"],
+            ['status', '=', 1]
+        ])->find();
+        //dump($bindData);
+        if (!empty($bindData)) {
+            $template_id = $bindData['template_id'];
+            $tempData = Db::name('SystemTemplate')->where(['id' => $template_id, 'is_deleted' => 0])->find();
+            if (!empty($tempData)) {
+                $fetchData = [
+                    'base_url' => $schemeDomain . '/' . $tempData['package'] . '/', // 页面默认URL
+                    'web_title' => $bindData['web_title'], // 页面名称
+                    'img_logo' => $bindData['img_logo'], // logo图标
+                    'kefu_url' => $bindData['kefu_url'], // 客服地址
+                    'download_type' => $bindData['download_type'], // 应用下载方式，1普通下载，2openinstall
+                    'channel_code' => $bindData['channel_code'], // 渠道号
+                    'ad_config_install_type' => $bindData['ad_config_install_type'], // 安卓安装方式，1托管APK，2外部APK
+                    'ad_download_url' => '', // 安卓安装地址
+                    'pg_config_install_type' => $bindData['pg_config_install_type'], // 苹果安装方式，1托管IPA，2外部IPA，3AppStore及其他，4外部plist
+                    'pg_download_url' => '', // 苹果安装地址
+                    'statistics_code' => $bindData['statistics_code'], // 统计代码
+                ];
+
+                // 查询安卓下载地址
+                $adInstallArr = json_decode($bindData['ad_config_install_data'], true);
+                if ($fetchData['ad_config_install_type'] == 1) {
+                    $packageData = Db::name('SystemPackage')->where('id', $adInstallArr['apk_id'])->find();
+                    if (!empty($packageData) && !empty($packageData['path'])) {
+                        $fetchData['ad_download_url'] = $packageData['path'];
+                    }
+                } else {
+                    $fetchData['ad_download_url'] = $adInstallArr['download_url'];
+                }
+
+                // 查询苹果下载地址
+                $pgInstallArr = json_decode($bindData['pg_config_install_data'], true);
+                if ($fetchData['pg_config_install_type'] == 1) {
+                    $packageData = Db::name('SystemPackage')->where('id', $pgInstallArr['ipa_id'])->find();
+                    if (!empty($packageData) && !empty($packageData['path'])) {
+                        $fetchData['pg_download_url'] = $packageData['path'];
+                    }
+                } else if ($fetchData['pg_config_install_type'] == 2) {
+                    $fetchData['pg_download_url'] = $pgInstallArr['download_url'];
+                } else if ($fetchData['pg_config_install_type'] == 3) {
+                    $fetchData['pg_download_url'] = $pgInstallArr['app_store_url'];
+                } else {
+                    $fetchData['pg_download_url'] = 'itms-services://?action=download-manifest&url=' . $pgInstallArr['plist'];
+                }
+
+                // 渲染视图
+                $this->fetch($tempData['package'] . '/index.html', $fetchData);
+            }
+        }
+
+        abort(404, '页面不存在');
     }
+
 }

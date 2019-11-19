@@ -38,7 +38,7 @@ class Domain extends Controller
     {
         parent::__construct();
         if (!NodeService::islogin()) {
-            $this->error('访问授权失败，请重新登录授权再试！');
+            $this->error('未登录', url('@admin/login'));
         }
     }
 
@@ -90,8 +90,8 @@ class Domain extends Controller
             for ($i = 0; $i < $num; $i++) {
                 $jumpTmp = explode(' ', $jump_domain[$i]);
                 $all[] = [
-                    'call_domain' => $call_domain[$i],
-                    'jump_domain' => $jumpTmp[0] . '?appkey=' . $jumpTmp[1],
+                    'call_domain' => trim($call_domain[$i], "/"),
+                    'jump_domain' => trim($jumpTmp[0], "/") . '?ChannelCode=' . $jumpTmp[1],
                     'remark' => $data['remark'],
                     'created_at' => $nowTime,
                 ];
