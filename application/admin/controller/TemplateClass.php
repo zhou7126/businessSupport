@@ -38,7 +38,7 @@ class TemplateClass extends Controller
     {
         parent::__construct();
         if (!NodeService::islogin()) {
-            $this->error('访问授权失败，请重新登录授权再试！');
+            $this->error('未登录', url('@admin/login'));
         }
     }
 
