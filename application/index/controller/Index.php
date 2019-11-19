@@ -67,6 +67,7 @@ class Index extends Controller
                     'pg_config_install_type' => $bindData['pg_config_install_type'], // 苹果安装方式，1托管IPA，2外部IPA，3AppStore及其他，4外部plist
                     'pg_download_url' => '', // 苹果安装地址
                     'statistics_code' => $bindData['statistics_code'], // 统计代码
+                    'openintsall_app_key' => $bindData['openintsall_app_key'],
                 ];
 
                 // 查询安卓下载地址
