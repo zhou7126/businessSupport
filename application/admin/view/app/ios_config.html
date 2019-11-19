@@ -5,7 +5,7 @@
     }
 </style>
 <div class="layui-tab-item">
-    <form class="layui-form" onsubmit="return configSubmit(this);" action="{:url('changeAdConfig')}"  method="post" >
+    <form class="layui-form" onsubmit="return configSubmit(this);" action="{:url('changeAdConfig')}"  method="post" lay-filter="payment">
         <div class="layui-form-item">
             <label class="layui-form-label">集成应用宝</label>
             <div class="layui-input-block">
@@ -24,40 +24,41 @@
         <div class="layui-form-item">
             <label class="layui-form-label">选择安装方式</label>
             <div class="layui-input-block">
-                <input type="radio" name="pg_config_install_type" value="1" title="托管IPA" {$row.pg_config_install_type == 1 ? 'checked' : ''}>
-                <input type="radio" name="pg_config_install_type" value="2" title="外部IPA" {$row.pg_config_install_type == 2 ? 'checked' : ''}>
-                <input type="radio" name="pg_config_install_type" value="3" title="App Store及其他"  {$row.pg_config_install_type == 3 ? 'checked' : ''}>
-                <input type="radio" name="pg_config_install_type" value="4" title="外部plist" {$row.pg_config_install_type == 4 ? 'checked' : ''}>
+                <input type="radio" name="pg_config_install_type" value="1" title="托管IPA" lay-filter="data-mch-type" {$row.pg_config_install_type == 1 ? 'checked' : ''}>
+                <input type="radio" name="pg_config_install_type" value="2" title="外部IPA" lay-filter="data-mch-type" {$row.pg_config_install_type == 2 ? 'checked' : ''}>
+                <input type="radio" name="pg_config_install_type" value="3" title="App Store及其他" lay-filter="data-mch-type"  {$row.pg_config_install_type == 3 ? 'checked' : ''}>
+                <input type="radio" name="pg_config_install_type" value="4" title="外部plist" lay-filter="data-mch-type" {$row.pg_config_install_type == 4 ? 'checked' : ''}>
             </div>
             <p>上传到系统的IPA包，方便快速测试</p>
         </div>
-        <div class="layui-form-item">
+
+        <div class="layui-form-item" data-mch-type="1" >
             <label class="layui-form-label">选择托管的APK包</label>
             <div class="layui-input-block">
-                <select name="pg_config_trust_ipa_id" lay-verify="">
+                <select name="ipa_id" lay-verify="">
                     <option value=""></option>
                     {foreach $ipas as $key=>$vo}
-                    <option value="{$vo.id}" {$vo.id == $row.pg_config_trust_ipa_id ? 'selected' : ''}>序号：{$vo.id} &nbsp;&nbsp;&nbsp;&nbsp;上传时间：{$vo.created_at|format_datetime}</option>
+                    <option value="{$vo.id}" {$vo.id == $row.pg_config_data.ipa_id ? 'selected' : ''}>序号：{$vo.id} &nbsp;&nbsp;&nbsp;&nbsp;上传时间：{$vo.created_at|format_datetime}</option>
                     {/foreach}
                 </select>
             </div>
         </div>
-        <div class="layui-form-item">
+        <div class="layui-form-item" data-mch-type="2">
             <label class="layui-form-label">IPA文件的下载地址</label>
             <div class="layui-input-block">
-                <input type="text" name="pg_config_install_url"  value="{$row.pg_config_install_url}"  lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+                <input type="text" name="download_url"  value="{$row.pg_config_data.download_url}"  lay-verify="" placeholder="" autocomplete="off" class="layui-input">
             </div>
         </div>
-        <div class="layui-form-item">
+        <div class="layui-form-item" data-mch-type="3">
             <label class="layui-form-label">App Store及其地址</label>
             <div class="layui-input-block">
-                <input type="text" name="pg_config_app_store_url" value="{$row.pg_config_app_store_url}"  lay-verify="" placeholder="请输入App Store及其地址" autocomplete="off" class="layui-input">
+                <input type="text" name="app_store_url" value="{$row.pg_config_data.app_store_url}"  lay-verify="" placeholder="请输入App Store及其地址" autocomplete="off" class="layui-input">
             </div>
         </div>
-        <div class="layui-form-item">
+        <div class="layui-form-item" data-mch-type="4">
             <label class="layui-form-label">外部plist</label>
             <div class="layui-input-block">
-                <input type="text" name="pg_config_plist" value="{$row.pg_config_plist}"  lay-verify="" placeholder="请输入外部plist" autocomplete="off" class="layui-input">
+                <input type="text" name="plist" value="{$row.pg_config_data.plist}"  lay-verify="" placeholder="请输入外部plist" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -69,18 +70,34 @@
 </div>
 
 <script>
+    (new function () {
+        form.render();
+        this.type = {$row.pg_config_install_type ? $row.pg_config_install_type : 1};
+        form.val('payment', {pg_config_install_type: this.type});
+        form.on('radio(data-mch-type)', function (data) {
+            apply(data.value);
+        });
+        apply.call(this, this.type);
+
+        function apply(type) {
+            $('[data-mch-type="' + type + '"]').show().siblings('[data-mch-type]').hide();
+        };
+    });
+
     //Demo
-    form.render();
+
+
     function configSubmit(formObj) {
-        var temp  = $(formObj).find("input[name='pg_config_is_myapp']:checked").val();
+        var temp  = $(formObj).find("input[name='pg_config_is_myapp']:checked").val() - 0;
         var pg_config_is_myapp = temp ? temp : 0;
         var pg_config_myapp_url = $(formObj).find("input[name='pg_config_myapp_url']").val();
-        var pg_config_install_type = $(formObj).find("input[name='pg_config_install_type']:checked").val();
-        var pg_config_trust_ipa_id = $(formObj).find("select[name='pg_config_trust_ipa_id']").val();
-        var pg_config_install_url = $(formObj).find("input[name='pg_config_install_url']").val();
-        var pg_config_app_store_url = $(formObj).find("input[name='pg_config_app_store_url']").val();
-        var pg_config_plist = $(formObj).find("input[name='pg_config_plist']").val();
-
+        var pg_config_install_type = $(formObj).find("input[name='pg_config_install_type']:checked").val() - 0;
+        var pg_config_install_data = {};
+        pg_config_install_data['ipa_id'] = pg_config_install_type === 1 ? $(formObj).find("select[name='ipa_id']").val() : '';
+        pg_config_install_data['download_url'] = pg_config_install_type === 2 ? $(formObj).find("input[name='download_url']").val() : '';
+        pg_config_install_data['app_store_url'] = pg_config_install_type === 3 ? $(formObj).find("input[name='app_store_url']").val() : '';
+        pg_config_install_data['plist'] = pg_config_install_type === 4 ? $(formObj).find("input[name='plist']").val() : '';
+        pg_config_install_data = JSON.stringify(pg_config_install_data);
         $.ajax({
             type: "post",
             url: "{:url('changePgConfig')}",
@@ -88,10 +105,7 @@
                 pg_config_install_type : pg_config_install_type,
                 pg_config_myapp_url : pg_config_myapp_url,
                 pg_config_is_myapp : pg_config_is_myapp,
-                pg_config_trust_ipa_id : pg_config_trust_ipa_id,
-                pg_config_install_url : pg_config_install_url,
-                pg_config_app_store_url : pg_config_app_store_url,
-                pg_config_plist : pg_config_plist,
+                pg_config_install_data : pg_config_install_data,
                 id : {$row.id},
             },
             beforeSend: function(request) {

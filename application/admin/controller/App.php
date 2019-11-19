@@ -30,6 +30,7 @@ class App extends Controller
     const AD = 1;
     const PG = 2;
 
+    const UPLOAD_PACKAGE_DOMAIN = "http://www.armshores.com";
     /**
      * 指定当前数据表
      * @var string
@@ -83,7 +84,8 @@ class App extends Controller
     public function template()
     {
         $id = $this->request->param('id');
-        $this->row = Db::name($this->table)->where('id',$id)->find();
+        $this->row = Db::name($this->table)->alias('a')->leftJoin('system_template t','a.template_id = t.id')->where('a.id',$id)->field('a.*,t.name as tem_name')->find();
+        $this->templates = Db::name('SystemTemplate')->where('is_deleted',0)->order('created_at desc')->select();
 
         $this->applyCsrfToken();
         $this->_form($this->table, 'template');
@@ -94,6 +96,7 @@ class App extends Controller
     {
         $id = $this->request->param('id');
         $this->row = Db::name($this->table)->where('id',$id)->find();
+        $this->row['ad_config_data'] = json_decode($this->row['ad_config_install_data'],true);
         $apk = Db::name($this->tablePackage)->where('type',self::AD)->order('created_at desc')->find();
         if ($apk){
             $apk['data'] = json_decode($apk['data'],true);
@@ -101,7 +104,7 @@ class App extends Controller
         $this->apk = $apk;
         $this->apks = Db::name($this->tablePackage)->where('type',self::AD)->order('created_at desc')->select();
         $query = $this->_query($this->tablePackage);
-        $query->where('type',self::PG)->order('created_at desc')->page();
+        $query->where('type',self::AD)->order('created_at desc')->page();
     }
 
     public function changeAdConfig()
@@ -112,17 +115,18 @@ class App extends Controller
             if(!$param['ad_config_install_type'] || !in_array($param['ad_config_install_type'],[1,2])) {
                 $this->error('请选择安装方式！');
             }
-            if ($param['ad_config_install_type'] == 1 && !$param['ad_config_trust_apk_id']){
+            $config = json_decode($param['ad_config_install_data'],true);
+            if ($param['ad_config_install_type'] == 1 && empty($config['apk_id'])){
                 $this->error('请选择托管APK！');
             }
-            if ($param['ad_config_install_type'] == 2 && !$param['ad_config_install_url']){
+            if ($param['ad_config_install_type'] == 2 && empty($config['download_url'])){
                 $this->error('请输入APK地址！');
             }
 
-            $tmp = $param['ad_config_install_type'] == 1
-                ? ['ad_config_trust_apk_id'=>$param['ad_config_trust_apk_id']]
-                : ['ad_config_install_url'=>$param['ad_config_install_url']];
-            $data = array_merge(['ad_config_install_type' => $param['ad_config_install_type']],$tmp);
+            $data = [
+                'ad_config_install_type' => $param['ad_config_install_type'],
+                'ad_config_install_data' => $param['ad_config_install_data'],
+            ];
             $res = Db::name($this->table)->where('id',$param['id'])->update($data);
             if($res !== false){
                 $this->success('保存成功');
@@ -144,34 +148,26 @@ class App extends Controller
             if (!$param['pg_config_install_type'] || !in_array($param['pg_config_install_type'],[1,2,3,4])){
                 $this->error('请选择安装方式！');
             }
-            if ($param['pg_config_install_type'] == 1 && !$param['pg_config_trust_ipa_id']){
+            if(empty($param['pg_config_install_data'])){
+                $this->error('config_data为空');
+            }
+            $config = json_decode($param['pg_config_install_data'],true);
+            if ($param['pg_config_install_type'] == 1 && empty($config['ipa_id'])){
                 $this->error('请选择托管ipa！');
             }
-            if ($param['pg_config_install_type'] == 2 && !$param['pg_config_install_url']){
+            if ($param['pg_config_install_type'] == 2 && !$config['download_url']){
                 $this->error('请输入下载地址！');
             }
-            if ($param['pg_config_install_type'] == 3 && !$param['pg_config_app_store_url']){
+            if ($param['pg_config_install_type'] == 3 && !$config['app_store_url']){
                 $this->error('请输入app store地址！');
             }
-            if ($param['pg_config_install_type'] == 4 && !$param['pg_config_plist']){
+            if ($param['pg_config_install_type'] == 4 && !$config['plist']){
                 $this->error('请输入plist！');
             }
             $data = [];
-            switch ($param['pg_config_install_type']){
-                case 1:
-                    $data['pg_config_trust_ipa_id'] = $param['pg_config_trust_ipa_id'];
-                    break;
-                case 2:
-                    $data['pg_config_install_url'] = $param['pg_config_install_url'];
-                    break;
-                case 3:
-                    $data['pg_config_install_type'] = $param['pg_config_install_type'];
-                    break;
-                case 4:
-                    $data['pg_config_plist'] = $param['pg_config_plist'];
-                    break;
-            }
+
             $data['pg_config_install_type'] = $param['pg_config_install_type'];
+            $data['pg_config_install_data'] = $param['pg_config_install_data'];
             $data['pg_config_is_myapp'] = $param['pg_config_is_myapp'];
             if($param['pg_config_is_myapp'] == 1){
                 $data['pg_config_myapp_url'] = $param['pg_config_myapp_url'];
@@ -202,28 +198,20 @@ class App extends Controller
     public function addApk()
     {
         $this->applyCsrfToken();
-        $url = $this->request->param('path');
+        $updateData = $this->request->param('updateData');
         $appId = $this->request->param('appId');
-        if(!$url) $this->error('路径为空');
+        if(!$updateData) $this->error('包数据为空');
         if(!$appId) $this->error('appId为空');
-        $index = strpos($url,'upload/');
-        $path = substr($url,$index);
-        $savePath = ROOT_PATH . $path;
-        include_once EXTEND_PATH . 'parseapp/ApkParser.php';
-        $apkParser = new \ApkParser();
-        if(!$apkParser->open($savePath)){
-            $this->error('文件路径错误！');
-        }
-
         $data = [
             'app_id' => $appId,
-            'path' => $path,
-            'size' => '55M',
+            'path' => self::UPLOAD_PACKAGE_DOMAIN . $updateData['package_file'],
+            'size' => $updateData['size'] . 'M',
             'type' => self::AD,
             'data' => json_encode([
-                'package' => $apkParser->getPackage(),
-                'versionName' => $apkParser->getVersionName(),
-                'versionCode' => $apkParser->getVersionCode(),
+                'package' => $updateData['signname'],
+                'iconimage' => self::UPLOAD_PACKAGE_DOMAIN .$updateData['iconimage'],
+                'versionName' => $updateData['version'],
+                'versionCode' => $updateData['version'],
             ]),
             'created_at' => time(),
         ];
@@ -239,28 +227,22 @@ class App extends Controller
     public function addIpa()
     {
         $this->applyCsrfToken();
-        $url = $this->request->param('path');
+        $updateData = $this->request->param('updateData');
         $appId = $this->request->param('appId');
-        if(!$url) $this->error('路径为空');
+        if(!$updateData) $this->error('包数据为空');
         if(!$appId) $this->error('appId为空');
-        $index = strpos($url,'upload/');
-        $path = substr($url,$index);
-        $savePath = ROOT_PATH . $path;
-        include_once EXTEND_PATH . 'parseapp/IpaParser.php';
-        $ipaParser = new \IpaParser();
-        if(!$ipaParser->parse($savePath)){
-            $this->error('文件路径错误！');
-        }
 
         $data = [
             'app_id' => $appId,
-            'path' => $path,
-            'size' => '55M',
+            'path' => self::UPLOAD_PACKAGE_DOMAIN . $updateData['package_file'],
+            'size' => $updateData['size'] . 'M',
             'type' => self::PG,
             'data' => json_encode([
-                'package' => $ipaParser->getPackage(),
-                'versionName' => $ipaParser->getVersion(),
-                'versionCode' => '',
+                'iconimage' =>self::UPLOAD_PACKAGE_DOMAIN . $updateData['iconimage'],
+                'package' => $updateData['signname'],
+                'versionName' => $updateData['version'],
+                'versionCode' => $updateData['version'],
+                'plist_path' => self::UPLOAD_PACKAGE_DOMAIN . $updateData['plist_path'],
             ]),
             'created_at' => time(),
         ];
@@ -291,10 +273,17 @@ class App extends Controller
     }
 
 
+    /**
+     * ios
+     * @auth true
+     * @menu true
+     */
     public function ios()
     {
         $id = $this->request->param('id');
         $this->row = Db::name($this->table)->where('id',$id)->find();
+        $this->row['pg_config_data'] = json_decode($this->row['pg_config_install_data'],true);
+
         $ipa = Db::name($this->tablePackage)->where('type',self::PG)->order('created_at desc')->find();
         if ($ipa){
             $ipa['data'] = json_decode($ipa['data'],true);
@@ -305,6 +294,25 @@ class App extends Controller
         $query->where('type',self::PG)->order('created_at desc')->page();
     }
 
+
+    protected function _add_form_filter(&$data)
+    {
+        if ($this->request->isPost()){
+
+            if (empty($data['name'])) $this->error('请输入应用名称！');
+            if (empty($data['img'])) $this->error('请上传应用图标！');
+            $data['app_key'] =substr(md5(uniqid(rand(),true)),0,8);
+            $data['created_at'] = time();
+            $data['updated_at'] = time();
+        }
+    }
+
+    private function suiji()
+    {
+
+    }
+
+
     /**
      * template表单处理
      * @param array $data
@@ -312,13 +320,14 @@ class App extends Controller
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    protected function template_form_filter(&$data)
+    protected function _template_form_filter(&$data)
     {
         if ($this->request->isPost()){
-            if (empty($data['webTitle'])) $this->error('请输入webTitle！');
-            if (empty($data['imgLogo'])) $this->error('请上传imgLogo！');
-            if (empty($data['kefuUrl'])) $this->error('请输入kefuUrl！');
-            if (empty($data['defaultChannelCode'])) $this->error('请输入defaultChannelCode！');
+            if (empty($data['template_id'])) $this->error('请选择模板！');
+            if (empty($data['web_title'])) $this->error('请输入webTitle！');
+            if (empty($data['img_logo'])) $this->error('请上传imgLogo！');
+            if (empty($data['kefu_url'])) $this->error('请输入kefuUrl！');
+            if (empty($data['channel_code'])) $this->error('请输入channelCode！');
 
             $data['updated_at'] = time();
         }
@@ -332,7 +341,7 @@ class App extends Controller
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    protected function base_form_filter(&$data)
+    protected function _base_form_filter(&$data)
     {
         if ($this->request->isPost()){
             //if (empty($data['name'])) $this->error('请输入应用名称！');

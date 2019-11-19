@@ -1,6 +1,8 @@
 {extend name='main'}
 
 {block name="style"}
+<link rel="stylesheet" href="__ROOT__/static/plugs/swiper/swiper.min.css?at={:date('md')}">
+
 <style>
     .app-detail-right{
         float: left;
@@ -24,6 +26,39 @@
     .app-upload{
         margin-left: 18px;
     }
+
+
+
+    .swiper-container {
+        width: 100%;
+        height: 100%;
+    }
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+
+        /* Center slide text vertically */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+    .fanhui{
+        margin-left: 20px;
+        margin-bottom: 10px;
+        height: 29px;
+        padding: 0 36px;
+        line-height: 29px;
+    }
 </style>
 {/block}
 {block name="button"}
@@ -40,11 +75,40 @@
 
 {block name="content"}
     <div class="think-box-shadow">
+        <button type="button" class="layui-btn layui-btn-primary fanhui" onclick="history.go(-1)"><&nbsp;&nbsp;&nbsp;返回</button>
+
         <div class="app-detail">
             {include file="app/left" /}
             <div class="app-detail-right">
                 <form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post" autocomplete="off">
                     <div class="layui-card-body padding-left-40">
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">模板名称</span>
+                                <input  value='{$row.tem_name}' class="layui-input duan-input tem_name_1" readonly>
+                                <input name="template_id" type="hidden" value='{$row.template_id}' class="layui-input duan-input">
+                            </label>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <!-- Swiper -->
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">选择模板</span>
+                                <div class="swiper-container">
+                                    <div class="swiper-wrapper">
+                                        {foreach $templates as $key=>$vo}
+                                        <div class="swiper-slide tems">
+                                            <div class="tem_name_2" data-id="{$vo.id}">{$vo.name}</div>
+                                            <img src="{$vo.package_img}" width="160" height="280">
+                                        </div>
+                                        {/foreach}
+                                    </div>
+                                    <!-- Add Pagination -->
+                                    <div class="swiper-pagination"></div>
+                                </div>
+                            </label>
+                        </div>
+
                         <div class="layui-form-item">
                             <label class="relative block">
                                 <span class="color-green font-w7 peizhi-title">webTitle</span>
@@ -73,11 +137,19 @@
                         </div>
                         <div class="layui-form-item">
                             <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">defaultChannelCode</span>
-                                <input name="default_channel_code" value='{$row.default_channel_code}' class="layui-input duan-input">
+                                <span class="color-green font-w7 peizhi-title">channelCode</span>
+                                <input name="channel_code" value='{$row.channel_code}' class="layui-input duan-input">
                                 <span class="help-block">默认渠道号</span>
                             </label>
                         </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">openintsall_app_key</span>
+                                <input name="openintsall_app_key" value='{$row.openintsall_app_key}' class="layui-input duan-input">
+                                <span class="help-block">openintsall_app_key</span>
+                            </label>
+                        </div>
+
                         <input type='hidden' value='{$row.id}' name='id'>
                     </div>
                     <div class="layui-form-item text-center">
@@ -88,8 +160,34 @@
             <div class="clear"></div>
         </div>
     </div>
+<script src="__ROOT__/static/plugs/swiper/swiper.js"></script>
+<script>
+    form.render();
+    layui.define(function (exports) {
+        exports('swiper',window.Swiper);
+    }).config({
+        base: '__ROOT__/static/plugs/swiper/' //设定扩展的Layui模块的所在目录，一般用于外部模块扩展
+    }).use(['swiper'], function (layuiSwiper) {
+        var swiper = new layuiSwiper('.swiper-container', {
+            slidesPerView: 3,
+            spaceBetween: 30,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+        });
 
+        $('.tems').click(function () {
+            var tem = $(this).find('.tem_name_2');
+
+            $('.tem_name_1').val(tem.text());
+            $('[name="template_id"]').val(tem.data('id'));
+        });
+    });
+
+</script>
 {/block}
-{block name='script'}
+
+{block name="script"}
 
 {/block}
