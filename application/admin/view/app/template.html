@@ -140,6 +140,60 @@
                             </label>
                         </div>
 
+
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">扩展图片1</span>
+                                <input name="ext_img1" placeholder="请上传图片文件" class="layui-input duan-input" readonly  value='{$row.ext_img1}'>
+                                <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img1">
+                                    <i class="layui-icon">&#xe67c;</i>上传
+                                </button>
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">扩展图片2</span>
+                                <input name="ext_img2" placeholder="请上传图片文件" class="layui-input duan-input" readonly  value='{$row.ext_img2}'>
+                                <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img2">
+                                    <i class="layui-icon">&#xe67c;</i>上传
+                                </button>
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">扩展图片3</span>
+                                <input name="ext_img3" placeholder="请上传图片文件" class="layui-input duan-input" readonly  value='{$row.ext_img3}'>
+                                <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img3">
+                                    <i class="layui-icon">&#xe67c;</i>上传
+                                </button>
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">扩展图片4</span>
+                                <input name="ext_img4" placeholder="请上传图片文件" class="layui-input duan-input" readonly  value='{$row.ext_img4}'>
+                                <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img4">
+                                    <i class="layui-icon">&#xe67c;</i>上传
+                                </button>
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">扩展图片5</span>
+                                <input name="ext_img5" placeholder="请上传图片文件" class="layui-input duan-input" readonly  value='{$row.ext_img5}'>
+                                <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img5">
+                                    <i class="layui-icon">&#xe67c;</i>上传
+                                </button>
+                            </label>
+                        </div>
+
+
+
+
+
+
+
+
                         <input type='hidden' value='{$row.id}' name='id'>
                     </div>
                     <div class="layui-form-item text-center">
@@ -195,6 +249,35 @@
     });
 
 
+</script>
+
+
+<script>
+    layui.use(['upload'], function(){
+        var upload = layui.upload;
+        var that = this;
+        console.log($(that).attr('data-field'));
+        upload.render({
+            elem: '.ext_img'
+            , url: 'admin/api.plugs/upload/'
+            , exts: 'jpg|png|gif|bmp|jpeg'
+            , accept: 'images'
+            , acceptMime: "image/*"
+            , progress: function (n) {
+                var percent = n + '%' //获取进度百分比
+            }
+            ,done: function(ret, index, upload){
+                this.multiple || $.msg.close(this.proindex);
+                console.log(ret.filename);
+                if (ret.uploaded) {
+                    $(this.item).prev().val('/upload/' + ret.filename);
+                    $.msg.success('上传成功');
+                } else {
+                    $.msg.error(ret.info || ret.error.message || '文件上传出错！');
+                }
+            }
+        });
+    });
 </script>
 {/block}
 

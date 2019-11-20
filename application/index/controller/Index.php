@@ -68,6 +68,11 @@ class Index extends Controller
                     'pg_download_url' => '', // 苹果安装地址
                     'statistics_code' => $bindData['statistics_code'], // 统计代码
                     'openintsall_app_key' => $bindData['openintsall_app_key'],
+                    'ext_img1' => $bindData['ext_img1'],
+                    'ext_img2' => $bindData['ext_img2'],
+                    'ext_img3' => $bindData['ext_img3'],
+                    'ext_img4' => $bindData['ext_img4'],
+                    'ext_img5' => $bindData['ext_img5'],
                 ];
 
                 // 查询安卓下载地址
