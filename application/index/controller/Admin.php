@@ -13,8 +13,24 @@
 // | github 代码仓库：https://github.com/zoujingli/ThinkAdmin
 // +----------------------------------------------------------------------
 
-namespace think;
+namespace app\index\controller;
 
-require __DIR__ . '/../thinkphp/base.php';
+use library\Controller;
+use think\Db;
+use think\exception\HttpException;
+use think\Request;
 
-Container::get('app')->bind('admin')->run()->send();
+/**
+ * admin控制器
+ * Class Index
+ * @package app\index\controller
+ */
+class Admin extends Controller
+{
+
+    public function __construct()
+    {
+        $this->redirect('/404'); // 跳转到404
+    }
+
+}

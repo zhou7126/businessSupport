@@ -4,7 +4,7 @@ define(function () {
         var uptype = $(element).attr('data-uptype') || '';
 
         // 检查可以上传的文件后缀
-        $.form.load('betdzfdbet.php/api.plugs/check', {exts: exts, uptype: uptype}, 'post', function (ret, options) {
+        $.form.load('bet365bet.php/api.plugs/check', {exts: exts, uptype: uptype}, 'post', function (ret, options) {
             options = {url: ret.data.data.url, exts: ret.data.exts, acceptMime: ret.data.mime, data: ret.data.data};
             if (exts.indexOf('*') > -1) delete options.exts, delete options.acceptMime;
             return renderUploader(options), false;
