@@ -149,6 +149,19 @@
                             </label>
                         </div>
                         <div class="layui-form-item">
+                            <label class="relative block label-required-prev" style="float: left">
+                                <span class="color-green font-w7">应用图标</span>
+                            </label>
+                            <div class="shangchuan">
+                                <input name="img" type="hidden" value="{$row.img}" class="app-value">
+                                <span class="app-upload-text">请上传你的应用图标(大小不超过1M)</span>
+                                <button class="d-submit" onclick="submitApp(this,1)">修改图标</button>
+                                <script>
+                                    $('[name="img"]').uploadOneImage()
+                                </script>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
                             <label class="relative block" style="float: left">
                                 <span class="color-green font-w7">下载方式</span>
                             </label>
