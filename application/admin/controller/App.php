@@ -215,8 +215,9 @@ class App extends Controller
             ]),
             'created_at' => time(),
         ];
-
         $res = Db::name($this->tablePackage)->insert($data);
+        Db::name($this->table)->where('id',$appId)->update(['img'=>self::UPLOAD_PACKAGE_DOMAIN .$updateData['iconimage']]);
+
         if($res){
             $this->success('操作成功');
         }else{
@@ -298,8 +299,8 @@ class App extends Controller
     protected function _add_form_filter(&$data)
     {
         if ($this->request->isPost()){
-
             if (empty($data['name'])) $this->error('请输入应用名称！');
+            if (empty($data['img'])) $this->error('请上传应用图标！');
             $data['app_key'] =substr(md5(uniqid(rand(),true)),0,8);
             $data['created_at'] = time();
             $data['updated_at'] = time();

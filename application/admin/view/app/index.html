@@ -22,6 +22,7 @@
                 <label><input data-auto-none data-check-target='.list-check-box' type='checkbox'></label>
             </th>
             <th class='text-left nowrap'>名称</th>
+            <th class='text-left nowrap'>图标</th>
             <th class='text-center nowrap'>AppKey</th>
             <th class='text-left nowrap'>操作</th>
         </tr>
@@ -34,6 +35,7 @@
                 <label><input class="list-check-box" value='{$vo.id}' type='checkbox'></label>
             </td>
             <td class='text-left nowrap'>{$vo.name|default=''}</td>
+            <td class='text-left nowrap'><img src="{$vo.img}"></td>
             <td class='text-center nowrap'>{$vo.app_key|default=''}</td>
             <td class='text-left nowrap'>
                 <a data-open="{:url('base')}?id={$vo.id}" data-menu-node="app-jichu-{$vo.id}"  class="layui-btn layui-btn-sm" data-title="详情">详情</a>
