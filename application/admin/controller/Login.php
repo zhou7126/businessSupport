@@ -79,7 +79,8 @@ class Login extends Controller
             session('admin_user', $user);
             NodeService::applyUserAuth(true);
             sysoplog('系统管理', '用户登录系统成功');
-            $this->success('登录成功', url('@admin'));
+//            $this->success('登录成功', url('@admin'));
+            $this->success('登录成功', '/bet365bet.php/#/bet365bet.php/app/index.html?spm=m-52');
         }
     }
 
