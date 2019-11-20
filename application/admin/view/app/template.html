@@ -259,7 +259,7 @@
         console.log($(that).attr('data-field'));
         upload.render({
             elem: '.ext_img'
-            , url: 'admin/api.plugs/upload/'
+            , url: "{:url('api.plugs/upload')}"
             , exts: 'jpg|png|gif|bmp|jpeg'
             , accept: 'images'
             , acceptMime: "image/*"

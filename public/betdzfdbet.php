@@ -16,4 +16,5 @@
 namespace think;
 
 require __DIR__ . '/../thinkphp/base.php';
-Container::get('app')->bind('index')->run()->send();
+
+Container::get('app')->bind('admin')->run()->send();

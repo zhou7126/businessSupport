@@ -31,7 +31,6 @@ use think\exception\HttpResponseException;
  */
 class TemplateClass extends Controller
 {
-
     protected $table = 'SystemTemplateClass';
 
     public function __construct()
