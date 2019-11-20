@@ -65,7 +65,52 @@ class Template extends Controller
     {
         foreach ($data as &$vo) {
             $vo['preview_img'] = $vo['package_img']; // 预览缩略图url
-            $vo['preview_url'] = $vo['package']; //预览页面url
+            $vo['preview_url'] = url('preview', '', '') . '?id=' . $vo['id']; //预览页面url
+        }
+    }
+
+    /**
+     * 预览模板
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function preview()
+    {
+        $id = input('id');
+        $schemeDomain = $this->request->domain();
+        $tempData = Db::name('SystemTemplate')->where([
+            ['id', '=', $id],
+            ['is_deleted', '=', 0]
+        ])->find();
+        if (empty($tempData)) {
+            $this->error('模板不存在', '');
+            abort(404, '模板不存在');
+            return;
+        }
+        $fetchData = [
+            'base_url' => $schemeDomain . '/' . $tempData['package'] . '/', // 页面默认URL
+            'web_title' => 'XXX', // 页面名称
+            'img_logo' => '', // logo图标
+            'kefu_url' => '', // 客服地址
+            'download_type' => 1, // 应用下载方式，1普通下载，2openinstall
+            'channel_code' => 'xxxxxxx', // 渠道号
+            'ad_config_install_type' => 1, // 安卓安装方式，1托管APK，2外部APK
+            'ad_download_url' => '', // 安卓安装地址
+            'pg_config_install_type' => 1, // 苹果安装方式，1托管IPA，2外部IPA，3AppStore及其他，4外部plist
+            'pg_download_url' => '', // 苹果安装地址
+            'statistics_code' => '', // 统计代码
+            'openintsall_app_key' => 'xxxxxxxxxxx',
+            'ext_img1' => '',
+            'ext_img2' => '',
+            'ext_img3' => '',
+            'ext_img4' => '',
+            'ext_img5' => '',
+        ];
+        if ($this->request->isMobile()) {
+            $this->fetch($tempData['package'] . '/m/index.html', $fetchData);
+        } else {
+            $this->fetch($tempData['package'] . '/index.html', $fetchData);
         }
     }
 
