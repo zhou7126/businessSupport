@@ -153,7 +153,6 @@
             content: jQuery('#qrcode'),
             shade:0,
         });
-
     });
     var upload = layui.upload;
     upload.render({
@@ -161,6 +160,8 @@
         ,url: 'http://www.armshores.com/admin/ajax/package_upload'
         ,accept: 'file' //允许上传的文件类型
         ,size: 5000000 //最大允许上传的文件大小
+        ,exts:'ipa'
+        ,acceptMime:'application/iphone'
         ,data:{
             domain : 'https://www.apposg.com'
         }
