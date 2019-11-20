@@ -110,7 +110,7 @@ class Index extends Controller
             }
         }
 
-        abort(404, '页面不存在');
+        $this->redirect('/404');
     }
 
 }

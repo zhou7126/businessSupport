@@ -15,7 +15,6 @@
 
 use think\facade\Request;
 use think\facade\Route;
-Route::bind('admin');
 /* 演示环境禁止操作路由绑定 */
 if (stripos(Request::host(true), 'thinkadmin.top') !== false) {
     Route::post('admin/user/pass', function () {

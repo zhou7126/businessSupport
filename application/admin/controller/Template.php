@@ -138,7 +138,7 @@ class Template extends Controller
     public function _form_filter(&$data)
     {
         if ($this->request->isPost()) {
-            $data['class_id'] = intval($data['class_id']);
+            $data['class_id'] = isset($data['class_id']) ? intval($data['class_id']) : 0;
             if (Db::name('SystemTemplateClass')->where(['id' => $data['class_id']])->count() < 1) {
                 $this->error('模板分组不存在');
             }
