@@ -102,7 +102,11 @@ class Index extends Controller
                 }
 
                 // 渲染视图
-                $this->fetch($tempData['package'] . '/index.html', $fetchData);
+                if ($this->request->isMobile()) {
+                    $this->fetch($tempData['package'] . '/m/index.html', $fetchData);
+                } else {
+                    $this->fetch($tempData['package'] . '/index.html', $fetchData);
+                }
             }
         }
 
