@@ -300,7 +300,6 @@ class App extends Controller
         if ($this->request->isPost()){
 
             if (empty($data['name'])) $this->error('请输入应用名称！');
-            if (empty($data['img'])) $this->error('请上传应用图标！');
             $data['app_key'] =substr(md5(uniqid(rand(),true)),0,8);
             $data['created_at'] = time();
             $data['updated_at'] = time();

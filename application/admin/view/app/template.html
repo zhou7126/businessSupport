@@ -39,18 +39,7 @@
         background: #fff;
 
         /* Center slide text vertically */
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: -webkit-flex;
-        display: flex;
-        -webkit-box-pack: center;
-        -ms-flex-pack: center;
-        -webkit-justify-content: center;
-        justify-content: center;
-        -webkit-box-align: center;
-        -ms-flex-align: center;
-        -webkit-align-items: center;
-        align-items: center;
+
     }
     .fanhui{
         margin-left: 20px;
@@ -85,8 +74,9 @@
                         <div class="layui-form-item">
                             <label class="relative block">
                                 <span class="color-green font-w7 peizhi-title">模板名称</span>
-                                <input  value='{$row.tem_name}' class="layui-input duan-input tem_name_1" readonly>
+                                <input  value='{$row.tem_name}' class="layui-input duan-input tem_name_1">
                                 <input name="template_id" type="hidden" value='{$row.template_id}' class="layui-input duan-input">
+                                <span class="help-block"><button type="button" class="layui-btn layui-btn-primary sousuo">搜索</button></span>
                             </label>
                         </div>
 
@@ -97,7 +87,7 @@
                                 <div class="swiper-container">
                                     <div class="swiper-wrapper">
                                         {foreach $templates as $key=>$vo}
-                                        <div class="swiper-slide tems">
+                                        <div class="swiper-slide tems" data-id="{$vo.id}" data-name="{$vo.name}">
                                             <div class="tem_name_2" data-id="{$vo.id}">{$vo.name}</div>
                                             <img src="{$vo.package_img}" width="160" height="280">
                                         </div>
@@ -168,9 +158,27 @@
     }).config({
         base: '__ROOT__/static/plugs/swiper/' //设定扩展的Layui模块的所在目录，一般用于外部模块扩展
     }).use(['swiper'], function (layuiSwiper) {
+        var tem_index, template_id = $('[name="template_id"]').val();
+        if(template_id){
+            tem_index = $('.swiper-slide').index($('[data-id="'+template_id+'"]'));
+        }
+        
+        $('.sousuo').click(function () {
+            let name = $('.tem_name_1').val();
+            console.log(name);
+            if(!name) return false;
+            tem_index = $('.swiper-slide').index($('[data-name="'+name+'"]'));
+            if(tem_index === -1) return false;
+            swiper.slideTo(tem_index);
+            $('[name="template_id"]').val($('.swiper-slide:eq('+tem_index+')').data('id'));
+        });
+
         var swiper = new layuiSwiper('.swiper-container', {
-            slidesPerView: 3,
+            initialSlide:template_id ? tem_index : 0,
+            slidesPerGroup:6,
+            slidesPerView: 6,
             spaceBetween: 30,
+            grabCursor: true,
             pagination: {
                 el: '.swiper-pagination',
                 clickable: true,
@@ -183,7 +191,9 @@
             $('.tem_name_1').val(tem.text());
             $('[name="template_id"]').val(tem.data('id'));
         });
+
     });
+
 
 </script>
 {/block}
