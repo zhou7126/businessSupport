@@ -35,7 +35,7 @@
                 <label><input class="list-check-box" value='{$vo.id}' type='checkbox'></label>
             </td>
             <td class='text-left nowrap'>{$vo.name|default=''}</td>
-            <td class='text-left nowrap'><img src="{$vo.img}"></td>
+            <td class='text-left nowrap'><img src="{$vo.img}" style="max-width: 42px;"></td>
             <td class='text-center nowrap'>{$vo.app_key|default=''}</td>
             <td class='text-left nowrap'>
                 <a data-open="{:url('base')}?id={$vo.id}" data-menu-node="app-jichu-{$vo.id}"  class="layui-btn layui-btn-sm" data-title="详情">详情</a>
