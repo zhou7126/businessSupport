@@ -71,6 +71,16 @@ class App extends Controller
         $this->_form($this->table, 'form');
     }
 
+    /**
+     * 基础信息
+     * @auth true
+     *
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
     public function base()
     {
         $id = $this->request->param('id');
@@ -80,7 +90,16 @@ class App extends Controller
         $this->_form($this->table, 'base');
     }
 
-
+    /**
+     * 配置模板
+     * @auth true
+     *
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
     public function template()
     {
         $id = $this->request->param('id');
@@ -131,6 +150,16 @@ class App extends Controller
     }
 
 
+    /**
+     * ad集成
+     * @auth true
+     *
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
     public function ad()
     {
         $id = $this->request->param('id');
@@ -146,6 +175,12 @@ class App extends Controller
         $query->where('type',self::AD)->order('created_at desc')->page();
     }
 
+
+    /**
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
+     */
     public function changeAdConfig()
     {
         if($this->request->isPost()){
@@ -176,6 +211,11 @@ class App extends Controller
         }
     }
 
+    /**
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
+     */
     public function changePgConfig()
     {
         if($this->request->isPost()){
@@ -234,6 +274,11 @@ class App extends Controller
     }
 
 
+    /**
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
+     */
     public function addApk()
     {
         $this->applyCsrfToken();
@@ -264,6 +309,10 @@ class App extends Controller
         }
     }
 
+
+    /**
+     * @auth true
+     */
     public function addIpa()
     {
         $this->applyCsrfToken();
@@ -295,10 +344,6 @@ class App extends Controller
         }
     }
 
-    private function uploadPackage($type,$instance)
-    {
-
-    }
 
     /**
      * 删除Package
@@ -345,10 +390,6 @@ class App extends Controller
         }
     }
 
-    private function suiji()
-    {
-
-    }
 
 
     /**
