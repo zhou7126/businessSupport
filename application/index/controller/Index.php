@@ -54,9 +54,23 @@ class Index extends Controller
             $channelCode = $bindData['channel_code'];
             $bindDomain = explode("\n", trim($bindData['domain']));
             foreach ($bindDomain as $v) {
-                $tempDomain = explode(" ", $v);
-                if (isset($tempDomain[1]) && !empty(trim($tempDomain[1]))) {
-                    $channelCode = trim($tempDomain[1]);
+                $tempDomain = explode(" ", trim($v));
+                $tempDomainKey = '';
+                $tempDomainVal = '';
+                foreach ($tempDomain as $v1) {
+                    if (trim($v1) !== '') {
+                        if (empty($tempDomainKey)) {
+                            $tempDomainKey = trim($v1);
+                        } elseif (empty($tempDomainVal)) {
+                            $tempDomainVal = trim($v1);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+
+                if (stripos($tempDomainKey, $domain) !== false && !empty($tempDomainVal)) {
+                    $channelCode = $tempDomainVal;
                     break;
                 }
             }
@@ -110,9 +124,10 @@ class Index extends Controller
                 }
 
                 // 渲染视图
-                if ($this->request->isMobile()) {
+                if (is_file($tempData['package'] . '/m/index.html') && $this->request->isMobile()) {
+                    $fetchData['base_url'] .= 'm/';
                     $this->fetch($tempData['package'] . '/m/index.html', $fetchData);
-                } else {
+                } else if (is_file($tempData['package'] . '/index.html')) {
                     $this->fetch($tempData['package'] . '/index.html', $fetchData);
                 }
             }
