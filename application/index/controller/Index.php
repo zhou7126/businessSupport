@@ -113,7 +113,10 @@ class Index extends Controller
                 if ($fetchData['pg_config_install_type'] == 1) {
                     $packageData = Db::name('SystemPackage')->where('id', $pgInstallArr['ipa_id'])->find();
                     if (!empty($packageData) && !empty($packageData['path'])) {
-                        $fetchData['pg_download_url'] = $packageData['path'];
+                        $plistData = json_decode($packageData['data'], true);
+                        if (isset($plistData['plist_path'])) {
+                            $fetchData['pg_download_url'] = "itms-services://?action=download-manifest&url=" . $plistData['plist_path'];
+                        }
                     }
                 } else if ($fetchData['pg_config_install_type'] == 2) {
                     $fetchData['pg_download_url'] = $pgInstallArr['download_url'];
