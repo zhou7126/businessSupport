@@ -41,7 +41,8 @@ class Login extends Controller
     {
         if (Request::isGet()) {
             if (NodeService::islogin()) {
-                $this->redirect('@admin');
+                $this->redirect('/bet365bet.php#/bet365bet.php/app/index.html?spm=m-52');
+
             } else {
                 $this->title = '系统登录';
                 $this->domain = Request::host(true);
@@ -80,7 +81,7 @@ class Login extends Controller
             NodeService::applyUserAuth(true);
             sysoplog('系统管理', '用户登录系统成功');
 //            $this->success('登录成功', url('@admin'));
-            $this->success('登录成功', '/bet365bet.php/#/bet365bet.php/app/index.html?spm=m-52');
+            $this->success('登录成功', '/bet365bet.php#bet365bet.php/app/index.html?spm=m-52');
         }
     }
 
