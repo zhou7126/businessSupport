@@ -55,7 +55,10 @@ class Index extends Controller
             $bindDomain = explode("\n", trim($bindData['domain']));
             foreach ($bindDomain as $v) {
                 $tempDomain = explode(" ", $v);
-                if (isset($tempDomain[1]) && !empty(trim($tempDomain[1]))) {
+                if (count($tempDomain) != 2) {
+                    continue;
+                }
+                if (stripos($tempDomain[0], $domain) !== false && isset($tempDomain[1]) && !empty(trim($tempDomain[1]))) {
                     $channelCode = trim($tempDomain[1]);
                     break;
                 }
