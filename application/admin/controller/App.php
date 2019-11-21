@@ -76,8 +76,8 @@ class App extends Controller
         $id = $this->request->param('id');
         $this->row = Db::name($this->table)->where('id',$id)->find();
 
-        $query = $this->_query($this->table);
-        $query->order('created_at desc')->page();
+        $this->applyCsrfToken();
+        $this->_form($this->table, 'base');
     }
 
 
@@ -89,14 +89,32 @@ class App extends Controller
             ->where('a.id',$id)
             ->field('a.*,t.name as tem_name,t.class_id')
             ->find();
-        $this->templates = Db::name('SystemTemplate')->where('is_deleted',0)->order('created_at desc')->select();
-        $this->templateClasss = Db::name('SystemTemplateClass')
+        $where = [];
+        if(!empty($this->row['class_id'])){
+            $where['class_id'] = $this->row['class_id'];
+        }
+        $this->templates = Db::name('SystemTemplate')
             ->where('is_deleted',0)
+            ->where($where)
+            ->order('created_at desc')->select();
+
+        $this->templateClasss = Db::name('SystemTemplateClass')
             ->where('is_deleted',0)
             ->select();
 
         $this->applyCsrfToken();
         $this->_form($this->table, 'template');
+    }
+
+    public function getTem()
+    {
+        $res = Db::name('SystemTemplate')
+            ->where('is_deleted',0)
+            ->order('created_at desc')->select();
+        $data = [];
+        $keyStr = '';
+
+        $this->success('success',['tem'=>$data,'keyStr'=>$keyStr]);
     }
 
 
@@ -321,7 +339,6 @@ class App extends Controller
     {
         if ($this->request->isPost()){
             if (empty($data['name'])) $this->error('请输入应用名称！');
-            if (empty($data['img'])) $this->error('请上传应用图标！');
             $data['app_key'] =substr(md5(uniqid(rand(),true)),0,8);
             $data['created_at'] = time();
             $data['updated_at'] = time();
@@ -365,11 +382,7 @@ class App extends Controller
     protected function _base_form_filter(&$data)
     {
         if ($this->request->isPost()){
-            //if (empty($data['name'])) $this->error('请输入应用名称！');
-            if (empty($data['img'])) $this->error('请上传应用图标！');
-            if (empty($data['app_key'])) $this->error('请输入appkey！');
-
-            $data['created_at'] = time();
+            $data['status'] = $data['status'] ?? 0;
             $data['updated_at'] = time();
         }
     }

@@ -133,7 +133,6 @@
                             <label class="relative block">
                                 <span class="color-green font-w7">应用名称</span>
                                 <input value='{$row.name}' name="name" class="layui-input duan-input app-value">
-                                <button class="d-submit" onclick="submitApp(this,1)">修改名称</button>
                             </label>
                         </div>
                         <div class="layui-form-item">
@@ -149,13 +148,12 @@
                             </label>
                         </div>
                         <div class="layui-form-item">
-                            <label class="relative block label-required-prev" style="float: left">
+                            <label class="relative block" style="float: left">
                                 <span class="color-green font-w7">应用图标</span>
                             </label>
                             <div class="shangchuan">
                                 <input name="img" type="hidden" value="{$row.img}" class="app-value">
                                 <span class="app-upload-text">请上传你的应用图标(大小不超过1M)</span>
-                                <button class="d-submit" onclick="submitApp(this,1)">修改图标</button>
                                 <script>
                                     $('[name="img"]').uploadOneImage()
                                 </script>
@@ -183,15 +181,19 @@
                             <label class="relative block">
                                 <span class="color-green font-w7" style="position: absolute">域名</span>
                                 <textarea placeholder="请输入域名" class="layui-textarea chang-input app-value" name="domain">{$row.domain}</textarea>
-                                <button class="d-submit" style="position: absolute" onclick="submitApp(this,2)">保存</button>
                             </label>
                         </div>
                         <div class="layui-form-item">
                             <label class="relative block">
                                 <span class="color-green font-w7" style="position: absolute">统计代码</span>
                                 <textarea placeholder="请输入统计代码" class="layui-textarea chang-input app-value" name="statistics_code">{$row.statistics_code}</textarea>
-                                <button class="d-submit" style="position: absolute" onclick="submitApp(this,2)">保存</button>
                             </label>
+                        </div>
+                        <input type="hidden" name="id" value="{$row.id}">
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" type='submit' lay-filter="formDemo">立即提交</button>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -206,51 +208,5 @@
 {block name='script'}
 <script>
     form.render();
-    var id = {$row.id};
-
-    form.on('switch(status)', function(switchData){
-        $.ajax({
-            type: "post",
-            url: "{:url('change')}",
-            data:{id:id,field:'status',value:switchData.elem.checked ? switchData.value : 0},
-            beforeSend: function(request) {
-                request.setRequestHeader("User-Token-Csrf", "{:systoken('change')}");
-            },
-            success: function(rJson) {
-                console.log(rJson.info);
-            }
-        });
-    });
-
-    form.on('radio(download_type)', function(callbackData){
-        $.ajax({
-            type: "post",
-            url: "{:url('change')}",
-            data:{id:id,field:'download_type',value:callbackData.value},
-            beforeSend: function(request) {
-                request.setRequestHeader("User-Token-Csrf", "{:systoken('change')}");
-            },
-            success: function(rJson) {
-                console.log(rJson.info);
-            }
-        });
-    });
-
-    function submitApp(obj,type) {
-        var inputObj = $(obj).parents('.layui-form-item').find('.app-value');
-        var field = inputObj.attr('name');
-        var  value = inputObj.val();
-        $.ajax({
-            type: "post",
-            url: "{:url('change')}",
-            data:{id:id,field:field,value:value},
-            beforeSend: function(request) {
-                request.setRequestHeader("User-Token-Csrf", "{:systoken('change')}");
-            },
-            success: function(rJson) {
-                alert(rJson.info);
-            }
-        });
-    }
 </script>
 {/block}

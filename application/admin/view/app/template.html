@@ -40,17 +40,27 @@
         text-align: center;
         font-size: 18px;
         background: #fff;
-
+        position: relative;
+        padding: 5px;
         /* Center slide text vertically */
 
     }
-
     .fanhui {
         margin-left: 20px;
         margin-bottom: 10px;
         height: 29px;
         padding: 0 36px;
         line-height: 29px;
+    }
+    .zezao{
+        width: 98%;
+        height: 98%;
+        position: absolute;
+        z-index: 9;
+        top: 0;
+        left: 0;
+        border: 2px #090 solid;
+        display: none;
     }
 </style>
 {/block}
@@ -97,9 +107,10 @@
                             <span class="color-green font-w7 peizhi-title">模板名称</span>
                             <input value='{$row.tem_name}' class="layui-input duan-input tem_name_1">
                             <input name="template_id" type="hidden" value='{$row.template_id}'
-                                   class="layui-input duan-input">
-                            <span class="help-block"><button type="button"
-                                                             class="layui-btn layui-btn-primary sousuo">搜索</button></span>
+                                   class="layui-input duan-input" >
+                          <!--  <span class="help-block">
+                                <button type="button" class="layui-btn layui-btn-primary sousuo">搜索</button>
+                            </span>-->
                         </label>
                     </div>
 
@@ -110,9 +121,10 @@
                             <div class="swiper-container">
                                 <div class="swiper-wrapper">
                                     {foreach $templates as $key=>$vo}
-                                    <div class="swiper-slide tems" data-id="{$vo.id}" data-name="{$vo.name}">
+                                    <div class="swiper-slide tems " data-id="{$vo.id}" data-name="{$vo.name}">
                                         <div class="tem_name_2" data-id="{$vo.id}">{$vo.name}</div>
                                         <img src="{$vo.package_img}" width="160" height="280">
+                                        <div class="zezao" style="{$row.template_id == $vo.id ? 'display: block' : ''}" ></div>
                                     </div>
                                     {/foreach}
                                 </div>
@@ -240,12 +252,21 @@
     }).config({
         base: '__ROOT__/static/plugs/swiper/' //设定扩展的Layui模块的所在目录，一般用于外部模块扩展
     }).use(['swiper'], function (layuiSwiper) {
+        var classTem;
+
+        $.ajax({
+            type: "post",
+            url: "{:url('getTemClass')}",
+            success: function (rJson) {
+                classTem = rJson.data;
+            }
+        });
         var tem_index, template_id = $('[name="template_id"]').val();
         if (template_id) {
             tem_index = $('.swiper-slide').index($('[data-id="' + template_id + '"]'));
         }
 
-        $('.sousuo').click(function () {
+        /*$('.sousuo').click(function () {
             let name = $('.tem_name_1').val();
             if (!name) return false;
             tem_index = $('.swiper-slide').index($('[data-name="' + name + '"]'));
@@ -253,8 +274,8 @@
             var template_id = $('.swiper-slide:eq(' + tem_index + ')').data('id')
             $('.swiper-wrapper').html($('.swiper-slide:eq(' + tem_index + ')').clone());
             $('[name="template_id"]').val(template_id);
-            /* swiper.slideTo(tem_index);*/
-        });
+            /!* swiper.slideTo(tem_index);*!/
+        });*/
 
         var swiper = new layuiSwiper('.swiper-container', {
             initialSlide: template_id ? tem_index : 0,
@@ -270,12 +291,32 @@
                 clickable: true,
             },
         });
-
-        $('.tems').click(function () {
+        $(document).on('click', '.tems', function(){
             var tem = $(this).find('.tem_name_2');
 
             $('.tem_name_1').val(tem.text());
             $('[name="template_id"]').val(tem.data('id'));
+            $(this).parent().find('.zezao').hide();
+            $(this).find('.zezao').show();
+        });
+        $('.tem_name_1').keyup(function(){
+            let name = $('.tem_name_1').val();
+            let str = '';
+            for (let i = 0; i < classTem.length; i++) {
+                let vo = classTem[i];
+                if(vo.name.indexOf(name) !== -1){
+                    str += '<div class="swiper-slide tems" data-id="' + vo.id + '" data-name="' + vo.name + '">';
+                    str += '<div class="tem_name_2" data-id="' + vo.id + '">' + vo.name + '</div>';
+                    str += '<img src="' + vo.package_img + '" width="160" height="280">';
+                    str += ' <div class="zezao"></div>';
+                    str += '</div>';
+                }
+            }
+
+            $('.swiper-wrapper').html(str);
+            $('.swiper-slide:eq(0) .zezao').show();
+            var template_id = $('.swiper-slide:eq(0)').data('id');
+            $('[name="template_id"]').val(template_id);
         });
 
         form.on('select(class_id)', function (data) {
@@ -285,15 +326,16 @@
                 url: "{:url('getTemClass')}",
                 data: {classId: classId},
                 success: function (rJson) {
-
                     var str = '';
                     if (rJson.code !== 1) return false;
+                    classTem = rJson.data;
                     var data = rJson.data;
                     for (let i = 0; i < data.length; i++) {
                         let vo = data[i];
                         str += '<div class="swiper-slide tems" data-id="' + vo.id + '" data-name="' + vo.name + '">';
                         str += '<div class="tem_name_2" data-id="' + vo.id + '">' + vo.name + '</div>';
                         str += '<img src="' + vo.package_img + '" width="160" height="280">';
+                        str += ' <div class="zezao"></div>';
                         str += '</div>';
                     }
                     $('.tem_name_1').val('');
@@ -301,7 +343,6 @@
                 }
             });
         });
-
     });
 
 
@@ -331,6 +372,8 @@
             }
         });
     });
+
+
 </script>
 
 
