@@ -30,7 +30,7 @@ class App extends Controller
     const AD = 1;
     const PG = 2;
 
-    const UPLOAD_PACKAGE_DOMAIN = "http://www.armshores.com";
+    const UPLOAD_PACKAGE_DOMAIN = "https://www.armshores.com";
     /**
      * 指定当前数据表
      * @var string
