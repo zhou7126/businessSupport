@@ -115,7 +115,7 @@ class Index extends Controller
                     if (!empty($packageData) && !empty($packageData['path'])) {
                         $plistData = json_decode($packageData['data'], true);
                         if (isset($plistData['plist_path'])) {
-                            $fetchData['pg_download_url'] = $plistData['plist_path'];
+                            $fetchData['pg_download_url'] = "itms-services://?action=download-manifest&url=" . $plistData['plist_path'];
                         }
                     }
                 } else if ($fetchData['pg_config_install_type'] == 2) {
