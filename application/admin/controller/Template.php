@@ -64,7 +64,7 @@ class Template extends Controller
     protected function _index_page_filter(&$data)
     {
         foreach ($data as &$vo) {
-            $vo['preview_img'] = $vo['package_img']; // 预览缩略图url
+//            $vo['preview_img'] = $vo['package_img']; // 预览缩略图url
             $vo['preview_url'] = url('preview', '', '') . '?id=' . $vo['id']; //预览页面url
         }
     }
