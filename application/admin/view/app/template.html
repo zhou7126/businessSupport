@@ -4,35 +4,38 @@
 <link rel="stylesheet" href="__ROOT__/static/plugs/swiper/swiper.min.css?at={:date('md')}">
 
 <style>
-    .app-detail-right{
+    .app-detail-right {
         float: left;
         width: 73%;
         margin: 0 33px 0 33px;
         min-height: 700px;
         border: 1px #000000 solid;
     }
-    .duan-input{
+
+    .duan-input {
         width: 53%;
         height: 30px;
         display: inline-block;
         margin-right: 33px;
         margin-left: 19px;
     }
-    .app-detail .peizhi-title{
+
+    .app-detail .peizhi-title {
         width: 14%;
         display: inline-block;
         margin-top: 10px;
     }
-    .app-upload{
+
+    .app-upload {
         margin-left: 18px;
     }
-
 
 
     .swiper-container {
         width: 100%;
         height: 100%;
     }
+
     .swiper-slide {
         text-align: center;
         font-size: 18px;
@@ -41,7 +44,8 @@
         /* Center slide text vertically */
 
     }
-    .fanhui{
+
+    .fanhui {
         margin-left: 20px;
         margin-bottom: 10px;
         height: 29px;
@@ -57,179 +61,190 @@
 {/if}
 
 {if auth("remove")}
-<button data-action='{:url("remove")}' data-rule="id#{key}" data-csrf="{:systoken('remove')}" data-confirm="确定要删除这些APP吗？" class='layui-btn layui-btn-sm layui-btn-primary'>删除APP</button>
+<button data-action='{:url("remove")}' data-rule="id#{key}" data-csrf="{:systoken('remove')}"
+        data-confirm="确定要删除这些APP吗？" class='layui-btn layui-btn-sm layui-btn-primary'>删除APP
+</button>
 {/if}
 
 {/block}
 
 {block name="content"}
-    <div class="think-box-shadow">
-        <button type="button" class="layui-btn layui-btn-primary fanhui" onclick="history.go(-1)"><&nbsp;&nbsp;&nbsp;返回</button>
+<div class="think-box-shadow">
+    <button type="button" class="layui-btn layui-btn-primary fanhui" onclick="history.go(-1)"><&nbsp;&nbsp;&nbsp;返回
+    </button>
 
-        <div class="app-detail">
-            {include file="app/left" /}
-            <div class="app-detail-right">
-                <form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post" autocomplete="off">
-                    <div class="layui-card-body padding-left-40">
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">模板名称</span>
-                                <input  value='{$row.tem_name}' class="layui-input duan-input tem_name_1">
-                                <input name="template_id" type="hidden" value='{$row.template_id}' class="layui-input duan-input">
-                                <span class="help-block"><button type="button" class="layui-btn layui-btn-primary sousuo">搜索</button></span>
-                            </label>
-                        </div>
+    <div class="app-detail">
+        {include file="app/left" /}
+        <div class="app-detail-right">
+            <form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post"
+                  autocomplete="off">
+                <div class="layui-card-body padding-left-40">
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">模板名称</span>
+                            <input value='{$row.tem_name}' class="layui-input duan-input tem_name_1">
+                            <input name="template_id" type="hidden" value='{$row.template_id}'
+                                   class="layui-input duan-input">
+                            <span class="help-block"><button type="button"
+                                                             class="layui-btn layui-btn-primary sousuo">搜索</button></span>
+                        </label>
+                    </div>
 
-                        <div class="layui-form-item">
-                            <!-- Swiper -->
-                            <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">选择模板</span>
-                                <div class="swiper-container">
-                                    <div class="swiper-wrapper">
-                                        {foreach $templates as $key=>$vo}
-                                        <div class="swiper-slide tems" data-id="{$vo.id}" data-name="{$vo.name}">
-                                            <div class="tem_name_2" data-id="{$vo.id}">{$vo.name}</div>
-                                            <img src="{$vo.package_img}" width="160" height="280">
-                                        </div>
-                                        {/foreach}
+                    <div class="layui-form-item">
+                        <!-- Swiper -->
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">选择模板</span>
+                            <div class="swiper-container">
+                                <div class="swiper-wrapper">
+                                    {foreach $templates as $key=>$vo}
+                                    <div class="swiper-slide tems" data-id="{$vo.id}" data-name="{$vo.name}">
+                                        <div class="tem_name_2" data-id="{$vo.id}">{$vo.name}</div>
+                                        <img src="{$vo.package_img}" width="160" height="280">
                                     </div>
-                                    <!-- Add Pagination -->
-                                    <div class="swiper-pagination"></div>
+                                    {/foreach}
                                 </div>
-                            </label>
-                        </div>
+                                <!-- Add Pagination -->
+                                <div class="swiper-pagination"></div>
+                            </div>
+                        </label>
+                    </div>
 
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">webTitle</span>
-                                <input name="web_title" value='{$row.web_title}' class="layui-input duan-input">
-                                <span class="help-block">网页title</span>
-                            </label>
-                        </div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">webTitle</span>
+                            <input name="web_title" value='{$row.web_title}' class="layui-input duan-input">
+                            <span class="help-block">网页title</span>
+                        </label>
+                    </div>
 
-                        <div class="layui-form-item"><span class="color-green font-w7 peizhi-title">imgLogo</span>
-                            <span width="90px" class="text-center app-upload">
+                    <div class="layui-form-item"><span class="color-green font-w7 peizhi-title">imgLogo</span>
+                        <span width="90px" class="text-center app-upload">
                                 <input name="img_logo" type="hidden" value="{$row.img_logo}" autocomplete="off">
                             </span>
-                            <script>
-                                $('[name="img_logo"]').uploadOneImage()
-                            </script>
-                            <span class="help-block">大小不超过200KB,尺寸200*200PNG格式</span>
-                        </div>
-
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">kefuUrl</span>
-                                <input name="kefu_url" value='{$row.kefu_url}' class="layui-input duan-input">
-                                <span class="help-block">客服地址</span>
-
-                            </label>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">channelCode</span>
-                                <input name="channel_code" value='{$row.channel_code}' class="layui-input duan-input">
-                                <span class="help-block">默认渠道号</span>
-                            </label>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">openintsall_app_key</span>
-                                <input name="openintsall_app_key" value='{$row.openintsall_app_key}' class="layui-input duan-input">
-                                <span class="help-block">openintsall_app_key</span>
-                            </label>
-                        </div>
-
-
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">扩展图片1</span>
-                                <input name="ext_img1" placeholder="请上传图片文件" class="layui-input duan-input" readonly  value='{$row.ext_img1}'>
-                                <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img1">
-                                    <i class="layui-icon">&#xe67c;</i>上传
-                                </button>
-                            </label>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">扩展图片2</span>
-                                <input name="ext_img2" placeholder="请上传图片文件" class="layui-input duan-input" readonly  value='{$row.ext_img2}'>
-                                <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img2">
-                                    <i class="layui-icon">&#xe67c;</i>上传
-                                </button>
-                            </label>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">扩展图片3</span>
-                                <input name="ext_img3" placeholder="请上传图片文件" class="layui-input duan-input" readonly  value='{$row.ext_img3}'>
-                                <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img3">
-                                    <i class="layui-icon">&#xe67c;</i>上传
-                                </button>
-                            </label>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">扩展图片4</span>
-                                <input name="ext_img4" placeholder="请上传图片文件" class="layui-input duan-input" readonly  value='{$row.ext_img4}'>
-                                <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img4">
-                                    <i class="layui-icon">&#xe67c;</i>上传
-                                </button>
-                            </label>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7 peizhi-title">扩展图片5</span>
-                                <input name="ext_img5" placeholder="请上传图片文件" class="layui-input duan-input" readonly  value='{$row.ext_img5}'>
-                                <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img5">
-                                    <i class="layui-icon">&#xe67c;</i>上传
-                                </button>
-                            </label>
-                        </div>
-
-
-
-
-
-
-
-
-                        <input type='hidden' value='{$row.id}' name='id'>
+                        <script>
+                            $('[name="img_logo"]').uploadOneImage()
+                        </script>
+                        <span class="help-block">大小不超过200KB,尺寸200*200PNG格式</span>
                     </div>
-                    <div class="layui-form-item text-center">
-                        <button class="layui-btn" type='submit'>保存数据</button>
+
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">kefuUrl</span>
+                            <input name="kefu_url" value='{$row.kefu_url}' class="layui-input duan-input">
+                            <span class="help-block">客服地址</span>
+
+                        </label>
                     </div>
-                </form>
-            </div>
-            <div class="clear"></div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">channelCode</span>
+                            <input name="channel_code" value='{$row.channel_code}' class="layui-input duan-input">
+                            <span class="help-block">默认渠道号</span>
+                        </label>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">openintsall_app_key</span>
+                            <input name="openintsall_app_key" value='{$row.openintsall_app_key}'
+                                   class="layui-input duan-input">
+                            <span class="help-block">openintsall_app_key</span>
+                        </label>
+                    </div>
+
+
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">ext_img1</span>
+                            <img width="100px" src="{$row.ext_img1}"/>
+                            <input name="ext_img1" placeholder="请上传图片文件" class="layui-input duan-input" readonly
+                                   value='{$row.ext_img1}'>
+                            <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img1">
+                                <i class="layui-icon">&#xe67c;</i>上传
+                            </button>
+                        </label>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">ext_img2</span>
+                            <img width="100px" src="{$row.ext_img2}"/>
+                            <input name="ext_img2" placeholder="请上传图片文件" class="layui-input duan-input" readonly
+                                   value='{$row.ext_img2}'>
+                            <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img2">
+                                <i class="layui-icon">&#xe67c;</i>上传
+                            </button>
+                        </label>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">ext_img3</span>
+                            <img width="100px" src="{$row.ext_img3}"/>
+                            <input name="ext_img3" placeholder="请上传图片文件" class="layui-input duan-input" readonly
+                                   value='{$row.ext_img3}'>
+                            <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img3">
+                                <i class="layui-icon">&#xe67c;</i>上传
+                            </button>
+                        </label>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">ext_img4</span>
+                            <img width="100px" src="{$row.ext_img4}"/>
+                            <input name="ext_img4" placeholder="请上传图片文件" class="layui-input duan-input" readonly
+                                   value='{$row.ext_img4}'>
+                            <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img4">
+                                <i class="layui-icon">&#xe67c;</i>上传
+                            </button>
+                        </label>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">ext_img5</span>
+                            <img width="100px" src="{$row.ext_img5}"/>
+                            <input name="ext_img5" placeholder="请上传图片文件" class="layui-input duan-input" readonly
+                                   value='{$row.ext_img5}'>
+                            <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img5">
+                                <i class="layui-icon">&#xe67c;</i>上传
+                            </button>
+                        </label>
+                    </div>
+
+
+                    <input type='hidden' value='{$row.id}' name='id'>
+                </div>
+                <div class="layui-form-item text-center">
+                    <button class="layui-btn" type='submit'>保存数据</button>
+                </div>
+            </form>
         </div>
+        <div class="clear"></div>
     </div>
+</div>
 <script src="__ROOT__/static/plugs/swiper/swiper.js"></script>
 <script>
     form.render();
     layui.define(function (exports) {
-        exports('swiper',window.Swiper);
+        exports('swiper', window.Swiper);
     }).config({
         base: '__ROOT__/static/plugs/swiper/' //设定扩展的Layui模块的所在目录，一般用于外部模块扩展
     }).use(['swiper'], function (layuiSwiper) {
         var tem_index, template_id = $('[name="template_id"]').val();
-        if(template_id){
-            tem_index = $('.swiper-slide').index($('[data-id="'+template_id+'"]'));
+        if (template_id) {
+            tem_index = $('.swiper-slide').index($('[data-id="' + template_id + '"]'));
         }
-        
+
         $('.sousuo').click(function () {
             let name = $('.tem_name_1').val();
             console.log(name);
-            if(!name) return false;
-            tem_index = $('.swiper-slide').index($('[data-name="'+name+'"]'));
-            if(tem_index === -1) return false;
+            if (!name) return false;
+            tem_index = $('.swiper-slide').index($('[data-name="' + name + '"]'));
+            if (tem_index === -1) return false;
             swiper.slideTo(tem_index);
-            $('[name="template_id"]').val($('.swiper-slide:eq('+tem_index+')').data('id'));
+            $('[name="template_id"]').val($('.swiper-slide:eq(' + tem_index + ')').data('id'));
         });
 
         var swiper = new layuiSwiper('.swiper-container', {
-            initialSlide:template_id ? tem_index : 0,
-            slidesPerGroup:6,
+            initialSlide: template_id ? tem_index : 0,
+            slidesPerGroup: 6,
             slidesPerView: 6,
             spaceBetween: 30,
             grabCursor: true,
@@ -253,7 +268,7 @@
 
 
 <script>
-    layui.use(['upload'], function(){
+    layui.use(['upload'], function () {
         var upload = layui.upload;
         var that = this;
         console.log($(that).attr('data-field'));
@@ -266,11 +281,12 @@
             , progress: function (n) {
                 var percent = n + '%' //获取进度百分比
             }
-            ,done: function(ret, index, upload){
+            , done: function (ret, index, upload) {
                 this.multiple || $.msg.close(this.proindex);
-                console.log(ret.filename);
+                // console.log(ret);
                 if (ret.uploaded) {
                     $(this.item).prev().val('/upload/' + ret.filename);
+                    $(this.item).prev().prev().attr('src', ret.url);
                     $.msg.success('上传成功');
                 } else {
                     $.msg.error(ret.info || ret.error.message || '文件上传出错！');
