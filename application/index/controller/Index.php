@@ -50,8 +50,16 @@ class Index extends Controller
             ['domain', 'like', "%{$domain}%"],
             ['status', '=', 1]
         ])->find();
-        //dump($bindData);
         if (!empty($bindData)) {
+            $channelCode = $bindData['channel_code'];
+            $bindDomain = explode("\n", trim($bindData['domain']));
+            foreach ($bindDomain as $v) {
+                $tempDomain = explode(" ", $v);
+                if (isset($tempDomain[1]) && !empty(trim($tempDomain[1]))) {
+                    $channelCode = trim($tempDomain[1]);
+                    break;
+                }
+            }
             $template_id = $bindData['template_id'];
             $tempData = Db::name('SystemTemplate')->where(['id' => $template_id, 'is_deleted' => 0])->find();
             if (!empty($tempData)) {
@@ -61,7 +69,7 @@ class Index extends Controller
                     'img_logo' => $bindData['img_logo'], // logo图标
                     'kefu_url' => $bindData['kefu_url'], // 客服地址
                     'download_type' => $bindData['download_type'], // 应用下载方式，1普通下载，2openinstall
-                    'channel_code' => $bindData['channel_code'], // 渠道号
+                    'channel_code' => $channelCode, // 渠道号
                     'ad_config_install_type' => $bindData['ad_config_install_type'], // 安卓安装方式，1托管APK，2外部APK
                     'ad_download_url' => '', // 安卓安装地址
                     'pg_config_install_type' => $bindData['pg_config_install_type'], // 苹果安装方式，1托管IPA，2外部IPA，3AppStore及其他，4外部plist
