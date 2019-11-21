@@ -81,6 +81,19 @@
                 <div class="layui-card-body padding-left-40">
                     <div class="layui-form-item">
                         <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">选择分组</span>
+                            <div class="layui-input-block duan-input">
+                            <select name="class_id" class="" lay-verify="" lay-filter="class_id">
+                                <option value="">超级管理组</option>
+                                {foreach $templateClasss as $key=>$vo}
+                                <option value="{$vo.id}" {$vo.id == $row.class_id ? 'selected' : ''}>{$vo.name}</option>
+                                {/foreach}
+                            </select>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
                             <span class="color-green font-w7 peizhi-title">模板名称</span>
                             <input value='{$row.tem_name}' class="layui-input duan-input tem_name_1">
                             <input name="template_id" type="hidden" value='{$row.template_id}'
@@ -234,12 +247,13 @@
 
         $('.sousuo').click(function () {
             let name = $('.tem_name_1').val();
-            console.log(name);
             if (!name) return false;
             tem_index = $('.swiper-slide').index($('[data-name="' + name + '"]'));
             if (tem_index === -1) return false;
-            swiper.slideTo(tem_index);
-            $('[name="template_id"]').val($('.swiper-slide:eq(' + tem_index + ')').data('id'));
+            var template_id = $('.swiper-slide:eq(' + tem_index + ')').data('id')
+            $('.swiper-wrapper').html($('.swiper-slide:eq(' + tem_index + ')').clone());
+            $('[name="template_id"]').val(template_id);
+            /* swiper.slideTo(tem_index);*/
         });
 
         var swiper = new layuiSwiper('.swiper-container', {
@@ -248,6 +262,9 @@
             slidesPerView: 6,
             spaceBetween: 30,
             grabCursor: true,
+            observer: true,//修改swiper自己或子元素时，自动初始化swiper
+
+            observeParents: true,//修改swiper的父元素时，自动初始化swiper
             pagination: {
                 el: '.swiper-pagination',
                 clickable: true,
@@ -261,13 +278,33 @@
             $('[name="template_id"]').val(tem.data('id'));
         });
 
+        form.on('select(class_id)', function (data) {
+            var classId = data.value;
+            $.ajax({
+                type: "post",
+                url: "{:url('getTemClass')}",
+                data: {classId: classId},
+                success: function (rJson) {
+
+                    var str = '';
+                    if (rJson.code !== 1) return false;
+                    var data = rJson.data;
+                    for (let i = 0; i < data.length; i++) {
+                        let vo = data[i];
+                        str += '<div class="swiper-slide tems" data-id="' + vo.id + '" data-name="' + vo.name + '">';
+                        str += '<div class="tem_name_2" data-id="' + vo.id + '">' + vo.name + '</div>';
+                        str += '<img src="' + vo.package_img + '" width="160" height="280">';
+                        str += '</div>';
+                    }
+                    $('.tem_name_1').val('');
+                    $('.swiper-wrapper').html(str);
+                }
+            });
+        });
+
     });
 
 
-</script>
-
-
-<script>
     layui.use(['upload'], function () {
         var upload = layui.upload;
         var that = this;
@@ -295,6 +332,8 @@
         });
     });
 </script>
+
+
 {/block}
 
 {block name="script"}

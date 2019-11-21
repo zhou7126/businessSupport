@@ -84,11 +84,32 @@ class App extends Controller
     public function template()
     {
         $id = $this->request->param('id');
-        $this->row = Db::name($this->table)->alias('a')->leftJoin('system_template t','a.template_id = t.id')->where('a.id',$id)->field('a.*,t.name as tem_name')->find();
+        $this->row = Db::name($this->table)->alias('a')
+            ->leftJoin('system_template t','a.template_id = t.id')
+            ->where('a.id',$id)
+            ->field('a.*,t.name as tem_name,t.class_id')
+            ->find();
         $this->templates = Db::name('SystemTemplate')->where('is_deleted',0)->order('created_at desc')->select();
+        $this->templateClasss = Db::name('SystemTemplateClass')
+            ->where('is_deleted',0)
+            ->where('is_deleted',0)
+            ->select();
 
         $this->applyCsrfToken();
         $this->_form($this->table, 'template');
+    }
+
+
+    public function getTemClass()
+    {
+        $classId = $this->request->param('classId');
+        $where = [];
+        if($classId) $where['class_id'] = $classId;
+        $templates = Db::name('SystemTemplate')
+            ->where('is_deleted',0)
+            ->where($where)
+            ->order('created_at desc')->select();
+        $this->success('成功',$templates);
     }
 
 
