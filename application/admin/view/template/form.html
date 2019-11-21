@@ -47,6 +47,11 @@
                     <i class="layui-icon">&#xe67c;</i>上传
                 </button>
             </div>
+            <div class="layui-progress layui-hide" lay-filter="template_package" id="template_package" style="margin:20px auto;">
+                <div class="layui-progress-bar" lay-percent="0%">
+                    <span class="layui-progress-text">0</span>
+                </div>
+            </div>
             <p class="help-block">将模板根目录的所有文件打包成zip格式的压缩包。</p>
         </div>
 
@@ -64,6 +69,7 @@
 <script>
     layui.use(['upload'], function(){
         var upload = layui.upload;
+        var element = layui.element;
         upload.render({
             elem: '#package'
             , url: "{:url('api.plugs/upload')}"
@@ -71,8 +77,11 @@
             , accept: 'file'
             , acceptMime: "application/zip"
             , data:{safe: '1'}
+            , choose: function (ret) {
+                $("#template_package").removeClass('layui-hide');
+            }
             , progress: function (n) {
-                var percent = n + '%' //获取进度百分比
+                element.progress('template_package', n + '%'); //设置进度百分比
             }
             ,done: function(ret, index, upload){
                 this.multiple || $.msg.close(this.proindex);
