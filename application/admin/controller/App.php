@@ -103,26 +103,53 @@ class App extends Controller
     public function template()
     {
         $id = $this->request->param('id');
+        $temId = $this->request->param('temId');
         $this->row = Db::name($this->table)->alias('a')
             ->leftJoin('system_template t','a.template_id = t.id')
             ->where('a.id',$id)
             ->field('a.*,t.name as tem_name,t.class_id')
             ->find();
+        if($temId){
+            $temHistory = Db::name('SystemTemplateHistory')
+                ->where('template_id',$temId)
+                ->where('uid',session('admin_user')['id'])
+                ->order('created_at desc')
+                ->value('data');
+            foreach (json_decode($temHistory,true) ?? [] as $key => $vo){
+                $this->row[$key] = $vo;
+            }
+        }
         $where = [];
         if(!empty($this->row['class_id'])){
-            $where['class_id'] = $this->row['class_id'];
+            $where['t.class_id'] = $this->row['class_id'];
         }
-        $this->templates = Db::name('SystemTemplate')
-            ->where('is_deleted',0)
-            ->where($where)
-            ->order('created_at desc')->select();
+        $temHisQuery = Db::name('SystemTemplateHistory')
+            ->field('distinct template_id')
+            ->where('uid',session('admin_user')['id'])
+            ->buildSql();
 
+        $this->templates = Db::name('SystemTemplate')
+            ->alias('t')
+            ->leftJoin($temHisQuery.' h','t.id = h.template_id')
+            ->where('t.is_deleted',0)
+            ->where($where)
+            ->field('t.*,h.template_id as hid')
+            ->order('t.created_at desc')->select();
         $this->templateClasss = Db::name('SystemTemplateClass')
             ->where('is_deleted',0)
             ->select();
 
         $this->applyCsrfToken();
         $this->_form($this->table, 'template');
+    }
+
+    protected function _template_form_result()
+    {
+        if ($this->request->isPost()) {
+            $url = '/bet365bet.php#'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'];
+            $url = preg_replace("/&temId=[0-9]*/",'',$url);
+            $this->success('success',[],1,$url);
+        }
     }
 
     public function getTem()
@@ -137,15 +164,19 @@ class App extends Controller
     }
 
 
+
     public function getTemClass()
     {
         $classId = $this->request->param('classId');
         $where = [];
-        if($classId) $where['class_id'] = $classId;
+        if($classId) $where['t.class_id'] = $classId;
         $templates = Db::name('SystemTemplate')
-            ->where('is_deleted',0)
+            ->alias('t')
+            ->leftJoin('system_template_history h','t.id = h.template_id')
+            ->where('t.is_deleted',0)
             ->where($where)
-            ->order('created_at desc')->select();
+            ->field('t.*,h.id as hid')
+            ->order('t.created_at desc')->select();
         $this->success('成功',$templates);
     }
 
@@ -407,8 +438,14 @@ class App extends Controller
             if (empty($data['img_logo'])) $this->error('请上传imgLogo！');
             if (empty($data['kefu_url'])) $this->error('请输入kefuUrl！');
             if (empty($data['channel_code'])) $this->error('请输入channelCode！');
-
             $data['updated_at'] = time();
+
+            Db::name('SystemTemplateHistory')->insert([
+                'uid' => session('admin_user')['id'],
+                'template_id' => $data['template_id'],
+                'data' => json_encode($data),
+                'created_at' => time(),
+            ]);
         }
     }
 

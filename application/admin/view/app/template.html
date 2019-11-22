@@ -86,7 +86,7 @@
     <div class="app-detail">
         {include file="app/left" /}
         <div class="app-detail-right">
-            <form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post"
+            <form class="layui-form layui-card" id="temForm" action="{:request()->url()}" data-auto="true" method="post"
                   autocomplete="off">
                 <div class="layui-card-body padding-left-40">
                     <div class="layui-form-item">
@@ -121,7 +121,7 @@
                             <div class="swiper-container">
                                 <div class="swiper-wrapper">
                                     {foreach $templates as $key=>$vo}
-                                    <div class="swiper-slide tems " data-id="{$vo.id}" data-name="{$vo.name}">
+                                    <div class="swiper-slide tems " data-id="{$vo.id}" data-name="{$vo.name}" data-hid="{$vo.hid}">
                                         <div class="tem_name_2" data-id="{$vo.id}">{$vo.name}</div>
                                         <img src="{$vo.package_img}" width="160" height="280">
                                         <div class="zezao" style="{$row.template_id == $vo.id ? 'display: block' : ''}" ></div>
@@ -295,9 +295,25 @@
             var tem = $(this).find('.tem_name_2');
 
             $('.tem_name_1').val(tem.text());
-            $('[name="template_id"]').val(tem.data('id'));
+            var temId = tem.data('id');
+            $('[name="template_id"]').val(temId);
             $(this).parent().find('.zezao').hide();
             $(this).find('.zezao').show();
+
+            //历史
+            //询问框
+            if($(this).data('hid')){
+                layer.confirm('是否使用历史配置？', {
+                    btn: ['使用','取消'] //按钮
+                }, function(index){
+                    let url = window.location.href;
+                    url = url.replace(/&temId=[0-9]*/ig,'');
+                    location.href = url + "&temId=" + temId;
+                    layer.close(index);
+                });
+            }
+
+
         });
         $('.tem_name_1').keyup(function(){
             let name = $('.tem_name_1').val();
@@ -305,11 +321,7 @@
             for (let i = 0; i < classTem.length; i++) {
                 let vo = classTem[i];
                 if(vo.name.indexOf(name) !== -1){
-                    str += '<div class="swiper-slide tems" data-id="' + vo.id + '" data-name="' + vo.name + '">';
-                    str += '<div class="tem_name_2" data-id="' + vo.id + '">' + vo.name + '</div>';
-                    str += '<img src="' + vo.package_img + '" width="160" height="280">';
-                    str += ' <div class="zezao"></div>';
-                    str += '</div>';
+                    str += swiperTem(vo);
                 }
             }
 
@@ -318,6 +330,18 @@
             var template_id = $('.swiper-slide:eq(0)').data('id');
             $('[name="template_id"]').val(template_id);
         });
+
+
+        function swiperTem(vo){
+            let str = '';
+            str += '<div class="swiper-slide tems" data-id="' + vo.id + '" data-name="' + vo.name + '" data-hid="' + vo.hid + '">';
+            str += '<div class="tem_name_2" data-id="' + vo.id + '">' + vo.name + '</div>';
+            str += '<img src="' + vo.package_img + '" width="160" height="280">';
+            str += ' <div class="zezao"></div>';
+            str += '</div>';
+
+            return str
+        }
 
         form.on('select(class_id)', function (data) {
             var classId = data.value;
@@ -332,11 +356,7 @@
                     var data = rJson.data;
                     for (let i = 0; i < data.length; i++) {
                         let vo = data[i];
-                        str += '<div class="swiper-slide tems" data-id="' + vo.id + '" data-name="' + vo.name + '">';
-                        str += '<div class="tem_name_2" data-id="' + vo.id + '">' + vo.name + '</div>';
-                        str += '<img src="' + vo.package_img + '" width="160" height="280">';
-                        str += ' <div class="zezao"></div>';
-                        str += '</div>';
+                        str += swiperTem(vo);
                     }
                     $('.tem_name_1').val('');
                     $('.swiper-wrapper').html(str);
