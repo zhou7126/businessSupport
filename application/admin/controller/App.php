@@ -148,7 +148,7 @@ class App extends Controller
         if ($this->request->isPost()) {
             $url = '/bet365bet.php#'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'];
             $url = preg_replace("/&temId=[0-9]*/",'',$url);
-            $this->success('success',[],1,$url);
+            $this->success('保存成功',$url);
         }
     }
 
