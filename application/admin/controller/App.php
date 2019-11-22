@@ -438,7 +438,6 @@ class App extends Controller
             if (empty($data['img_logo'])) $this->error('请上传imgLogo！');
             if (empty($data['kefu_url'])) $this->error('请输入kefuUrl！');
             if (empty($data['channel_code'])) $this->error('请输入channelCode！');
-            $data['updated_at'] = time();
 
             Db::name('SystemTemplateHistory')->insert([
                 'uid' => session('admin_user')['id'],
@@ -446,6 +445,9 @@ class App extends Controller
                 'data' => json_encode($data),
                 'created_at' => time(),
             ]);
+
+            $data['updated_at'] = time();
+            unset($data['tem_name']);
         }
     }
 
