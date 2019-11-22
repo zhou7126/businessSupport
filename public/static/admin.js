@@ -779,7 +779,7 @@ $(function () {
     document.addEventListener('error', function (e, elem) {
         elem = e.target;
         if (elem.tagName.toLowerCase() === 'img') {
-            elem.src = baseRoot + 'theme/img/404_icon.png';
+            elem.src = baseRoot + 'theme/img/duft.png';
         }
     }, true);
 
