@@ -45,6 +45,7 @@
         /* Center slide text vertically */
 
     }
+
     .fanhui {
         margin-left: 20px;
         margin-bottom: 10px;
@@ -52,7 +53,8 @@
         padding: 0 36px;
         line-height: 29px;
     }
-    .zezao{
+
+    .zezao {
         width: 98%;
         height: 98%;
         position: absolute;
@@ -62,6 +64,22 @@
         border: 2px #090 solid;
         display: none;
     }
+
+    .ext_json_key {
+        width: 120px;
+        display: inline;
+    }
+
+    .ext_json_value {
+        width: 300px;
+        display: inline;
+        margin: 0 20px;
+    }
+
+    .ext_json_add {
+        margin-top: 10px;
+    }
+
 </style>
 {/block}
 {block name="button"}
@@ -93,12 +111,13 @@
                         <label class="relative block">
                             <span class="color-green font-w7 peizhi-title">选择分组</span>
                             <div class="layui-input-block duan-input">
-                            <select name="class_id" class="" lay-verify="" lay-filter="class_id">
-                                <option value="">超级管理组</option>
-                                {foreach $templateClasss as $key=>$vo}
-                                <option value="{$vo.id}" {$vo.id == $row.class_id ? 'selected' : ''}>{$vo.name}</option>
-                                {/foreach}
-                            </select>
+                                <select name="class_id" class="" lay-verify="" lay-filter="class_id">
+                                    <option value="">超级管理组</option>
+                                    {foreach $templateClasss as $key=>$vo}
+                                    <option value="{$vo.id}" {$vo.id== $row.class_id ?
+                                    'selected' : ''}>{$vo.name}</option>
+                                    {/foreach}
+                                </select>
                             </div>
                         </label>
                     </div>
@@ -107,10 +126,10 @@
                             <span class="color-green font-w7 peizhi-title">模板名称</span>
                             <input value='{$row.tem_name}' class="layui-input duan-input tem_name_1">
                             <input name="template_id" type="hidden" value='{$row.template_id}'
-                                   class="layui-input duan-input" >
-                          <!--  <span class="help-block">
-                                <button type="button" class="layui-btn layui-btn-primary sousuo">搜索</button>
-                            </span>-->
+                                   class="layui-input duan-input">
+                            <!--  <span class="help-block">
+                                  <button type="button" class="layui-btn layui-btn-primary sousuo">搜索</button>
+                              </span>-->
                         </label>
                     </div>
 
@@ -121,10 +140,12 @@
                             <div class="swiper-container">
                                 <div class="swiper-wrapper">
                                     {foreach $templates as $key=>$vo}
-                                    <div class="swiper-slide tems " data-id="{$vo.id}" data-name="{$vo.name}" data-hid="{$vo.hid}">
+                                    <div class="swiper-slide tems " data-id="{$vo.id}" data-name="{$vo.name}"
+                                         data-hid="{$vo.hid}">
                                         <div class="tem_name_2" data-id="{$vo.id}">{$vo.name}</div>
                                         <img src="{$vo.package_img}" width="160" height="280">
-                                        <div class="zezao" style="{$row.template_id == $vo.id ? 'display: block' : ''}" ></div>
+                                        <div class="zezao"
+                                             style="{$row.template_id == $vo.id ? 'display: block' : ''}"></div>
                                     </div>
                                     {/foreach}
                                 </div>
@@ -234,6 +255,28 @@
                     </div>
 
 
+
+
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7 peizhi-title">ext_data</span>
+                            <div class="layui-input-block ext_json_line">
+                                <input type="text" name="ext_key[]" lay-verify="title" placeholder="请输入KEY"
+                                       class="layui-input ext_json_key">
+                                <input type="text" name="ext_value[]" lay-verify="title" placeholder="请输入VALUE"
+                                       class="layui-input ext_json_value">
+                                <button type="button" class="layui-btn layui-btn-danger ext_json_del">删除</button>
+                            </div>
+                        </label>
+
+                        <div class="layui-input-block ext_json_add">
+                            <button type="button" class="layui-btn">新增</button>
+                        </div>
+                    </div>
+
+
+
+
                     <input type='hidden' value='{$row.id}' name='id'>
                 </div>
                 <div class="layui-form-item text-center">
@@ -291,7 +334,7 @@
                 clickable: true,
             },
         });
-        $(document).on('click', '.tems', function(){
+        $(document).on('click', '.tems', function () {
             var tem = $(this).find('.tem_name_2');
 
             $('.tem_name_1').val(tem.text());
@@ -302,12 +345,12 @@
 
             //历史
             //询问框
-            if($(this).data('hid')){
+            if ($(this).data('hid')) {
                 layer.confirm('是否使用历史配置？', {
-                    btn: ['使用','取消'] //按钮
-                }, function(index){
+                    btn: ['使用', '取消'] //按钮
+                }, function (index) {
                     let url = window.location.href;
-                    url = url.replace(/&temId=[0-9]*/ig,'');
+                    url = url.replace(/&temId=[0-9]*/ig, '');
                     location.href = url + "&temId=" + temId;
                     layer.close(index);
                 });
@@ -315,12 +358,26 @@
 
 
         });
-        $('.tem_name_1').keyup(function(){
+
+        $(document).on('click', '.ext_json_add button', function () {
+            $(".ext_json_line").parent().append($(".ext_json_line").last().clone());
+            $(".ext_json_line").last().find("input").val("");
+        });
+
+        $(document).on('click', '.ext_json_del', function () {
+            if ($(".ext_json_line").length == 1) {
+                layer.msg('最后一个不能删除');
+                return;
+            }
+            $(this).parent().remove();
+        });
+
+        $('.tem_name_1').keyup(function () {
             let name = $('.tem_name_1').val();
             let str = '';
             for (let i = 0; i < classTem.length; i++) {
                 let vo = classTem[i];
-                if(vo.name.indexOf(name) !== -1){
+                if (vo.name.indexOf(name) !== -1) {
                     str += swiperTem(vo);
                 }
             }
@@ -332,7 +389,7 @@
         });
 
 
-        function swiperTem(vo){
+        function swiperTem(vo) {
             let str = '';
             str += '<div class="swiper-slide tems" data-id="' + vo.id + '" data-name="' + vo.name + '" data-hid="' + vo.hid + '">';
             str += '<div class="tem_name_2" data-id="' + vo.id + '">' + vo.name + '</div>';
