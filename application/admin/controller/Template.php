@@ -160,6 +160,11 @@ class Template extends Controller
                 }
                 $data['package'] = 'tpl/' . $data['class_id'] . '/' . md5_file($file);
                 $data['package_img'] = $data['package'] . '/index.png';
+
+                $extJson = $data['package'] . '/index.json';
+                if (is_file($extJson) && !empty(json_decode(file_get_contents($extJson), true))) { // 判断是否存在配置文件且为json格式
+                    $data['ext_json'] = file_get_contents($extJson);
+                }
             } else { // 未上传压缩包
                 unset($data['package']);
             }

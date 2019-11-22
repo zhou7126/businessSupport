@@ -96,6 +96,13 @@ class Index extends Controller
                     'ext_img4' => $bindData['ext_img4'],
                     'ext_img5' => $bindData['ext_img5'],
                 ];
+                if (!empty($bindData['ext_json']) && !empty(json_decode($bindData['ext_json'], true))) {
+                    foreach (json_decode($bindData['ext_json'], true) as $extKey => $extVal) {
+                        if (!isset($fetchData[$extKey])) {
+                            $fetchData[$extKey] = is_array($extVal) ? json_encode($extVal, JSON_UNESCAPED_UNICODE) : $extVal;
+                        }
+                    }
+                }
 
                 // 查询安卓下载地址
                 $adInstallArr = json_decode($bindData['ad_config_install_data'], true);
