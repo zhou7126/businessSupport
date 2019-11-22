@@ -64,7 +64,7 @@ class Template extends Controller
     protected function _index_page_filter(&$data)
     {
         foreach ($data as &$vo) {
-            $vo['preview_img'] = $vo['package_img']; // 预览缩略图url
+//            $vo['preview_img'] = $vo['package_img']; // 预览缩略图url
             $vo['preview_url'] = url('preview', '', '') . '?id=' . $vo['id']; //预览页面url
         }
     }
@@ -107,11 +107,14 @@ class Template extends Controller
             'ext_img4' => '',
             'ext_img5' => '',
         ];
-        if ($this->request->isMobile()) {
+        // 渲染视图
+        if (is_file($tempData['package'] . '/m/index.html') && $this->request->isMobile()) {
+            $fetchData['base_url'] .= 'm/';
             $this->fetch($tempData['package'] . '/m/index.html', $fetchData);
-        } else {
+        } else if (is_file($tempData['package'] . '/index.html')) {
             $this->fetch($tempData['package'] . '/index.html', $fetchData);
         }
+        abort(404, '模板不存在');
     }
 
 
