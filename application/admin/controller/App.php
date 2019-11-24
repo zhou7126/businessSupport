@@ -142,7 +142,7 @@ class App extends Controller
 
         if (!empty($this->row['ext_json'])) {
             $this->ext_json = json_decode($this->row['ext_json'], true);
-        }else{
+        } else {
             $this->ext_json = [];
         }
         $this->applyCsrfToken();
@@ -461,6 +461,23 @@ class App extends Controller
                 'created_at' => time(),
             ]);
 
+            $ext_data = [];
+            if (isset($data['ext_key']) && count($data['ext_key']) > 0) {
+
+                $ext_key = $data['ext_key'];
+                $ext_value = $data['ext_value'];
+                if (count($ext_key) != count($ext_value)) {
+                    $this->error('扩展数据个数不匹配');
+                }
+                for ($i = 0; $i < count($ext_key); $i++) {
+                    if (empty(trim($ext_key[$i])) || empty(trim($ext_value[$i]))) {
+                        $this->error('扩展数据不能留空');
+                    }
+                    $ext_data[trim($ext_key[$i])] = trim($ext_value[$i]);
+
+                }
+            }
+            $data['ext_json'] = json_encode($ext_data, JSON_UNESCAPED_UNICODE);
             $data['updated_at'] = time();
             unset($data['tem_name']);
         }

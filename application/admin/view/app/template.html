@@ -258,7 +258,7 @@
 
 
                     <div class="layui-form-item">
-                        <label class="relative block">
+                        <label class="relative block ext_parent">
                             <span class="color-green font-w7 peizhi-title">ext_data</span>
                             <div class="layui-input-block ext_json_line">
                                 <input type="text" name="ext_key[]" lay-verify="title" placeholder="请输入KEY"
@@ -359,15 +359,16 @@
 
         });
 
-        $(document).on('click', '.ext_json_add button', function () {
-            $(".ext_json_line").parent().append($(".ext_json_line").last().clone());
+        $('.ext_json_add').on('click', function () {
+            $(".ext_parent").append($(".ext_json_line").last().clone(true));
             $(".ext_json_line").last().find("input").val("");
+
         });
 
-        $(document).on('click', '.ext_json_del', function () {
+        $('.ext_json_del').on('click', function () {
             if ($(".ext_json_line").length == 1) {
-                layer.msg('最后一个不能删除');
-                return;
+                // layer.msg('最后一个不能删除');
+                // return;
             }
             $(this).parent().remove();
         });
