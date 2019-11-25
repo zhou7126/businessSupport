@@ -116,9 +116,8 @@ class App extends Controller
                 ->where('uid', session('admin_user')['id'])
                 ->order('created_at desc')
                 ->value('data');
-            foreach (json_decode($temHistory, true) ?? [] as $key => $vo) {
-                $this->row[$key] = $vo;
-            }
+            $extJson = json_decode($temHistory, true);
+            $this->row['ext_json'] = $extJson ? $extJson['ext_json'] : '';
         }
         $where = [];
         if (!empty($this->row['class_id'])) {
@@ -158,7 +157,7 @@ class App extends Controller
         if ($this->request->isPost()) {
             $url = '/bet365bet.php#' . $_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING'];
             $url = preg_replace("/&temId=[0-9]*/", '', $url);
-            $this->success('保存成功', $url);
+            $this->success('保存成功', ['url' => $url]);
         }
     }
 
@@ -458,14 +457,6 @@ class App extends Controller
             if (empty($data['kefu_url'])) $this->error('请输入kefuUrl！');
             if (empty($data['channel_code'])) $this->error('请输入channelCode！');
 
-            Db::name('SystemTemplateHistory')->insert([
-                'app_id' => $data['id'],
-                'uid' => session('admin_user')['id'],
-                'template_id' => $data['template_id'],
-                'data' => json_encode($data),
-                'created_at' => time(),
-            ]);
-
             $ext_data = [];
             if (isset($data['ext_key']) && count($data['ext_key']) > 0) {
 
@@ -483,6 +474,14 @@ class App extends Controller
                 }
             }
             $data['ext_json'] = json_encode($ext_data, JSON_UNESCAPED_UNICODE);
+            unset($data['ext_key'], $data['ext_value']);
+            Db::name('SystemTemplateHistory')->insert([
+                'app_id' => $data['id'],
+                'uid' => session('admin_user')['id'],
+                'template_id' => $data['template_id'],
+                'data' => json_encode($data),
+                'created_at' => time(),
+            ]);
             $data['updated_at'] = time();
             unset($data['tem_name']);
         }

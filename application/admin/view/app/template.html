@@ -254,28 +254,36 @@
                         </label>
                     </div>
 
-
-
-
                     <div class="layui-form-item">
-                        <label class="relative block ext_parent">
-                            <span class="color-green font-w7 peizhi-title">ext_data</span>
+
+                        <div class="ext_json_muban" style="display: none;">
                             <div class="layui-input-block ext_json_line">
-                                <input type="text" name="ext_key[]" lay-verify="title" placeholder="请输入KEY"
+                                <input type="text" name="ext_key[]" lay-verify="title" disabled placeholder="请输入KEY"
                                        class="layui-input ext_json_key">
-                                <input type="text" name="ext_value[]" lay-verify="title" placeholder="请输入VALUE"
+                                <input type="text" name="ext_value[]" lay-verify="title" disabled placeholder="请输入VALUE"
                                        class="layui-input ext_json_value">
                                 <button type="button" class="layui-btn layui-btn-danger ext_json_del">删除</button>
                             </div>
+                        </div>
+
+                        <label class="relative block ext_parent">
+                            <span class="color-green font-w7 peizhi-title">ext_data</span>
+                            {foreach $ext_json as $k=>$v}
+                            <div class="layui-input-block ext_json_line">
+                                <input type="text" name="ext_key[]" lay-verify="title" placeholder="请输入KEY" value="{$k}"
+                                       class="layui-input ext_json_key">
+                                <input type="text" name="ext_value[]" lay-verify="title" placeholder="请输入VALUE"
+                                       value="{$v}"
+                                       class="layui-input ext_json_value">
+                                <button type="button" class="layui-btn layui-btn-danger ext_json_del">删除</button>
+                            </div>
+                            {/foreach}
                         </label>
 
                         <div class="layui-input-block ext_json_add">
                             <button type="button" class="layui-btn">新增</button>
                         </div>
                     </div>
-
-
-
 
                     <input type='hidden' value='{$row.id}' name='id'>
                 </div>
@@ -359,10 +367,9 @@
 
         });
 
-        $('.ext_json_add').on('click', function () {
-            $(".ext_parent").append($(".ext_json_line").last().clone(true));
-            $(".ext_json_line").last().find("input").val("");
-
+        $('.ext_json_add button').on('click', function () {
+            $(".ext_parent").append($(".ext_json_muban").children().eq(0).clone(true));
+            $(".ext_parent").find("input").prop("disabled", false);
         });
 
         $('.ext_json_del').on('click', function () {
