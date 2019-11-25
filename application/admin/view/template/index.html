@@ -24,6 +24,7 @@
             <th class='list-table-check-td think-checkbox'>
                 <label><input data-auto-none data-check-target='.list-check-box' type='checkbox'></label>
             </th>
+            <th class='text-left nowrap'>ID</th>
             <th class='text-left nowrap'>模板名称</th>
             <th class='text-left nowrap'>效果展示</th>
             <th class='text-center nowrap'>模板分组</th>
@@ -38,6 +39,7 @@
             <td class='list-table-check-td think-checkbox'>
                 <label><input class="list-check-box" value='{$vo.id}' type='checkbox'></label>
             </td>
+            <td class='text-left nowrap'>{$vo.id|default=''}</td>
             <td class='text-left nowrap'>{$vo.name|default=''}</td>
             <td class='text-left nowrap'>
                 <a target="_blank" href="{$vo.preview_url}">点击预览</a>
