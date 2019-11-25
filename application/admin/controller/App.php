@@ -173,19 +173,32 @@ class App extends Controller
     }
 
 
-    public function getTemClass()
+    // 获取模板扩展数据和历史配置数据
+    public function getTemplateInfo()
     {
         $classId = $this->request->param('classId');
-        $where = [];
-        if ($classId) $where['t.class_id'] = $classId;
-        $templates = Db::name('SystemTemplate')
-            ->alias('t')
-            ->leftJoin('system_template_history h', 't.id = h.template_id')
-            ->where('t.is_deleted', 0)
-            ->where($where)
-            ->field('t.*,h.id as hid')
-            ->order('t.created_at desc')->select();
-        $this->success('成功', $templates);
+        $appId = $this->request->param('appId');
+        $tempData = Db::name('systemTemplate')->where([
+            'id' => $classId,
+            'is_deleted' => 0
+        ])->field('id,ext_json')->find();
+        if (empty($tempData)) {
+            $this->error('模板不存在');
+        }
+        if (json_decode($tempData['ext_json'], true) === false) {
+            $tempData['ext_json'] = [];
+        }
+        $hisTempData = Db::name('systemTemplateHistory')->where([
+            'template_id' => $classId,
+            'app_id' => $appId,
+            'uid' => session('admin_user.id')
+        ])->order('id desc')->find();
+        if (!empty($hisTempData)) {
+            $tempData['ext_json'] = json_decode($hisTempData['data'], true);
+        } else {
+            $tempData['ext_json'] = json_decode($tempData['ext_json'], true);
+        }
+        $this->success('成功', $tempData);
     }
 
 

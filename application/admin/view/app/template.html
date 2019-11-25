@@ -21,7 +21,7 @@
     }
 
     .app-detail .peizhi-title {
-        width: 14%;
+        width: 6%;
         display: inline-block;
         margin-top: 10px;
     }
@@ -76,6 +76,15 @@
         margin: 0 20px;
     }
 
+    .ext_json_line {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .muban-save {
+        text-align: center;
+    }
+
 </style>
 {/block}
 {block name="button"}
@@ -105,78 +114,35 @@
                 <div class="layui-card-body padding-left-40">
                     <div class="layui-form-item">
                         <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">选择分组</span>
-                            <div class="layui-input-block duan-input">
-                                <select name="class_id" class="" lay-verify="" lay-filter="class_id">
-                                    <option value="">超级管理组</option>
-                                    {foreach $templateClasss as $key=>$vo}
-                                    <option value="{$vo.id}" {$vo.id== $row.class_id ?
-                                    'selected' : ''}>{$vo.name}</option>
-                                    {/foreach}
-                                </select>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">模板名称</span>
-                            <input value='{$row.tem_name}' name="tem_name" class="layui-input duan-input tem_name_1">
-                            <input name="template_id" type="hidden" value='{$row.template_id}'
-                                   class="layui-input duan-input">
-                            <!--  <span class="help-block">
-                                  <button type="button" class="layui-btn layui-btn-primary sousuo">搜索</button>
-                              </span>-->
+                            <span class="color-green font-w7 peizhi-title">模板ID</span>
+                            <input name="template_id" id="template_id" value='{$row.template_id}'
+                                   oninput="value=value.replace(/[^\d]/g,'')"
+                                   class="layui-input duan-input"
+                                   placeholder="输入模板ID进行搜索">
                         </label>
                     </div>
 
                     <div class="layui-form-item">
-                        <!-- Swiper -->
                         <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">选择模板</span>
-                            <div class="swiper-container">
-                                <div class="swiper-wrapper">
-                                    {foreach $templates as $key=>$vo}
-                                    <div class="swiper-slide tems " data-id="{$vo.id}" data-name="{$vo.name}"
-                                         data-hid="{$vo.hid}">
-                                        <div class="tem_name_2" data-id="{$vo.id}">{$vo.name}</div>
-                                        <img src="{$vo.package_img}" width="160" height="280">
-                                        <div class="zezao"
-                                             style="{$row.template_id == $vo.id ? 'display: block' : ''}"></div>
-                                    </div>
-                                    {/foreach}
+                            <span class="color-green font-w7 peizhi-title">参数配置</span>
+
+                            <div class="layui-hide ext_json_muban">
+                                <div class="layui-input-block ext_json_line">
+                                    <input type="text" name="ext_key[]" readonly placeholder="请输入KEY"
+                                           value=""
+                                           class="layui-input ext_json_key layui-bg-gray">
+                                    <input type="text" name="ext_value[]" placeholder="请输入配置值"
+                                           value=""
+                                           class="layui-input ext_json_value">
                                 </div>
-                                <!-- Add Pagination -->
-                                <div class="swiper-pagination"></div>
                             </div>
-                        </label>
-                    </div>
-
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">webTitle</span>
-                            <input name="web_title" value='{$row.web_title}' class="layui-input duan-input">
-                            <span class="help-block">网页title</span>
-                        </label>
-                    </div>
-
-                    <div class="layui-form-item"><span class="color-green font-w7 peizhi-title">imgLogo</span>
-                        <span width="90px" class="text-center app-upload">
-                                <input name="img_logo" type="hidden" value="{$row.img_logo}" autocomplete="off">
-                            </span>
-                        <script>
-                            $('[name="img_logo"]').uploadOneImage()
-                        </script>
-                        <span class="help-block">大小不超过200KB,尺寸200*200PNG格式</span>
-                    </div>
 
 
-                    <div class="layui-form-item">
-                        <label class="relative block ext_parent">
-                            <span class="color-green font-w7 peizhi-title">ext_data</span>
                             {foreach $ext_json as $k=>$v}
                             <div class="layui-input-block ext_json_line">
-                                <input type="text" name="ext_key[]" lay-verify="title" placeholder="请输入KEY" value="{$k}"
-                                       class="layui-input ext_json_key">
+                                <input type="text" name="ext_key[]" lay-verify="title" readonly placeholder="请输入KEY"
+                                       value="{$k}"
+                                       class="layui-input ext_json_key layui-bg-gray">
                                 <input type="text" name="ext_value[]" lay-verify="title" placeholder="请输入VALUE"
                                        value="{$v}"
                                        class="layui-input ext_json_value">
@@ -187,7 +153,9 @@
 
                     <input type='hidden' value='{$row.id}' name='id'>
                 </div>
-                <div class="layui-form-item text-center">
+
+
+                <div class="layui-form-item muban-save">
                     <button class="layui-btn" type='submit'>保存数据</button>
                 </div>
             </form>
@@ -195,133 +163,25 @@
         <div class="clear"></div>
     </div>
 </div>
-<script src="__ROOT__/static/plugs/swiper/swiper.js"></script>
 <script>
     form.render();
-    layui.define(function (exports) {
-        exports('swiper', window.Swiper);
-    }).config({
-        base: '__ROOT__/static/plugs/swiper/' //设定扩展的Layui模块的所在目录，一般用于外部模块扩展
-    }).use(['swiper'], function (layuiSwiper) {
-        var classTem;
+
+    $(document).on('keyup', '#template_id', function (e) {
 
         $.ajax({
             type: "post",
-            url: "{:url('getTemClass')}",
+            url: "{:url('getTemplateInfo')}",
+            data: {classId: $(this).val(), appId: $('input[name="id"]').val()},
             success: function (rJson) {
                 classTem = rJson.data;
+                console.log(classTem);
             }
-        });
-        var tem_index, template_id = $('[name="template_id"]').val();
-        if (template_id) {
-            tem_index = $('.swiper-slide').index($('[data-id="' + template_id + '"]'));
-        }
-
-        /*$('.sousuo').click(function () {
-            let name = $('.tem_name_1').val();
-            if (!name) return false;
-            tem_index = $('.swiper-slide').index($('[data-name="' + name + '"]'));
-            if (tem_index === -1) return false;
-            var template_id = $('.swiper-slide:eq(' + tem_index + ')').data('id')
-            $('.swiper-wrapper').html($('.swiper-slide:eq(' + tem_index + ')').clone());
-            $('[name="template_id"]').val(template_id);
-            /!* swiper.slideTo(tem_index);*!/
-        });*/
-
-        var swiper = new layuiSwiper('.swiper-container', {
-            initialSlide: template_id ? tem_index : 0,
-            slidesPerGroup: 6,
-            slidesPerView: 6,
-            spaceBetween: 30,
-            grabCursor: true,
-            observer: true,//修改swiper自己或子元素时，自动初始化swiper
-
-            observeParents: true,//修改swiper的父元素时，自动初始化swiper
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-        });
-        $(document).on('click', '.tems', function () {
-            var tem = $(this).find('.tem_name_2');
-
-            $('.tem_name_1').val(tem.text());
-            var temId = tem.data('id');
-            $('[name="template_id"]').val(temId);
-            $(this).parent().find('.zezao').hide();
-            $(this).find('.zezao').show();
-
-            //历史
-            //询问框
-            if ($(this).data('hid')) {
-                layer.confirm('是否使用历史配置？', {
-                    btn: ['使用', '取消'] //按钮
-                }, function (index) {
-                    let url = window.location.href;
-                    url = url.replace(/&temId=[0-9]*/ig, '');
-                    location.href = url + "&temId=" + temId;
-                    layer.close(index);
-                });
-            }
-
-
-        });
-
-        $('.tem_name_1').keyup(function () {
-            let name = $('.tem_name_1').val();
-            let str = '';
-            for (let i = 0; i < classTem.length; i++) {
-                let vo = classTem[i];
-                if (vo.name.indexOf(name) !== -1) {
-                    str += swiperTem(vo);
-                }
-            }
-
-            $('.swiper-wrapper').html(str);
-            $('.swiper-slide:eq(0) .zezao').show();
-            var template_id = $('.swiper-slide:eq(0)').data('id');
-            $('[name="template_id"]').val(template_id);
-        });
-
-
-        function swiperTem(vo) {
-            let str = '';
-            str += '<div class="swiper-slide tems" data-id="' + vo.id + '" data-name="' + vo.name + '" data-hid="' + vo.hid + '">';
-            str += '<div class="tem_name_2" data-id="' + vo.id + '">' + vo.name + '</div>';
-            str += '<img src="' + vo.package_img + '" width="160" height="280">';
-            str += ' <div class="zezao"></div>';
-            str += '</div>';
-
-            return str
-        }
-
-        form.on('select(class_id)', function (data) {
-            var classId = data.value;
-            $.ajax({
-                type: "post",
-                url: "{:url('getTemClass')}",
-                data: {classId: classId},
-                success: function (rJson) {
-                    var str = '';
-                    if (rJson.code !== 1) return false;
-                    classTem = rJson.data;
-                    var data = rJson.data;
-                    for (let i = 0; i < data.length; i++) {
-                        let vo = data[i];
-                        str += swiperTem(vo);
-                    }
-                    $('.tem_name_1').val('');
-                    $('.swiper-wrapper').html(str);
-                }
-            });
         });
     });
 
 
     layui.use(['upload'], function () {
         var upload = layui.upload;
-        var that = this;
-        console.log($(that).attr('data-field'));
         upload.render({
             elem: '.ext_img'
             , url: "{:url('api.plugs/upload')}"
