@@ -517,7 +517,8 @@ $(function () {
 
     /*! 上传单个图片 */
     $.fn.uploadOneImage = function () {
-        var name = $(this).attr('name') || 'image', type = $(this).data('type') || 'png,jpg,gif';
+        console.log($(this).data());
+        var name = $(this).attr('name') || 'image', type = $(this).data('type') || 'png,jpg,jpeg,gif';
         var $tpl = $('<a data-file="btn" class="uploadimage"></a>').attr('data-field', name).attr('data-type', type);
         $(this).attr('name', name).after($tpl.data('input', this)).on('change', function () {
             if (this.value) $tpl.css('backgroundImage', 'url(' + this.value + ')');
@@ -526,7 +527,7 @@ $(function () {
 
     /*! 上传多个图片 */
     $.fn.uploadMultipleImage = function () {
-        var type = $(this).data('type') || 'png,jpg,gif', name = $(this).attr('name') || 'umt-image';
+        var type = $(this).data('type') || 'png,jpg,jpeg,gif', name = $(this).attr('name') || 'umt-image';
         var $tpl = $('<a class="uploadimage"></a>').attr('data-file', 'mul').attr('data-field', name).attr('data-type', type);
         $(this).attr('name', name).after($tpl.data('input', this)).on('change', function () {
             var input = this;
