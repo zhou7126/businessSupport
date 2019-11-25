@@ -111,6 +111,7 @@ class App extends Controller
             ->find();
         if ($temId) {
             $temHistory = Db::name('SystemTemplateHistory')
+                ->where('app_id', $id)
                 ->where('template_id', $temId)
                 ->where('uid', session('admin_user')['id'])
                 ->order('created_at desc')
@@ -123,14 +124,17 @@ class App extends Controller
         if (!empty($this->row['class_id'])) {
             $where['t.class_id'] = $this->row['class_id'];
         }
-        $temHisQuery = Db::name('SystemTemplateHistory')
-            ->field('distinct template_id')
-            ->where('uid', session('admin_user')['id'])
-            ->buildSql();
 
         $this->templates = Db::name('SystemTemplate')
             ->alias('t')
-            ->leftJoin($temHisQuery . ' h', 't.id = h.template_id')
+            ->leftJoin(
+                Db::name('SystemTemplateHistory')
+                    ->field('distinct template_id')
+                    ->where('app_id', $id)
+                    ->where('uid', session('admin_user')['id'])
+                    ->buildSql()
+                . ' h', 't.id = h.template_id'
+            )
             ->where('t.is_deleted', 0)
             ->where($where)
             ->field('t.*,h.template_id as hid')
@@ -455,6 +459,7 @@ class App extends Controller
             if (empty($data['channel_code'])) $this->error('请输入channelCode！');
 
             Db::name('SystemTemplateHistory')->insert([
+                'app_id' => $data['id'],
                 'uid' => session('admin_user')['id'],
                 'template_id' => $data['template_id'],
                 'data' => json_encode($data),
