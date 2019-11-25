@@ -168,6 +168,7 @@
     var element = layui.element;
     element.render('progress', 'demo');
 
+    {if sysconf('package_upload_type')=='tx'}
     upload.render({
         elem: '#upload'
         ,url: 'http://www.armshores.com/admin/ajax/package_upload'
@@ -209,6 +210,46 @@
             console.log(upload);
         }
     });
+    {else}
+    upload.render({
+        elem: '#upload'
+        ,url: "{:url('app/package_upload')}"
+        ,accept: 'file' //允许上传的文件类型
+        ,size: 5000000 //最大允许上传的文件大小
+        ,exts:'apk'
+        ,acceptMime:'application/vnd.android.package-archive'
+        ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+            // layer.load(); //上传loading
+            $('.jindu').show(500);
+        }
+        ,done: function(res, index, upload){ //上传后的回调
+            if (res.code !== 1) {
+                alert('上传失败');
+                return false;
+            }
+            $.ajax({
+                type: "post",
+                url: "{:url('addApk')}",
+                data:{updateData : res.data,appId:{$row.id}},
+                beforeSend: function(request) {
+                    request.setRequestHeader("User-Token-Csrf", "{:systoken('addApk')}");
+                },
+                success: function(rJson) {
+                    alert(rJson.info);
+                    if(rJson.code === 1) location.reload();
+                }
+            });
+        }
+        ,progress: function(n){
+            var percent = n + '%' ;//获取进度百分比
+            element.progress('demo', percent); //可配合 layui 进度条元素使用
+        }
+        ,error: function(index, upload){
+            console.log(index);
+            console.log(upload);
+        }
+    });
+    {/if}
 </script>
 
 

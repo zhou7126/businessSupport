@@ -76,10 +76,6 @@
         margin: 0 20px;
     }
 
-    .ext_json_add {
-        margin-top: 10px;
-    }
-
 </style>
 {/block}
 {block name="button"}
@@ -173,99 +169,8 @@
                         <span class="help-block">大小不超过200KB,尺寸200*200PNG格式</span>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">kefuUrl</span>
-                            <input name="kefu_url" value='{$row.kefu_url}' class="layui-input duan-input">
-                            <span class="help-block">客服地址</span>
-
-                        </label>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">channelCode</span>
-                            <input name="channel_code" value='{$row.channel_code}' class="layui-input duan-input">
-                            <span class="help-block">默认渠道号</span>
-                        </label>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">openintsall_app_key</span>
-                            <input name="openintsall_app_key" value='{$row.openintsall_app_key}'
-                                   class="layui-input duan-input">
-                            <span class="help-block">openintsall_app_key</span>
-                        </label>
-                    </div>
-
 
                     <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">ext_img1</span>
-                            <img width="100px" src="{$row.ext_img1}"/>
-                            <input name="ext_img1" placeholder="请上传图片文件" class="layui-input duan-input" readonly
-                                   value='{$row.ext_img1}'>
-                            <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img1">
-                                <i class="layui-icon">&#xe67c;</i>上传
-                            </button>
-                        </label>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">ext_img2</span>
-                            <img width="100px" src="{$row.ext_img2}"/>
-                            <input name="ext_img2" placeholder="请上传图片文件" class="layui-input duan-input" readonly
-                                   value='{$row.ext_img2}'>
-                            <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img2">
-                                <i class="layui-icon">&#xe67c;</i>上传
-                            </button>
-                        </label>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">ext_img3</span>
-                            <img width="100px" src="{$row.ext_img3}"/>
-                            <input name="ext_img3" placeholder="请上传图片文件" class="layui-input duan-input" readonly
-                                   value='{$row.ext_img3}'>
-                            <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img3">
-                                <i class="layui-icon">&#xe67c;</i>上传
-                            </button>
-                        </label>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">ext_img4</span>
-                            <img width="100px" src="{$row.ext_img4}"/>
-                            <input name="ext_img4" placeholder="请上传图片文件" class="layui-input duan-input" readonly
-                                   value='{$row.ext_img4}'>
-                            <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img4">
-                                <i class="layui-icon">&#xe67c;</i>上传
-                            </button>
-                        </label>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">ext_img5</span>
-                            <img width="100px" src="{$row.ext_img5}"/>
-                            <input name="ext_img5" placeholder="请上传图片文件" class="layui-input duan-input" readonly
-                                   value='{$row.ext_img5}'>
-                            <button type="button" class="layui-btn layui-btn-sm ext_img" data-field="ext_img5">
-                                <i class="layui-icon">&#xe67c;</i>上传
-                            </button>
-                        </label>
-                    </div>
-
-                    <div class="layui-form-item">
-
-                        <div class="ext_json_muban" style="display: none;">
-                            <div class="layui-input-block ext_json_line">
-                                <input type="text" name="ext_key[]" lay-verify="title" disabled placeholder="请输入KEY"
-                                       class="layui-input ext_json_key">
-                                <input type="text" name="ext_value[]" lay-verify="title" disabled placeholder="请输入VALUE"
-                                       class="layui-input ext_json_value">
-                                <button type="button" class="layui-btn layui-btn-danger ext_json_del">删除</button>
-                            </div>
-                        </div>
-
                         <label class="relative block ext_parent">
                             <span class="color-green font-w7 peizhi-title">ext_data</span>
                             {foreach $ext_json as $k=>$v}
@@ -275,14 +180,9 @@
                                 <input type="text" name="ext_value[]" lay-verify="title" placeholder="请输入VALUE"
                                        value="{$v}"
                                        class="layui-input ext_json_value">
-                                <button type="button" class="layui-btn layui-btn-danger ext_json_del">删除</button>
                             </div>
                             {/foreach}
                         </label>
-
-                        <div class="layui-input-block ext_json_add">
-                            <button type="button" class="layui-btn">新增</button>
-                        </div>
                     </div>
 
                     <input type='hidden' value='{$row.id}' name='id'>
@@ -365,19 +265,6 @@
             }
 
 
-        });
-
-        $('.ext_json_add button').on('click', function () {
-            $(".ext_parent").append($(".ext_json_muban").children().eq(0).clone(true));
-            $(".ext_parent").find("input").prop("disabled", false);
-        });
-
-        $('.ext_json_del').on('click', function () {
-            if ($(".ext_json_line").length == 1) {
-                // layer.msg('最后一个不能删除');
-                // return;
-            }
-            $(this).parent().remove();
         });
 
         $('.tem_name_1').keyup(function () {

@@ -42,7 +42,8 @@ class Index extends Controller
         //dump($jumpData);
         if (!empty($jumpData) && !empty($jumpData['jump_domain'])) {
             $jumpUrl = stripos($jumpData['jump_domain'], 'http') !== false ? $jumpData['jump_domain'] : "http://" . $jumpData['jump_domain'];
-            $this->redirect($jumpUrl);
+            echo "<script language='JavaScript'>self.location='{$jumpUrl}';</script>";
+            exit();
         }
 
         // 域名绑定
@@ -98,9 +99,10 @@ class Index extends Controller
                 ];
                 if (!empty($bindData['ext_json']) && !empty(json_decode($bindData['ext_json'], true))) {
                     foreach (json_decode($bindData['ext_json'], true) as $extKey => $extVal) {
-                        if (!isset($fetchData[$extKey])) {
-                            $fetchData[$extKey] = is_array($extVal) ? json_encode($extVal, JSON_UNESCAPED_UNICODE) : $extVal;
-                        }
+                        $fetchData[$extKey] = is_array($extVal) ? json_encode($extVal, JSON_UNESCAPED_UNICODE) : $extVal;
+                        //if (!isset($fetchData[$extKey])) {
+                        //
+                        //}
                     }
                 }
 

@@ -89,9 +89,10 @@ class Domain extends Controller
             $nowTime = time();
             for ($i = 0; $i < $num; $i++) {
                 $jumpTmp = explode(' ', $jump_domain[$i]);
+                $jumpUrl = empty($jumpTmp[1]) ? trim($jumpTmp[0], "/") : trim($jumpTmp[0], "/") . '?ChannelCode=' . $jumpTmp[1];
                 $all[] = [
                     'call_domain' => trim($call_domain[$i], "/"),
-                    'jump_domain' => trim($jumpTmp[0], "/") . '?ChannelCode=' . $jumpTmp[1],
+                    'jump_domain' => $jumpUrl,
                     'remark' => $data['remark'],
                     'created_at' => $nowTime,
                 ];
