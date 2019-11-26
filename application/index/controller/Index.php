@@ -47,11 +47,13 @@ class Index extends Controller
         }
 
         // 域名绑定
+        $domainData = Db::name('SystemAppDomain')->where('domain', 'like', "%{$domain}%")->field('app_id,domain,channel_code,statistics_code')->find();
         $bindData = Db::name('SystemApp')->where([
-            ['domain', 'like', "%{$domain}%"],
+            ['id', '=', $domainData['app_id']],
             ['status', '=', 1]
         ])->find();
         if (!empty($bindData)) {
+            $bindData = array_merge($bindData, $domainData);
             $channelCode = $bindData['channel_code'];
             $bindDomain = explode("\n", trim($bindData['domain']));
             foreach ($bindDomain as $v) {
