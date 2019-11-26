@@ -217,14 +217,25 @@ class App extends Controller
         $id = $this->request->param('id');
         $this->row = Db::name($this->table)->where('id', $id)->find();
         $this->row['ad_config_data'] = json_decode($this->row['ad_config_install_data'], true);
-        $apk = Db::name($this->tablePackage)->where('type', self::AD)->order('created_at desc')->find();
+        $apk = Db::name($this->tablePackage)
+            ->where('type', self::AD)
+            ->where('app_id', $id)
+            ->order('created_at desc')
+            ->find();
         if ($apk) {
             $apk['data'] = json_decode($apk['data'], true);
         }
         $this->apk = $apk;
-        $this->apks = Db::name($this->tablePackage)->where('type', self::AD)->order('created_at desc')->select();
+        $this->apks = Db::name($this->tablePackage)
+            ->where('type', self::AD)
+            ->where('app_id', $id)
+            ->order('created_at desc')
+            ->select();
         $query = $this->_query($this->tablePackage);
-        $query->where('type', self::AD)->order('created_at desc')->page();
+        $query->where('type', self::AD)
+            ->where('app_id', $id)
+            ->order('created_at desc')
+            ->page();
     }
 
 
@@ -423,14 +434,24 @@ class App extends Controller
         $this->row = Db::name($this->table)->where('id', $id)->find();
         $this->row['pg_config_data'] = json_decode($this->row['pg_config_install_data'], true);
 
-        $ipa = Db::name($this->tablePackage)->where('type', self::PG)->order('created_at desc')->find();
+        $ipa = Db::name($this->tablePackage)
+            ->where('type', self::PG)
+            ->where('app_id', $id)
+            ->order('created_at desc')->find();
         if ($ipa) {
             $ipa['data'] = json_decode($ipa['data'], true);
         }
         $this->ipa = $ipa;
-        $this->ipas = Db::name($this->tablePackage)->where('type', self::PG)->order('created_at desc')->select();
+        $this->ipas = Db::name($this->tablePackage)
+            ->where('type', self::PG)
+            ->where('app_id', $id)
+            ->order('created_at desc')
+            ->select();
         $query = $this->_query($this->tablePackage);
-        $query->where('type', self::PG)->order('created_at desc')->page();
+        $query->where('type', self::PG)
+            ->where('app_id', $id)
+            ->order('created_at desc')
+            ->page();
     }
 
 
