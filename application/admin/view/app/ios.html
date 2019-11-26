@@ -92,9 +92,6 @@
     .fanhui{
         margin-left: 20px;
         margin-bottom: 10px;
-        height: 29px;
-        padding: 0 36px;
-        line-height: 29px;
     }
 </style>
 {/block}
@@ -112,7 +109,9 @@
 
 {block name="content"}
 <div class="think-box-shadow">
-    <button type="button" class="layui-btn layui-btn-primary fanhui" onclick="history.go(-1)"><&nbsp;&nbsp;&nbsp;返回</button>
+    <a data-open="{:url('app/index')}">
+        <button type="button" class="layui-btn layui-btn-primary fanhui">返回</button>
+    </a>
 
     <div class="app-detail">
             {include file="app/left" /}

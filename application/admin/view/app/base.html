@@ -2,42 +2,54 @@
 
 {block name="style"}
 <style>
-    .app-detail-left{
+    .think-box-shadow {
+        min-width: 1250px;
+    }
+
+    .app-detail-left {
         width: 20%;
         min-height: 700px;
         background-color: #2C333D;
         float: left;
         margin-left: 20px;
     }
-    .app-left-top{
+
+    .app-left-top {
         margin-top: 10px;
         text-align: center;
     }
-    .app-left-top img{
+
+    .app-left-top img {
         width: 32%;
     }
-    .app-left-top .app-name{
+
+    .app-left-top .app-name {
         font-size: 16px;
         color: #fff;
         margin: 17px 0 6px 0;
     }
-    .app-left-top .app-key{
+
+    .app-left-top .app-key {
         font-size: 17px;
         color: #fff;
     }
-    .app-left-botton{
+
+    .app-left-botton {
         margin-top: 31px;
         margin-left: 20px;
     }
-    .app-left-botton-1{
+
+    .app-left-botton-1 {
         font-size: 16px;
         color: #7c7c7c;
     }
-    .app-left-botton-title{
+
+    .app-left-botton-title {
         font-size: 17px;
         color: #fff;
     }
-    .yuan{
+
+    .yuan {
         width: 14px;
         height: 14px;
         border-radius: 8px;
@@ -45,18 +57,25 @@
         margin-right: 7px;
         display: inline-block;
     }
-    .app-left-botton-title-text{
+
+    .app-left-botton-title-text {
         line-height: 34px;
-        cursor:pointer;
+        cursor: pointer;
     }
-    .app-detail-right{
+
+    .app-detail-right {
         float: left;
         width: 73%;
-        margin: 0 33px 0 33px;
+        margin: 0 33px 0 15px;
         min-height: 700px;
-        border: 1px #000000 solid;
+        /*border: 1px #000000 solid;*/
     }
-    .duan-input{
+
+    .app-detail-right .layui-tab-card {
+        padding:20px 25px;
+    }
+
+    .duan-input {
         width: 24%;
         height: 30px;
         display: inline-block;
@@ -64,47 +83,54 @@
         margin-left: 19px;
     }
 
-    .d-submit{
+    .d-submit {
         width: 8%;
         height: 30px;
         border-radius: 3px;
         border: 1px #000 solid;
         background-color: #fff;
     }
-    .chang-input{
+
+    .chang-input {
         width: 60%;
         display: inline-block;
         margin-left: 67px;
         margin-right: 33px;
     }
-    .fabu{
+
+    .fabu {
         display: inline-block;
         margin-left: 19px;
     }
-    .app-upload{
+
+    .app-upload {
         margin-left: 19px;
     }
-    .app-upload-text{
+
+    .app-upload-text {
         margin: 0 19px;
     }
-    .shangchuan{
+
+    .shangchuan {
         margin-left: 68px;
     }
-    .layui-form-switch{
+
+    .layui-form-switch {
         margin-top: 0;
     }
+
     .layui-input-block {
         margin-left: 67px;
     }
-    .layui-form-radio{
+
+    .layui-form-radio {
         margin-top: 0;
     }
-    .fanhui{
+
+    .fanhui {
         margin-left: 20px;
         margin-bottom: 10px;
-        height: 29px;
-        padding: 0 36px;
-        line-height: 29px;
+
     }
 </style>
 {/block}
@@ -115,91 +141,100 @@
 {/if}
 
 {if auth("remove")}
-<button data-action='{:url("remove")}' data-rule="id#{key}" data-csrf="{:systoken('remove')}" data-confirm="确定要删除这些APP吗？" class='layui-btn layui-btn-sm layui-btn-primary'>删除APP</button>
+<button data-action='{:url("remove")}' data-rule="id#{key}" data-csrf="{:systoken('remove')}"
+        data-confirm="确定要删除这些APP吗？" class='layui-btn layui-btn-sm layui-btn-primary'>删除APP
+</button>
 {/if}
 
 {/block}
 
 {block name="content"}
 <div class="think-box-shadow">
-    <button type="button" class="layui-btn layui-btn-primary fanhui" onclick="history.go(-1)"><&nbsp;&nbsp;&nbsp;返回</button>
+    <a data-open="{:url('app/index')}">
+        <button type="button" class="layui-btn layui-btn-primary fanhui">返回</button>
+    </a>
 
     <div class="app-detail">
-            {include file="app/left" /}
-            <div class="app-detail-right">
-                <form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post" autocomplete="off">
-                    <div class="layui-card-body padding-left-40">
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7">应用名称</span>
-                                <input value='{$row.name}' name="name" class="layui-input duan-input app-value">
-                            </label>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7">创建时间</span>
-                                <input value='{$row.created_at|format_datetime}' class="layui-input duan-input" disabled>
-                            </label>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7">AppKey</span>
-                                <input value='{$row.app_key}' class="layui-input duan-input" disabled>
-                            </label>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block" style="float: left">
-                                <span class="color-green font-w7">应用图标</span>
-                            </label>
-                            <div class="shangchuan">
-                                <input name="img" type="hidden" value="{$row.img}" class="app-value">
-                                <span class="app-upload-text">请上传你的应用图标(大小不超过1M)</span>
-                                <script>
-                                    $('[name="img"]').uploadOneImage()
-                                </script>
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block" style="float: left">
-                                <span class="color-green font-w7">下载方式</span>
-                            </label>
-                            <div class="layui-input-block">
-                                <input type="radio" name="download_type" value="1" title="链接下载" lay-filter="download_type"   {$row.download_type == 1 ? 'checked' : ''}>
-                                <input type="radio" name="download_type" value="2" title="openInstall" lay-filter="download_type"  {$row.download_type == 2 ? 'checked' : ''}>
-                            </div>
-                        </div>
-
-                        <div class="layui-form-item">
-                            <label class="relative block" style="float: left">
-                                <span class="color-green font-w7">开关</span>
-                            </label>
-                            <div class="layui-input-block">
-                                <input class="app-value" type="checkbox" value="1" name="status" lay-skin="switch" lay-text="开启|关闭" lay-filter="status"  {$row.status == 1 ? 'checked' : ''}>
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7" style="position: absolute">域名</span>
-                                <textarea placeholder="请输入域名" class="layui-textarea chang-input app-value" name="domain">{$row.domain}</textarea>
-                            </label>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="relative block">
-                                <span class="color-green font-w7" style="position: absolute">统计代码</span>
-                                <textarea placeholder="请输入统计代码" class="layui-textarea chang-input app-value" name="statistics_code">{$row.statistics_code}</textarea>
-                            </label>
-                        </div>
-                        <input type="hidden" name="id" value="{$row.id}">
-                        <div class="layui-form-item">
-                            <div class="layui-input-block">
-                                <button class="layui-btn" type='submit' lay-filter="formDemo">立即提交</button>
-                            </div>
+        {include file="app/left" /}
+        <div class="app-detail-right">
+            <form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post"
+                  autocomplete="off">
+                <div class="layui-card-body layui-tab-card">
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7">应用名称</span>
+                            <input value='{$row.name}' name="name" class="layui-input duan-input app-value">
+                        </label>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7">创建时间</span>
+                            <input value='{$row.created_at|format_datetime}' class="layui-input duan-input" disabled>
+                        </label>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7">AppKey</span>
+                            <input value='{$row.app_key}' class="layui-input duan-input" disabled>
+                        </label>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="relative block" style="float: left">
+                            <span class="color-green font-w7">应用图标</span>
+                        </label>
+                        <div class="shangchuan">
+                            <input name="img" type="hidden" value="{$row.img}" class="app-value">
+                            <span class="app-upload-text">请上传你的应用图标(大小不超过1M)</span>
+                            <script>
+                                $('[name="img"]').uploadOneImage()
+                            </script>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="clear"></div>
+                    <div class="layui-form-item">
+                        <label class="relative block" style="float: left">
+                            <span class="color-green font-w7">下载方式</span>
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="download_type" value="1" title="链接下载" lay-filter="download_type"
+                                   {$row.download_type== 1 ? 'checked' : ''}>
+                            <input type="radio" name="download_type" value="2" title="openInstall"
+                                   lay-filter="download_type" {$row.download_type== 2 ? 'checked' : ''}>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="relative block" style="float: left">
+                            <span class="color-green font-w7">开关</span>
+                        </label>
+                        <div class="layui-input-block">
+                            <input class="app-value" type="checkbox" value="1" name="status" lay-skin="switch"
+                                   lay-text="开启|关闭" lay-filter="status" {$row.status== 1 ? 'checked' : ''}>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7" style="position: absolute">域名</span>
+                            <textarea placeholder="请输入域名" class="layui-textarea chang-input app-value" name="domain">{$row.domain}</textarea>
+                        </label>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="relative block">
+                            <span class="color-green font-w7" style="position: absolute">统计代码</span>
+                            <textarea placeholder="请输入统计代码" class="layui-textarea chang-input app-value"
+                                      name="statistics_code">{$row.statistics_code}</textarea>
+                        </label>
+                    </div>
+                    <input type="hidden" name="id" value="{$row.id}">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" type='submit' lay-filter="formDemo">立即提交</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
+        <div class="clear"></div>
+    </div>
 </div>
 <script>
 

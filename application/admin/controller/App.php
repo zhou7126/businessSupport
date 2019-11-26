@@ -198,7 +198,7 @@ class App extends Controller
         } else {
             $tempData['ext_json'] = json_decode($tempData['ext_json'], true);
         }
-        $this->success('成功', $tempData);
+        $this->success('成功', $tempData['ext_json']);
     }
 
 

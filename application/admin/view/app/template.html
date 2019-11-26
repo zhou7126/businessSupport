@@ -4,12 +4,20 @@
 <link rel="stylesheet" href="__ROOT__/static/plugs/swiper/swiper.min.css?at={:date('md')}">
 
 <style>
+    .think-box-shadow {
+        min-width: 1250px;
+    }
+
     .app-detail-right {
         float: left;
         width: 73%;
-        margin: 0 33px 0 33px;
+        margin: 0 33px 0 15px;
         min-height: 700px;
-        border: 1px #000000 solid;
+        /*border: 1px #000000 solid;*/
+    }
+
+    .app-detail-right .layui-tab-card {
+        padding: 20px 25px;
     }
 
     .duan-input {
@@ -49,9 +57,7 @@
     .fanhui {
         margin-left: 20px;
         margin-bottom: 10px;
-        height: 29px;
-        padding: 0 36px;
-        line-height: 29px;
+
     }
 
     .zezao {
@@ -66,12 +72,12 @@
     }
 
     .ext_json_key {
-        width: 120px;
+        width: 150px;
         display: inline;
     }
 
     .ext_json_value {
-        width: 300px;
+        width: 500px;
         display: inline;
         margin: 0 20px;
     }
@@ -83,6 +89,10 @@
 
     .muban-save {
         text-align: center;
+    }
+
+    .muban-search {
+        color: #FF5722;
     }
 
 </style>
@@ -103,15 +113,16 @@
 
 {block name="content"}
 <div class="think-box-shadow">
-    <button type="button" class="layui-btn layui-btn-primary fanhui" onclick="history.go(-1)"><&nbsp;&nbsp;&nbsp;返回
-    </button>
+    <a data-open="{:url('app/index')}">
+        <button type="button" class="layui-btn layui-btn-primary fanhui">返回</button>
+    </a>
 
     <div class="app-detail">
         {include file="app/left" /}
         <div class="app-detail-right">
             <form class="layui-form layui-card" id="temForm" action="{:request()->url()}" data-auto="true" method="post"
                   autocomplete="off">
-                <div class="layui-card-body padding-left-40">
+                <div class="layui-card-body layui-tab-card">
                     <div class="layui-form-item">
                         <label class="relative block">
                             <span class="color-green font-w7 peizhi-title">模板ID</span>
@@ -119,6 +130,7 @@
                                    oninput="value=value.replace(/[^\d]/g,'')"
                                    class="layui-input duan-input"
                                    placeholder="输入模板ID进行搜索">
+                            <span class="muban-search"></span>
                         </label>
                     </div>
 
@@ -137,27 +149,20 @@
                                 </div>
                             </div>
 
+                            <div class="ext_json_list">
 
-                            {foreach $ext_json as $k=>$v}
-                            <div class="layui-input-block ext_json_line">
-                                <input type="text" name="ext_key[]" lay-verify="title" readonly placeholder="请输入KEY"
-                                       value="{$k}"
-                                       class="layui-input ext_json_key layui-bg-gray">
-                                <input type="text" name="ext_value[]" lay-verify="title" placeholder="请输入VALUE"
-                                       value="{$v}"
-                                       class="layui-input ext_json_value">
                             </div>
-                            {/foreach}
                         </label>
                     </div>
 
                     <input type='hidden' value='{$row.id}' name='id'>
-                </div>
 
 
-                <div class="layui-form-item muban-save">
-                    <button class="layui-btn" type='submit'>保存数据</button>
+                    <div class="layui-form-item muban-save">
+                        <button class="layui-btn muban-save-btn" type='submit'>保存数据</button>
+                    </div>
                 </div>
+
             </form>
         </div>
         <div class="clear"></div>
@@ -167,17 +172,39 @@
     form.render();
 
     $(document).on('keyup', '#template_id', function (e) {
-
         $.ajax({
             type: "post",
             url: "{:url('getTemplateInfo')}",
             data: {classId: $(this).val(), appId: $('input[name="id"]').val()},
+            beforeSend: function () {
+                $(".muban-save-btn").attr('disabled', true);
+                $(".muban-save-btn").addClass('layui-bg-gray');
+                $(".ext_json_list").html('');
+            },
             success: function (rJson) {
-                classTem = rJson.data;
-                console.log(classTem);
+                if (rJson.code == 0) {
+                    $(".muban-search").text(rJson.info);
+                    $(".ext_json_list").html('');
+                    return;
+                } else {
+                    $(".muban-search").text('');
+                }
+                $(".muban-save-btn").attr('disabled', false);
+                $(".muban-save-btn").removeClass('layui-bg-gray');
+                let tempData = rJson.data;
+                for (let key in tempData) {
+                    let ext_json_item = $(".ext_json_muban").children().clone(true);
+                    ext_json_item.find('.ext_json_key').val(key);
+                    ext_json_item.find('.ext_json_value').val(tempData[key]);
+                    $(".ext_json_list").append(ext_json_item);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                layer.msg(errorThrown);
             }
         });
     });
+    $("#template_id").keyup();
 
 
     layui.use(['upload'], function () {
