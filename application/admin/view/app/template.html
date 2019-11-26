@@ -74,17 +74,22 @@
     .ext_json_key {
         width: 150px;
         display: inline;
+        margin-right: 20px;
     }
 
     .ext_json_value {
         width: 500px;
         display: inline;
-        margin: 0 20px;
     }
 
     .ext_json_line {
-        margin-left: 0;
+        /*margin-left: 0;*/
         margin-top: 10px;
+    }
+
+    .ext_json_line .uploadimage {
+        position: relative;
+        top: 15px;
     }
 
     .muban-save {
@@ -140,17 +145,33 @@
 
                             <div class="layui-hide ext_json_muban">
                                 <div class="layui-input-block ext_json_line">
-                                    <input type="text" name="ext_key[]" readonly placeholder="请输入KEY"
+                                    <input type="text" name="ext_key[]" readonly disabled placeholder="请输入KEY"
                                            value=""
                                            class="layui-input ext_json_key layui-bg-gray">
-                                    <input type="text" name="ext_value[]" placeholder="请输入配置值"
+                                    <input type="text" name="ext_value[]" disabled placeholder="请输入配置值"
                                            value=""
                                            class="layui-input ext_json_value">
                                 </div>
                             </div>
 
                             <div class="ext_json_list">
-
+                                {foreach $ext_json as $k=>$v}
+                                <div class="layui-input-block ext_json_line">
+                                    <input type="text" name="ext_key[]" readonly placeholder="请输入KEY"
+                                           value="{$k}"
+                                           class="layui-input ext_json_key layui-bg-gray">
+                                    {if stripos($k,'img')!==false}
+                                    <input type="text" name="ext_value[]" placeholder="请输入配置值" id="ext_{$k}"
+                                           value="{$v}"
+                                           class="layui-input ext_json_value layui-hide">
+                                    <script>$("#ext_{$k}").uploadOneImage();</script>
+                                    {else}
+                                    <input type="text" name="ext_value[]" placeholder="请输入配置值"
+                                           value="{$v}"
+                                           class="layui-input ext_json_value">
+                                    {/if}
+                                </div>
+                                {/foreach}
                             </div>
                         </label>
                     </div>
@@ -170,7 +191,6 @@
 </div>
 <script>
     form.render();
-
     $(document).on('keyup', '#template_id', function (e) {
         $.ajax({
             type: "post",
@@ -180,6 +200,9 @@
                 $(".muban-save-btn").attr('disabled', true);
                 $(".muban-save-btn").addClass('layui-bg-gray');
                 $(".ext_json_list").html('');
+            },
+            complete: function () {
+                isSearch = false;
             },
             success: function (rJson) {
                 if (rJson.code == 0) {
@@ -194,8 +217,13 @@
                 let tempData = rJson.data;
                 for (let key in tempData) {
                     let ext_json_item = $(".ext_json_muban").children().clone(true);
+                    ext_json_item.find('input').attr('disabled', false);
                     ext_json_item.find('.ext_json_key').val(key);
                     ext_json_item.find('.ext_json_value').val(tempData[key]);
+                    if (key.indexOf('img') > -1) {
+                        ext_json_item.find('.ext_json_value').uploadOneImage();
+                        ext_json_item.find('.ext_json_value').addClass('layui-hide');
+                    }
                     $(".ext_json_list").append(ext_json_item);
                 }
             },
@@ -204,7 +232,7 @@
             }
         });
     });
-    $("#template_id").keyup();
+    // $("#template_id").keyup();
 
 
     layui.use(['upload'], function () {

@@ -465,10 +465,6 @@ class App extends Controller
     {
         if ($this->request->isPost()) {
             if (empty($data['template_id'])) $this->error('请选择模板！');
-            if (empty($data['web_title'])) $this->error('请输入webTitle！');
-            if (empty($data['img_logo'])) $this->error('请上传imgLogo！');
-            if (empty($data['kefu_url'])) $this->error('请输入kefuUrl！');
-            if (empty($data['channel_code'])) $this->error('请输入channelCode！');
 
             $ext_data = [];
             if (isset($data['ext_key']) && count($data['ext_key']) > 0) {
@@ -483,7 +479,6 @@ class App extends Controller
                         $this->error('扩展数据不能留空');
                     }
                     $ext_data[trim($ext_key[$i])] = trim($ext_value[$i]);
-
                 }
             }
             $data['ext_json'] = json_encode($ext_data, JSON_UNESCAPED_UNICODE);
@@ -492,7 +487,7 @@ class App extends Controller
                 'app_id' => $data['id'],
                 'uid' => session('admin_user')['id'],
                 'template_id' => $data['template_id'],
-                'data' => json_encode($data),
+                'data' => $data['ext_json'],
                 'created_at' => time(),
             ]);
             $data['updated_at'] = time();
