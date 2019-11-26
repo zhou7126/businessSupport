@@ -80,9 +80,6 @@ class Index extends Controller
             if (!empty($tempData)) {
                 $fetchData = [
                     'base_url' => $schemeDomain . '/' . $tempData['package'] . '/', // 页面默认URL
-                    'web_title' => $bindData['web_title'], // 页面名称
-                    'img_logo' => $bindData['img_logo'], // logo图标
-                    'kefu_url' => $bindData['kefu_url'], // 客服地址
                     'download_type' => $bindData['download_type'], // 应用下载方式，1普通下载，2openinstall
                     'channel_code' => $channelCode, // 渠道号
                     'ad_config_install_type' => $bindData['ad_config_install_type'], // 安卓安装方式，1托管APK，2外部APK
@@ -91,18 +88,10 @@ class Index extends Controller
                     'pg_download_url' => '', // 苹果安装地址
                     'statistics_code' => $bindData['statistics_code'], // 统计代码
                     'openintsall_app_key' => $bindData['openintsall_app_key'],
-                    'ext_img1' => $bindData['ext_img1'],
-                    'ext_img2' => $bindData['ext_img2'],
-                    'ext_img3' => $bindData['ext_img3'],
-                    'ext_img4' => $bindData['ext_img4'],
-                    'ext_img5' => $bindData['ext_img5'],
                 ];
                 if (!empty($bindData['ext_json']) && !empty(json_decode($bindData['ext_json'], true))) {
                     foreach (json_decode($bindData['ext_json'], true) as $extKey => $extVal) {
                         $fetchData[$extKey] = is_array($extVal) ? json_encode($extVal, JSON_UNESCAPED_UNICODE) : $extVal;
-                        //if (!isset($fetchData[$extKey])) {
-                        //
-                        //}
                     }
                 }
 
@@ -145,7 +134,8 @@ class Index extends Controller
             }
         }
 
-        $this->redirect('/404');
+        echo "<script language='JavaScript'>self.location='/404';</script>";
+        exit();
     }
 
 }

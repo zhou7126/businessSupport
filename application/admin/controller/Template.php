@@ -90,9 +90,6 @@ class Template extends Controller
         }
         $fetchData = [
             'base_url' => $schemeDomain . '/' . $tempData['package'] . '/', // 页面默认URL
-            'web_title' => 'XXX', // 页面名称
-            'img_logo' => '', // logo图标
-            'kefu_url' => '', // 客服地址
             'download_type' => 1, // 应用下载方式，1普通下载，2openinstall
             'channel_code' => 'xxxxxxx', // 渠道号
             'ad_config_install_type' => 1, // 安卓安装方式，1托管APK，2外部APK
@@ -101,11 +98,6 @@ class Template extends Controller
             'pg_download_url' => '', // 苹果安装地址
             'statistics_code' => '', // 统计代码
             'openintsall_app_key' => 'xxxxxxxxxxx',
-            'ext_img1' => '',
-            'ext_img2' => '',
-            'ext_img3' => '',
-            'ext_img4' => '',
-            'ext_img5' => '',
         ];
         // 渲染视图
         if (is_file($tempData['package'] . '/m/index.html') && $this->request->isMobile()) {
@@ -162,8 +154,10 @@ class Template extends Controller
                 $data['package_img'] = $data['package'] . '/index.png';
 
                 $extJson = $data['package'] . '/index.json';
-                if (is_file($extJson) && !empty(json_decode(file_get_contents($extJson), true))) { // 判断是否存在配置文件且为json格式
+                if (is_file($extJson) && !empty(json_decode(file_get_contents($extJson), true))) { // 判断是否存在json配置文件
                     $data['ext_json'] = file_get_contents($extJson);
+                } else {
+                    $this->error('压缩包里的json文件不存在');
                 }
             } else { // 未上传压缩包
                 unset($data['package']);
