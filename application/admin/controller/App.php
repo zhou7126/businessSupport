@@ -505,6 +505,10 @@ class App extends Controller
 
             $extData = Db::name('SystemTemplate')->where('id', $data['template_id'])->value('ext_json');
             $extData = json_decode($extData, true);
+            if (empty($extData) || count($extData) < 1) {
+                // $this->error('模板配置数据异常');
+                $extData = [];
+            }
             if (count($ext_data) != count($extData)) {
                 $this->error('提交数据和模板配置数量不匹配');
             }
