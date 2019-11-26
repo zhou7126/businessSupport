@@ -72,7 +72,7 @@
     }
 
     .app-detail-right .layui-tab-card {
-        padding:20px 25px;
+        padding: 20px 25px;
     }
 
     .duan-input {
@@ -131,6 +131,48 @@
         margin-left: 20px;
         margin-bottom: 10px;
 
+    }
+
+
+    .app-domain-hr {
+        /*text-align: center;*/
+
+    }
+
+    .app-domain-hr1 {
+        float: left;
+        width: 150px;
+        margin-right: 40px;
+    }
+
+    .app-domain-hr2 {
+        float: left;
+        width: 150px;
+        margin-right: 40px;
+    }
+
+    .app-domain-hr3 {
+        float: left;
+        width: 250px;
+        margin-right: 40px;
+    }
+
+    .app-domain-textarea {
+        height: 38px;
+        min-height: 38px;
+    }
+
+    .app-domain-add {
+        clear: both;
+    }
+
+    .app-domain-contain {
+        margin: 10px auto;
+    }
+
+    .muban-save {
+        margin: 20px auto;
+        text-align: center;
     }
 </style>
 {/block}
@@ -211,24 +253,67 @@
                                    lay-text="开启|关闭" lay-filter="status" {$row.status== 1 ? 'checked' : ''}>
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7" style="position: absolute">域名</span>
-                            <textarea placeholder="请输入域名" class="layui-textarea chang-input app-value" name="domain">{$row.domain}</textarea>
-                        </label>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7" style="position: absolute">统计代码</span>
-                            <textarea placeholder="请输入统计代码" class="layui-textarea chang-input app-value"
-                                      name="statistics_code">{$row.statistics_code}</textarea>
-                        </label>
-                    </div>
-                    <input type="hidden" name="id" value="{$row.id}">
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <button class="layui-btn" type='submit' lay-filter="formDemo">立即提交</button>
+
+
+                    <div class="app-domain layui-tab-card">
+                        <div class="app-domain-hr">
+                            <div class="app-domain-hr1 color-green font-w7">域名</div>
+                            <div class="app-domain-hr2 color-green font-w7">渠道号</div>
+                            <div class="app-domain-hr3 color-green font-w7">统计代码</div>
+                            <div class="clear"></div>
                         </div>
+
+                        <div class="app-domain-muban layui-hide">
+                            <div class="app-domain-contain">
+                                <div class="app-domain-hr1">
+                                    <input value='' disabled name="bind_v1[]" placeholder="请输入域名"
+                                           class="layui-input">
+                                </div>
+                                <div class="app-domain-hr2">
+                                    <input value='' disabled name="bind_v2[]" placeholder="请输入渠道号"
+                                           class="layui-input">
+                                </div>
+                                <div class="app-domain-hr3">
+                                <textarea placeholder="请输入统计代码" disabled class="layui-textarea app-domain-textarea"
+                                          name="bind_v3[]"></textarea>
+                                </div>
+                                <div>
+                                    <button type="button" class="layui-btn layui-btn-danger app-domain-del">删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="app-domain-item app-domain-box">
+                            {foreach $bindDomain as $k=>$v}
+                            <div class="app-domain-contain">
+                                <div class="app-domain-hr1">
+                                    <input value='{$v.domain}' name="bind_v1[]" placeholder="请输入域名" class="layui-input">
+                                </div>
+                                <div class="app-domain-hr2">
+                                    <input value='{$v.channel_code}' name="bind_v2[]" placeholder="请输入渠道号"
+                                           class="layui-input">
+                                </div>
+                                <div class="app-domain-hr3">
+                                <textarea placeholder="请输入统计代码" class="layui-textarea app-domain-textarea"
+                                          name="bind_v3[]">{$v.statistics_code}</textarea>
+                                </div>
+                                <div>
+                                    <button type="button" class="layui-btn layui-btn-danger app-domain-del">删除</button>
+                                </div>
+                            </div>
+                            {/foreach}
+
+                        </div>
+                        <div>
+                            <button type="button" class="layui-btn  app-domain-add">新增</button>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <input type="hidden" name="id" value="{$row.id}">
+
+                    <div class="layui-form-item muban-save">
+                        <button class="layui-btn muban-save-btn" type='submit' lay-filter="formDemo">保存数据</button>
                     </div>
                 </div>
             </form>
@@ -237,6 +322,16 @@
     </div>
 </div>
 <script>
+    $(".app-domain-del").click(function (obj) {
+        $(this).parent().parent().remove();
+    });
+
+    $(".app-domain-add").click(function (obj) {
+        $item = $(".app-domain-muban").children().eq(0).clone(true);
+        $item.find('input,textarea').attr('disabled', false);
+        $('.app-domain-box').append($item);
+    });
+
 
 </script>
 {/block}

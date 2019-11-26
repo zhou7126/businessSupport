@@ -85,10 +85,11 @@ class App extends Controller
     {
         $id = $this->request->param('id');
         $this->row = Db::name($this->table)->where('id', $id)->find();
-
+        $this->bindDomain = Db::name('SystemAppDomain')->where('app_id', $id)->select();
         $this->applyCsrfToken();
         $this->_form($this->table, 'base');
     }
+
 
     /**
      * 配置模板
@@ -540,8 +541,40 @@ class App extends Controller
     protected function _base_form_filter(&$data)
     {
         if ($this->request->isPost()) {
+            $id = input('id');
             $data['status'] = $data['status'] ?? 0;
             $data['updated_at'] = time();
+//            dump($data);
+            $num = count($data['bind_v1']);
+            if ($num < 1 || count($data['bind_v2']) < 1 || count($data['bind_v3']) < 1) {
+                $this->error('域名配置数量不匹配');
+            }
+            $insertAll = [];
+            for ($i = 0; $i < $num; $i++) {
+                $val1 = trim($data['bind_v1'][$i]);
+                $val2 = trim($data['bind_v2'][$i]);
+                $val3 = trim($data['bind_v3'][$i]);
+                if (empty($val1) || empty($val2) || empty($val3)) {
+                    $this->error('域名配置不能留空');
+                }
+                $insertAll[] = [
+                    'app_id' => $id,
+                    'domain' => $val1,
+                    'channel_code' => $val2,
+                    'statistics_code' => $val3,
+                    'created_at' => time(),
+                ];
+            }
+            Db::startTrans();
+            try {
+                Db::name('SystemAppDomain')->where('app_id', $id)->delete();
+                Db::name('SystemAppDomain')->insertAll($insertAll);
+                Db::commit();
+            } catch (Exception $e) {
+                Db::rollback();
+                $this->error('域名配置保存失败');
+            }
+
         }
     }
 
