@@ -131,7 +131,7 @@
                     <td>{$vo.data.versionName}</td>
                     <td>{$vo.data.versionCode}</td>
                     <td>{$vo.size}</td>
-                    <td>{$apk.created_at|format_datetime}</td>
+                    <td>{$vo.created_at|format_datetime}</td>
                     <td>
                         <a href="javascript:;" class="layui-btn layui-btn-sm app_ceshi" data-url="{$vo.path}">测试</a>
                         <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要删除该apk吗？" data-action="{:url('removePackage')}" data-value="id#{$vo.id}" data-csrf="{:systoken('removePackage')}">删 除</a>
