@@ -155,23 +155,7 @@
                             </div>
 
                             <div class="ext_json_list">
-                                {foreach $ext_json as $k=>$v}
-                                <div class="layui-input-block ext_json_line">
-                                    <input type="text" name="ext_key[]" readonly placeholder="请输入KEY"
-                                           value="{$k}"
-                                           class="layui-input ext_json_key layui-bg-gray">
-                                    {if stripos($k,'img')!==false}
-                                    <input type="text" name="ext_value[]" placeholder="请输入配置值" id="ext_{$k}"
-                                           value="{$v}"
-                                           class="layui-input ext_json_value layui-hide">
-                                    <script>$("#ext_{$k}").uploadOneImage();</script>
-                                    {else}
-                                    <input type="text" name="ext_value[]" placeholder="请输入配置值"
-                                           value="{$v}"
-                                           class="layui-input ext_json_value">
-                                    {/if}
-                                </div>
-                                {/foreach}
+
                             </div>
                         </label>
                     </div>
@@ -217,17 +201,30 @@
                     ext_json_item.find('input').attr('disabled', false);
                     ext_json_item.find('.ext_json_key').val(key);
                     ext_json_item.find('.ext_json_value').val(tempData[key]);
-                    if (key.indexOf('img') > -1) {
-                        ext_json_item.find('.ext_json_value').uploadOneImage();
+
+                    if (key.substr(0, 3) == 'img') {
                         ext_json_item.find('.ext_json_value').addClass('layui-hide');
                     }
                     $(".ext_json_list").append(ext_json_item);
                 }
+                if ($(".ext_json_list .layui-hide").length > 0) {
+                    $(".ext_json_list .layui-hide").uploadOneImage();
+                }
+                /*! 初始化事件 */
+                $.form.reInit();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 layer.msg(errorThrown);
             }
         });
+    });
+
+    function test() {
+        $(".ext_json_list .layui-hide").uploadOneImage();
+    }
+
+    $(function () {
+        $('#template_id').keyup();
     });
 
     layui.use(['upload'], function () {
