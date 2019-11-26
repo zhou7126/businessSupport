@@ -502,6 +502,15 @@ class App extends Controller
                     $ext_data[trim($ext_key[$i])] = trim($ext_value[$i]);
                 }
             }
+
+            $extData = Db::name('SystemTemplate')->where('id', $data['template_id'])->value('ext_json');
+            $extData = json_decode($extData, true);
+            if (count($ext_data) != count($extData)) {
+                $this->error('提交数据和模板配置数量不匹配');
+            }
+            if (count(array_diff_key($ext_data, $extData)) > 0) {
+                $this->error('提交数据的键和模板配置有冲突');
+            }
             $data['ext_json'] = json_encode($ext_data, JSON_UNESCAPED_UNICODE);
             unset($data['ext_key'], $data['ext_value']);
             Db::name('SystemTemplateHistory')->insert([

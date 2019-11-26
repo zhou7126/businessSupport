@@ -99,6 +99,9 @@ class Template extends Controller
             'statistics_code' => '', // 统计代码
             'openintsall_app_key' => 'xxxxxxxxxxx',
         ];
+        foreach (json_decode($tempData['ext_json'], true) as $k => $v) {
+            $fetchData[$k] = $v;
+        }
         // 渲染视图
         if (is_file($tempData['package'] . '/m/index.html') && $this->request->isMobile()) {
             $fetchData['base_url'] .= 'm/';

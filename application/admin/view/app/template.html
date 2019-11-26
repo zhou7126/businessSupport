@@ -191,7 +191,7 @@
 </div>
 <script>
     form.render();
-    $(document).on('keyup', '#template_id', function (e) {
+    $('#template_id').keyup(function (e) {
         $.ajax({
             type: "post",
             url: "{:url('getTemplateInfo')}",
@@ -200,9 +200,6 @@
                 $(".muban-save-btn").attr('disabled', true);
                 $(".muban-save-btn").addClass('layui-bg-gray');
                 $(".ext_json_list").html('');
-            },
-            complete: function () {
-                isSearch = false;
             },
             success: function (rJson) {
                 if (rJson.code == 0) {
@@ -232,8 +229,6 @@
             }
         });
     });
-    // $("#template_id").keyup();
-
 
     layui.use(['upload'], function () {
         var upload = layui.upload;
