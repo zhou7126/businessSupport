@@ -544,9 +544,11 @@ class App extends Controller
             $id = input('id');
             $data['status'] = $data['status'] ?? 0;
             $data['updated_at'] = time();
-//            dump($data);
-            $num = count($data['bind_v1']);
-            if ($num < 1 || count($data['bind_v2']) < 1 || count($data['bind_v3']) < 1) {
+            $num = count($data['bind_v1'] ?? []);
+            if ($num < 1) {
+                $this->error('域名配置不能为空');
+            }
+            if ($num < 1 || count($data['bind_v2'] ?? []) < 1 || count($data['bind_v3'] ?? []) < 1) {
                 $this->error('域名配置数量不匹配');
             }
             $insertAll = [];
