@@ -198,18 +198,16 @@
                 $(".muban-save-btn").removeClass('layui-bg-gray');
                 let tempData = rJson.data;
                 for (let key in tempData) {
-                    let ext_json_item = $(".ext_json_muban").children().clone(true);
-                    ext_json_item.find('input').attr('disabled', false);
-                    ext_json_item.find('.ext_json_key').val(key);
-                    ext_json_item.find('.ext_json_value').val(tempData[key]);
+                    let extJsonItem = $(".ext_json_muban").children().clone(true);
+                    extJsonItem.find('input').attr('disabled', false);
+                    extJsonItem.find('.ext_json_key').val(key);
+                    extJsonItem.find('.ext_json_value').val(tempData[key]);
 
                     if (key.substr(0, 3) == 'img') {
-                        ext_json_item.find('.ext_json_value').addClass('layui-hide');
+                        extJsonItem.find('.ext_json_value').addClass('layui-hide');
+                        extJsonItem.find('.ext_json_value').uploadOneImage(); // 给每张图片绑定上传事件
                     }
-                    $(".ext_json_list").append(ext_json_item);
-                }
-                if ($(".ext_json_list .layui-hide").length > 0) {
-                    $(".ext_json_list .layui-hide").uploadOneImage();
+                    $(".ext_json_list").append(extJsonItem);
                 }
                 /*! 初始化事件 */
                 $.form.reInit();
