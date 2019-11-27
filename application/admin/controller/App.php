@@ -182,12 +182,19 @@ class App extends Controller
         $tempData = Db::name('systemTemplate')->where([
             'id' => $classId,
             'is_deleted' => 0
-        ])->field('id,ext_json')->find();
+        ])->field('id,package,ext_json')->find();
         if (empty($tempData)) {
             $this->error('模板不存在');
         }
-        if (json_decode($tempData['ext_json'], true) === false) {
-            $tempData['ext_json'] = [];
+        $extData = json_decode($tempData['ext_json'], true);
+        if ($extData === false) {
+            $extData = [];
+        } else {
+            foreach ($extData as $k => $v) {
+                if (substr($k, 0, 3) == 'img') {
+                    $extData[$k] = $tempData['package'] . '/' . str_replace("../", "", $v);
+                }
+            }
         }
         $hisTempData = Db::name('systemTemplateHistory')->where([
             'template_id' => $classId,
@@ -197,7 +204,7 @@ class App extends Controller
         if (!empty($hisTempData)) {
             $tempData['ext_json'] = json_decode($hisTempData['data'], true);
         } else {
-            $tempData['ext_json'] = json_decode($tempData['ext_json'], true);
+            $tempData['ext_json'] = $extData;
         }
         $this->success('成功', $tempData['ext_json']);
     }
@@ -500,7 +507,7 @@ class App extends Controller
                     if (empty(trim($ext_key[$i]))) {
                         $this->error('扩展数据不能留空');
                     }
-                    $ext_data[trim($ext_key[$i])] = trim($ext_value[$i]);
+                    $ext_data[trim($ext_key[$i])] = str_replace($this->request->domain(), '', trim($ext_value[$i]));
                 }
             }
 
