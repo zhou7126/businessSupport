@@ -365,10 +365,16 @@ class App extends Controller
             case 'tx' :
                 $path = self::UPLOAD_PACKAGE_DOMAIN . $updateData['package_file'];
                 $iconimage = self::UPLOAD_PACKAGE_DOMAIN . $updateData['iconimage'];
+                $img = $iconimage;
+                $is_oss = 0;
+                $oss_status = 0;
                 break;
             default:
-                $path = $updateData['ossUrl'] ?? '';
-                $iconimage =  $_SERVER['HTTP_HOST'] . $updateData['iconimage'];
+                $path = "http://" . $_SERVER['HTTP_HOST'] . $updateData['package_file'];
+                $iconimage =  "http://" .$_SERVER['HTTP_HOST'] . $updateData['iconimage'];
+                $img = $iconimage;
+                $is_oss = 1;
+                $oss_status = 0;
         }
         if (!$path) $this->error('上传文件路径为空');
 
@@ -377,16 +383,19 @@ class App extends Controller
             'path' => $path,
             'size' => $updateData['size'] . 'M',
             'type' => self::AD,
+            'is_oss' => $is_oss,
+            'oss_status' => $oss_status,
             'data' => json_encode([
                 'package' => $updateData['signname'],
                 'iconimage' => $iconimage,
                 'versionName' => $updateData['version'],
                 'versionCode' => $updateData['version'],
+                'path' => $updateData['package_file'],
             ]),
             'created_at' => time(),
         ];
         $res = Db::name($this->tablePackage)->insert($data);
-        Db::name($this->table)->where('id', $appId)->update(['img' => self::UPLOAD_PACKAGE_DOMAIN . $updateData['iconimage']]);
+        Db::name($this->table)->where('id', $appId)->update(['img' => $img]);
 
         if ($res) {
             $this->success('操作成功');
@@ -400,7 +409,7 @@ class App extends Controller
     {
         $jindu = $this->request->param('progressKey');
 
-        return session($jindu) ?? 0;
+        return  0;
     }
 
     /**
