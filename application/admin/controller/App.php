@@ -39,6 +39,12 @@ class App extends Controller
 
     public $tablePackage = 'SystemPackage';
 
+    private function authWhere($field = 'uid')
+    {
+        $user = session('admin_user');
+
+        return $user['username'] == 'admin' ? [] : [$field=>$user['id']];
+    }
     /**
      * APP管理
      * @auth true
@@ -52,7 +58,7 @@ class App extends Controller
     public function index()
     {
         $this->title = 'APP管理';
-        $query = $this->_query($this->table);
+        $query = $this->_query($this->table)->where(self::authWhere());
         $query->order('created_at desc')->page();
     }
 
@@ -84,8 +90,8 @@ class App extends Controller
     public function base()
     {
         $id = $this->request->param('id');
-        $this->row = Db::name($this->table)->where('id', $id)->find();
-        $this->bindDomain = Db::name('SystemAppDomain')->where('app_id', $id)->select();
+        $this->row = Db::name($this->table)->where('id', $id)->where(self::authWhere())->find();
+        $this->bindDomain = Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->select();
         $this->applyCsrfToken();
         $this->_form($this->table, 'base');
     }
@@ -108,13 +114,14 @@ class App extends Controller
         $this->row = Db::name($this->table)->alias('a')
             ->leftJoin('system_template t', 'a.template_id = t.id')
             ->where('a.id', $id)
+            ->where(self::authWhere('a.uid'))
             ->field('a.*,t.name as tem_name,t.class_id')
             ->find();
         if ($temId) {
             $temHistory = Db::name('SystemTemplateHistory')
                 ->where('app_id', $id)
                 ->where('template_id', $temId)
-                ->where('uid', session('admin_user')['id'])
+                ->where(self::authWhere())
                 ->order('created_at desc')
                 ->value('data');
             $extJson = json_decode($temHistory, true);
@@ -131,16 +138,18 @@ class App extends Controller
                 Db::name('SystemTemplateHistory')
                     ->field('distinct template_id')
                     ->where('app_id', $id)
-                    ->where('uid', session('admin_user')['id'])
+                    ->where(self::authWhere())
                     ->buildSql()
                 . ' h', 't.id = h.template_id'
             )
             ->where('t.is_deleted', 0)
             ->where($where)
+            ->where(self::authWhere("t.uid"))
             ->field('t.*,h.template_id as hid')
             ->order('t.created_at desc')->select();
         $this->templateClasss = Db::name('SystemTemplateClass')
             ->where('is_deleted', 0)
+            ->where(self::authWhere())
             ->select();
 
 
@@ -166,6 +175,7 @@ class App extends Controller
     {
         $res = Db::name('SystemTemplate')
             ->where('is_deleted', 0)
+            ->where(self::authWhere())
             ->order('created_at desc')->select();
         $data = [];
         $keyStr = '';
@@ -182,7 +192,7 @@ class App extends Controller
         $tempData = Db::name('systemTemplate')->where([
             'id' => $classId,
             'is_deleted' => 0
-        ])->field('id,package,ext_json')->find();
+        ])->where(self::authWhere())->field('id,package,ext_json')->find();
         if (empty($tempData)) {
             $this->error('模板不存在');
         }
@@ -199,8 +209,7 @@ class App extends Controller
         $hisTempData = Db::name('systemTemplateHistory')->where([
             'template_id' => $classId,
             'app_id' => $appId,
-            'uid' => session('admin_user.id')
-        ])->order('id desc')->find();
+        ])->where(self::authWhere())->order('id desc')->find();
         if (!empty($hisTempData)) {
             $tempData['ext_json'] = json_decode($hisTempData['data'], true);
         } else {
@@ -223,11 +232,12 @@ class App extends Controller
     public function ad()
     {
         $id = $this->request->param('id');
-        $this->row = Db::name($this->table)->where('id', $id)->find();
+        $this->row = Db::name($this->table)->where(self::authWhere())->where('id', $id)->find();
         $this->row['ad_config_data'] = json_decode($this->row['ad_config_install_data'], true);
         $apk = Db::name($this->tablePackage)
             ->where('type', self::AD)
             ->where('app_id', $id)
+            ->where(self::authWhere())
             ->order('created_at desc')
             ->find();
         if ($apk) {
@@ -237,11 +247,13 @@ class App extends Controller
         $this->apks = Db::name($this->tablePackage)
             ->where('type', self::AD)
             ->where('app_id', $id)
+            ->where(self::authWhere())
             ->order('created_at desc')
             ->select();
         $query = $this->_query($this->tablePackage);
         $query->where('type', self::AD)
             ->where('app_id', $id)
+            ->where(self::authWhere())
             ->order('created_at desc')
             ->page();
     }
@@ -272,7 +284,7 @@ class App extends Controller
                 'ad_config_install_type' => $param['ad_config_install_type'],
                 'ad_config_install_data' => $param['ad_config_install_data'],
             ];
-            $res = Db::name($this->table)->where('id', $param['id'])->update($data);
+            $res = Db::name($this->table)->where(self::authWhere())->where('id', $param['id'])->update($data);
             if ($res !== false) {
                 $this->success('保存成功');
             }
@@ -322,7 +334,7 @@ class App extends Controller
             if ($param['pg_config_is_myapp'] == 1) {
                 $data['pg_config_myapp_url'] = $param['pg_config_myapp_url'];
             }
-            $res = Db::name($this->table)->where('id', $param['id'])->update($data);
+            $res = Db::name($this->table)->where(self::authWhere())->where('id', $param['id'])->update($data);
             if ($res !== false) {
                 $this->success('保存成功');
             }
@@ -379,6 +391,7 @@ class App extends Controller
         if (!$path) $this->error('上传文件路径为空');
 
         $data = [
+            'uid' => session("admin_user")['id'],
             'app_id' => $appId,
             'path' => $path,
             'size' => $updateData['size'] . 'M',
@@ -395,7 +408,7 @@ class App extends Controller
             'created_at' => time(),
         ];
         $res = Db::name($this->tablePackage)->insert($data);
-        Db::name($this->table)->where('id', $appId)->update(['img' => $img]);
+        Db::name($this->table)->where(self::authWhere())->where('id', $appId)->update(['img' => $img]);
 
         if ($res) {
             $this->success('操作成功');
@@ -404,13 +417,6 @@ class App extends Controller
         }
     }
 
-
-    public function progress()
-    {
-        $jindu = $this->request->param('progressKey');
-
-        return  0;
-    }
 
     /**
      * @auth true
@@ -441,6 +447,7 @@ class App extends Controller
         if (!$path) $this->error('上传文件路径为空');
 
         $data = [
+            'uid' => session("admin_user")['id'],
             'app_id' => $appId,
             'path' => $path,
             'size' => $updateData['size'] . 'M',
@@ -476,7 +483,7 @@ class App extends Controller
     public function removePackage()
     {
         $this->applyCsrfToken();
-        $this->_delete($this->tablePackage);
+        $this->_delete($this->tablePackage,'id',self::authWhere());
     }
 
 
@@ -488,12 +495,13 @@ class App extends Controller
     public function ios()
     {
         $id = $this->request->param('id');
-        $this->row = Db::name($this->table)->where('id', $id)->find();
+        $this->row = Db::name($this->table)->where(self::authWhere())->where('id', $id)->find();
         $this->row['pg_config_data'] = json_decode($this->row['pg_config_install_data'], true);
 
         $ipa = Db::name($this->tablePackage)
             ->where('type', self::PG)
             ->where('app_id', $id)
+            ->where(self::authWhere())
             ->order('created_at desc')->find();
         if ($ipa) {
             $ipa['data'] = json_decode($ipa['data'], true);
@@ -502,11 +510,13 @@ class App extends Controller
         $this->ipas = Db::name($this->tablePackage)
             ->where('type', self::PG)
             ->where('app_id', $id)
+            ->where(self::authWhere())
             ->order('created_at desc')
             ->select();
         $query = $this->_query($this->tablePackage);
         $query->where('type', self::PG)
             ->where('app_id', $id)
+            ->where(self::authWhere())
             ->order('created_at desc')
             ->page();
     }
@@ -517,6 +527,7 @@ class App extends Controller
         if ($this->request->isPost()) {
             if (empty($data['name'])) $this->error('请输入应用名称！');
             $data['app_key'] = substr(md5(uniqid(rand(), true)), 0, 8);
+            $data['uid'] = session('admin_user.id');
             $data['created_at'] = time();
             $data['updated_at'] = time();
         }
@@ -560,7 +571,7 @@ class App extends Controller
                 }
             }
 
-            $extData = Db::name('SystemTemplate')->where('id', $data['template_id'])->value('ext_json');
+            $extData = Db::name('SystemTemplate')->where(self::authWhere())->where('id', $data['template_id'])->value('ext_json');
             $extData = json_decode($extData, true);
             if (empty($extData) || count($extData) < 1) {
                 // $this->error('模板配置数据异常');
@@ -614,6 +625,7 @@ class App extends Controller
                         $this->error('域名配置不能留空');
                     }
                     $insertAll[] = [
+                        'uid' => session("admin_user")['id'],
                         'app_id' => $id,
                         'domain' => $val1,
                         'channel_code' => $val2,
@@ -624,7 +636,7 @@ class App extends Controller
             }
             Db::startTrans();
             try {
-                Db::name('SystemAppDomain')->where('app_id', $id)->delete();
+                Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->delete();
                 if (!empty($insertAll)) {
                     Db::name('SystemAppDomain')->insertAll($insertAll);
                 }
@@ -659,7 +671,7 @@ class App extends Controller
     public function remove()
     {
         $this->applyCsrfToken();
-        $this->_delete($this->table);
+        $this->_delete($this->table,'id',self::authWhere());
     }
 
 }

@@ -73,44 +73,44 @@
     <!-- 顶部菜单 结束 -->
 
     <!-- 左则菜单 开始 -->
-<!--    <div class="layui-side layui-bg-black notselect">-->
-<!--        <div class="layui-side-scroll">-->
+    <div class="layui-side layui-bg-black notselect">
+        <div class="layui-side-scroll">
 
-<!--            {foreach $menus as $oneMenu}-->
-<!--            {notempty name='oneMenu.sub'}-->
-<!--            <ul class="layui-nav layui-nav-tree layui-hide" data-menu-layout="m-{$oneMenu.id}">-->
-<!--                {foreach $oneMenu.sub as $twoMenu}-->
-<!--                {empty name='twoMenu.sub'}-->
-<!--                <li class="layui-nav-item">-->
-<!--                    <a data-target-tips="{$twoMenu.title}" data-menu-node="m-{$oneMenu.id}-{$twoMenu.id}" data-open="{$twoMenu.url}">-->
-<!--                        <span class='{$twoMenu.icon|default="layui-icon layui-icon-link"}'></span>-->
-<!--                        <span class="nav-text padding-left-5">{$twoMenu.title}</span>-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--                {else}-->
-<!--                <li class="layui-nav-item" data-submenu-layout='m-{$oneMenu.id}-{$twoMenu.id}'>-->
-<!--                    <a data-target-tips="{$twoMenu.title}" style="background:#393D49">-->
-<!--                        <span class='nav-icon layui-hide {$twoMenu.icon|default="layui-icon layui-icon-triangle-d"}'></span>-->
-<!--                        <span class="nav-text padding-left-5">{$twoMenu.title}</span>-->
-<!--                    </a>-->
-<!--                    <dl class="layui-nav-child">-->
-<!--                        {foreach $twoMenu.sub as $thrMenu}-->
-<!--                        <dd>-->
-<!--                            <a data-target-tips="{$thrMenu.title}" data-open="{$thrMenu.url}" data-menu-node="m-{$oneMenu.id}-{$twoMenu.id}-{$thrMenu.id}">-->
-<!--                                <span class='nav-icon padding-left-5 {$thrMenu.icon|default="layui-icon layui-icon-link"}'></span>-->
-<!--                                <span class="nav-text padding-left-5">{$thrMenu.title}</span>-->
-<!--                            </a>-->
-<!--                        </dd>-->
-<!--                        {/foreach}-->
-<!--                    </dl>-->
-<!--                </li>-->
-<!--                {/empty}-->
-<!--                {/foreach}-->
-<!--            </ul>-->
-<!--            {/notempty}-->
-<!--            {/foreach}-->
-<!--        </div>-->
-<!--    </div>-->
+            {foreach $menus as $oneMenu}
+            {notempty name='oneMenu.sub'}
+            <ul class="layui-nav layui-nav-tree layui-hide" data-menu-layout="m-{$oneMenu.id}">
+                {foreach $oneMenu.sub as $twoMenu}
+                {empty name='twoMenu.sub'}
+                <li class="layui-nav-item">
+                    <a data-target-tips="{$twoMenu.title}" data-menu-node="m-{$oneMenu.id}-{$twoMenu.id}" data-open="{$twoMenu.url}">
+                        <span class='{$twoMenu.icon|default="layui-icon layui-icon-link"}'></span>
+                        <span class="nav-text padding-left-5">{$twoMenu.title}</span>
+                    </a>
+                </li>
+                {else}
+                <li class="layui-nav-item" data-submenu-layout='m-{$oneMenu.id}-{$twoMenu.id}'>
+                    <a data-target-tips="{$twoMenu.title}" style="background:#393D49">
+                        <span class='nav-icon layui-hide {$twoMenu.icon|default="layui-icon layui-icon-triangle-d"}'></span>
+                        <span class="nav-text padding-left-5">{$twoMenu.title}</span>
+                    </a>
+                    <dl class="layui-nav-child">
+                        {foreach $twoMenu.sub as $thrMenu}
+                        <dd>
+                            <a data-target-tips="{$thrMenu.title}" data-open="{$thrMenu.url}" data-menu-node="m-{$oneMenu.id}-{$twoMenu.id}-{$thrMenu.id}">
+                                <span class='nav-icon padding-left-5 {$thrMenu.icon|default="layui-icon layui-icon-link"}'></span>
+                                <span class="nav-text padding-left-5">{$thrMenu.title}</span>
+                            </a>
+                        </dd>
+                        {/foreach}
+                    </dl>
+                </li>
+                {/empty}
+                {/foreach}
+            </ul>
+            {/notempty}
+            {/foreach}
+        </div>
+    </div>
     <!-- 左则菜单 结束 -->
 
     <!-- 主体内容 开始 -->
