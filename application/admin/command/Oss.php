@@ -25,7 +25,7 @@ class Oss extends Command
         $package = Db::name($table)
             ->where('is_oss',1)
             ->where('oss_status',0)
-            ->order('created_at desc')
+            ->order('created_at asc')
             ->limit(10)
             ->select();
         $accessKeyId = "LTAIatcTnNfZauK5";

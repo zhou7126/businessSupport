@@ -164,7 +164,7 @@ class Plugs extends Controller
         $suffix = array_pop($tmp);
         $url = $data->key;
         $size = strlen(file_get_contents(ROOT_PATH . $url));
-        $domain = $_SERVER['HTTP_HOST'];
+        $domain = "http://".$_SERVER['HTTP_HOST'];
         //解析文件
         if ($suffix == 'apk') {
             $apk = $this->readApk($url, $size);
@@ -282,8 +282,7 @@ class Plugs extends Controller
     public function readIpa($url, $size, $domain)
     {
         $filepath = ROOT_PATH . $url;
-
-        Loader::import("parseapp.IpaParser");
+        include_once EXTEND_PATH . 'parseapp/IpaParser.php';
         $ipa = new \IpaParser();
         $ipa->parse($filepath);
         //var_dump($ipa->getPlist());
@@ -341,7 +340,9 @@ class Plugs extends Controller
             $plist
         );
 
-        file_put_contents(ROOT_PATH . '../public/plist/' . $app_plist, $put_plist);
+        $path = ROOT_PATH . '../public/plist/';
+        if (!is_dir($path)) mkdir($path, 0700);
+        file_put_contents($path . $app_plist, $put_plist);
         $arr['plist_path'] = '/plist/' . $app_plist;
         return $arr;
     }
@@ -365,7 +366,9 @@ class Plugs extends Controller
         $resources = $apk->getResources($resourceId);
         $base64img = base64_encode(stream_get_contents($apk->getStream($resources[0])));
         //base64转img
-        $iconPath = $this->base64_image_content("data:image/png;base64," . $base64img, ROOT_PATH . "upload/iconimage");
+        $path = ROOT_PATH . "upload/iconimage";
+        if (!is_dir($path)) mkdir($path, 0700);
+        $iconPath = $this->base64_image_content("data:image/png;base64," . $base64img, $path);
         $iconImage = substr($iconPath, strrpos($iconPath, "/upload"));
         $arr['iconimage'] = $iconImage;
         return $arr;
@@ -379,7 +382,6 @@ class Plugs extends Controller
             $type = $result[2];
             $new_file = $path . "/" . date('Ymd', time()) . "/";
             if (!file_exists($new_file)) {
-                var_dump($new_file);
                 mkdir($new_file, 0700);
             }
             $new_file = $new_file . time() . ".{$type}";

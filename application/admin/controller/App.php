@@ -423,17 +423,37 @@ class App extends Controller
         if (!$updateData) $this->error('包数据为空');
         if (!$appId) $this->error('appId为空');
 
+        switch (sysconf('package_upload_type')){
+            case 'tx' :
+                $path = self::UPLOAD_PACKAGE_DOMAIN . $updateData['package_file'];
+                $iconimage = self::UPLOAD_PACKAGE_DOMAIN . $updateData['iconimage'];
+                $plist_path = self::UPLOAD_PACKAGE_DOMAIN . $updateData['plist_path'];
+                $is_oss = 0;
+                $oss_status = 0;
+                break;
+            default:
+                $path = "http://" . $_SERVER['HTTP_HOST'] . $updateData['package_file'];
+                $iconimage =  "http://" .$_SERVER['HTTP_HOST'] . $updateData['iconimage'];
+                $plist_path = "http://" .$_SERVER['HTTP_HOST'] . $updateData['plist_path'];
+                $is_oss = 1;
+                $oss_status = 0;
+        }
+        if (!$path) $this->error('上传文件路径为空');
+
         $data = [
             'app_id' => $appId,
-            'path' => self::UPLOAD_PACKAGE_DOMAIN . $updateData['package_file'],
+            'path' => $path,
             'size' => $updateData['size'] . 'M',
             'type' => self::PG,
+            'is_oss' => $is_oss,
+            'oss_status' => $oss_status,
             'data' => json_encode([
-                'iconimage' => self::UPLOAD_PACKAGE_DOMAIN . $updateData['iconimage'],
+                'iconimage' => $iconimage,
                 'package' => $updateData['signname'],
                 'versionName' => $updateData['version'],
                 'versionCode' => $updateData['version'],
-                'plist_path' => self::UPLOAD_PACKAGE_DOMAIN . $updateData['plist_path'],
+                'plist_path' => $plist_path,
+                'path' => $updateData['package_file'],
             ]),
             'created_at' => time(),
         ];
