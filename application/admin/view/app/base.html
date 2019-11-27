@@ -284,6 +284,24 @@
                         </div>
 
                         <div class="app-domain-item app-domain-box">
+                            {if count($bindDomain)==0}
+                            <div class="app-domain-contain">
+                                <div class="app-domain-hr1">
+                                    <input value='' name="bind_v1[]" placeholder="请输入域名" class="layui-input">
+                                </div>
+                                <div class="app-domain-hr2">
+                                    <input value='' name="bind_v2[]" placeholder="请输入渠道号"
+                                           class="layui-input">
+                                </div>
+                                <div class="app-domain-hr3">
+                                <textarea placeholder="请输入统计代码" class="layui-textarea app-domain-textarea"
+                                          name="bind_v3[]"></textarea>
+                                </div>
+                                <div>
+                                    <button type="button" class="layui-btn layui-btn-danger app-domain-del">删除</button>
+                                </div>
+                            </div>
+                            {/if}
                             {foreach $bindDomain as $k=>$v}
                             <div class="app-domain-contain">
                                 <div class="app-domain-hr1">

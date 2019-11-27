@@ -55,30 +55,7 @@ class Index extends Controller
         if (!empty($bindData)) {
             $bindData = array_merge($bindData, $domainData);
             $channelCode = $bindData['channel_code'];
-            $bindDomain = explode("\n", trim($bindData['domain']));
-            foreach ($bindDomain as $v) {
-                $tempDomain = explode(" ", trim($v));
-                $tempDomainKey = '';
-                $tempDomainVal = '';
-                foreach ($tempDomain as $v1) {
-                    if (trim($v1) !== '') {
-                        if (empty($tempDomainKey)) {
-                            $tempDomainKey = trim($v1);
-                        } elseif (empty($tempDomainVal)) {
-                            $tempDomainVal = trim($v1);
-                        } else {
-                            break;
-                        }
-                    }
-                }
-
-                if (stripos($tempDomainKey, $domain) !== false && !empty($tempDomainVal)) {
-                    $channelCode = $tempDomainVal;
-                    break;
-                }
-            }
-            $template_id = $bindData['template_id'];
-            $tempData = Db::name('SystemTemplate')->where(['id' => $template_id, 'is_deleted' => 0])->find();
+            $tempData = Db::name('SystemTemplate')->where(['id' => $bindData['template_id'], 'is_deleted' => 0])->find();
             if (!empty($tempData)) {
                 $fetchData = [
                     'base_url' => $schemeDomain . '/' . $tempData['package'] . '/', // 页面默认URL
@@ -89,10 +66,12 @@ class Index extends Controller
                     'pg_config_install_type' => $bindData['pg_config_install_type'], // 苹果安装方式，1托管IPA，2外部IPA，3AppStore及其他，4外部plist
                     'pg_download_url' => '', // 苹果安装地址
                     'statistics_code' => $bindData['statistics_code'], // 统计代码
-                    'openintsall_app_key' => $bindData['openintsall_app_key'],
                 ];
                 if (!empty($bindData['ext_json']) && !empty(json_decode($bindData['ext_json'], true))) {
                     foreach (json_decode($bindData['ext_json'], true) as $extKey => $extVal) {
+                        if ($extKey == 'channel_code' && !empty($channelCode)) {
+                            continue;
+                        }
                         $fetchData[$extKey] = is_array($extVal) ? json_encode($extVal, JSON_UNESCAPED_UNICODE) : $extVal;
                     }
                 }
