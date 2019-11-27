@@ -78,30 +78,43 @@ class Domain extends Controller
 
     public function _form_filter(&$data)
     {
-        if ($this->request->isPost() && !isset($data['id'])) {
-            $call_domain = explode(PHP_EOL, trim($data['call_domain'], PHP_EOL));
-            $jump_domain = explode(PHP_EOL, trim($data['jump_domain'], PHP_EOL));
-            $num = count($call_domain);
-            if ($num < 1 || $num != count($jump_domain)) {
-                $this->error('访问域名和跳转域名个数不匹配');
-            }
-            $all = [];
-            $nowTime = time();
-            for ($i = 0; $i < $num; $i++) {
-                $jumpTmp = explode(' ', $jump_domain[$i]);
-                $jumpUrl = empty($jumpTmp[1]) ? trim($jumpTmp[0], "/") : trim($jumpTmp[0], "/") . '?ChannelCode=' . $jumpTmp[1];
-                $all[] = [
-                    'call_domain' => trim($call_domain[$i], "/"),
-                    'jump_domain' => $jumpUrl,
-                    'remark' => $data['remark'],
-                    'created_at' => $nowTime,
-                ];
-            }
-            try {
-                $data = $all;
-                Db::name($this->table)->insertAll($all);
-            } catch (Exception $e) {
-                $this->error("域名添加失败，{$e->getMessage()}");
+        if ($this->request->isPost()) {
+            if (!isset($data['id'])) {
+                $call_domain = explode(PHP_EOL, trim($data['call_domain'], PHP_EOL));
+                $jump_domain = explode(PHP_EOL, trim($data['jump_domain'], PHP_EOL));
+                $num = count($call_domain);
+                if ($num < 1 || $num != count($jump_domain)) {
+                    $this->error('访问域名和跳转域名个数不匹配');
+                }
+                $all = [];
+                $nowTime = time();
+                for ($i = 0; $i < $num; $i++) {
+                    $jumpTmp = explode(' ', $jump_domain[$i]);
+                    $jumpUrl = empty($jumpTmp[1]) ? trim($jumpTmp[0], "/") : trim($jumpTmp[0], "/") . '?ChannelCode=' . $jumpTmp[1];
+                    $all[] = [
+                        'call_domain' => trim($call_domain[$i], "/"),
+                        'jump_domain' => $jumpUrl,
+                        'remark' => $data['remark'],
+                        'created_at' => $nowTime,
+                    ];
+                }
+                Db::startTrans();
+                try {
+                    $data = $all;
+                    foreach ($all as $k => $v) {
+                        Db::name($this->table)->where('call_domain', $v['call_domain'])->delete();
+                    }
+                    Db::name($this->table)->insertAll($all);
+                    Db::commit();
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error("域名添加失败，{$e->getMessage()}");
+                }
+            } else {
+                $call_domain = explode(PHP_EOL, trim($data['call_domain']));
+                $jump_domain = explode(PHP_EOL, trim($data['jump_domain']));
+                $data['call_domain'] = trim($call_domain[0]);
+                $data['jump_domain'] = trim($jump_domain[0]);
             }
         }
     }
