@@ -91,13 +91,10 @@ class Template extends Controller
         $fetchData = [
             'base_url' => $schemeDomain . '/' . $tempData['package'] . '/', // 页面默认URL
             'download_type' => 1, // 应用下载方式，1普通下载，2openinstall
-            'channel_code' => 'xxxxxxx', // 渠道号
             'ad_config_install_type' => 1, // 安卓安装方式，1托管APK，2外部APK
             'ad_download_url' => '', // 安卓安装地址
             'pg_config_install_type' => 1, // 苹果安装方式，1托管IPA，2外部IPA，3AppStore及其他，4外部plist
             'pg_download_url' => '', // 苹果安装地址
-            'statistics_code' => '', // 统计代码
-            'openintsall_app_key' => 'xxxxxxxxxxx',
         ];
         $extData = json_decode($tempData['ext_json'], true);
         if (!empty($extData)) {

@@ -545,32 +545,33 @@ class App extends Controller
             $data['status'] = $data['status'] ?? 0;
             $data['updated_at'] = time();
             $num = count($data['bind_v1'] ?? []);
-            if ($num < 1) {
-                $this->error('域名配置不能为空');
-            }
-            if ($num < 1 || count($data['bind_v2'] ?? []) < 1 || count($data['bind_v3'] ?? []) < 1) {
-                $this->error('域名配置数量不匹配');
-            }
             $insertAll = [];
-            for ($i = 0; $i < $num; $i++) {
-                $val1 = trim($data['bind_v1'][$i]);
-                $val2 = trim($data['bind_v2'][$i]);
-                $val3 = trim($data['bind_v3'][$i]);
-                if (empty($val1) || empty($val2) || empty($val3)) {
-                    $this->error('域名配置不能留空');
+            if ($num > 0) {
+                if (count($data['bind_v2'] ?? []) < 1 || count($data['bind_v3'] ?? []) < 1) {
+                    $this->error('域名配置数量不匹配');
                 }
-                $insertAll[] = [
-                    'app_id' => $id,
-                    'domain' => $val1,
-                    'channel_code' => $val2,
-                    'statistics_code' => $val3,
-                    'created_at' => time(),
-                ];
+                for ($i = 0; $i < $num; $i++) {
+                    $val1 = trim($data['bind_v1'][$i]);
+                    $val2 = trim($data['bind_v2'][$i]);
+                    $val3 = trim($data['bind_v3'][$i]);
+                    if (empty($val1) || empty($val2) || empty($val3)) {
+                        $this->error('域名配置不能留空');
+                    }
+                    $insertAll[] = [
+                        'app_id' => $id,
+                        'domain' => $val1,
+                        'channel_code' => $val2,
+                        'statistics_code' => $val3,
+                        'created_at' => time(),
+                    ];
+                }
             }
             Db::startTrans();
             try {
                 Db::name('SystemAppDomain')->where('app_id', $id)->delete();
-                Db::name('SystemAppDomain')->insertAll($insertAll);
+                if (!empty($insertAll)) {
+                    Db::name('SystemAppDomain')->insertAll($insertAll);
+                }
                 Db::commit();
             } catch (Exception $e) {
                 Db::rollback();
