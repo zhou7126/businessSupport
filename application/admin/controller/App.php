@@ -497,7 +497,7 @@ class App extends Controller
                     $this->error('扩展数据个数不匹配');
                 }
                 for ($i = 0; $i < count($ext_key); $i++) {
-                    if (empty(trim($ext_key[$i])) || empty(trim($ext_value[$i]))) {
+                    if (empty(trim($ext_key[$i]))) {
                         $this->error('扩展数据不能留空');
                     }
                     $ext_data[trim($ext_key[$i])] = trim($ext_value[$i]);
