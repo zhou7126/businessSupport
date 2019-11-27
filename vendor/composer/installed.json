@@ -1,17 +1,61 @@
 [
     {
-        "name": "aliyuncs/oss-sdk-php",
-        "version": "v2.3.0",
-        "version_normalized": "2.3.0.0",
+        "name": "abbotton/ios-png-parser",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
-            "url": "https://github.com/aliyun/aliyun-oss-php-sdk.git",
-            "reference": "e69f57916678458642ac9d2fd341ae78a56996c8"
+            "url": "https://github.com/Abbotton/ios-png-parser.git",
+            "reference": "db5a2475ccfe033f4c27223c505d5a2620c04624"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/aliyun/aliyun-oss-php-sdk/zipball/e69f57916678458642ac9d2fd341ae78a56996c8",
-            "reference": "e69f57916678458642ac9d2fd341ae78a56996c8",
+            "url": "https://api.github.com/repos/Abbotton/ios-png-parser/zipball/db5a2475ccfe033f4c27223c505d5a2620c04624",
+            "reference": "db5a2475ccfe033f4c27223c505d5a2620c04624",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "php": ">=5.6"
+        },
+        "time": "2017-12-20T07:36:15+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "IosPngParser\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Abbotton",
+                "email": "uctoo@foxmail.com"
+            }
+        ],
+        "description": "A PHP-based tool for parsing IOS application icons in IPA files"
+    },
+    {
+        "name": "aliyuncs/oss-sdk-php",
+        "version": "v2.3.1",
+        "version_normalized": "2.3.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/aliyun/aliyun-oss-php-sdk.git",
+            "reference": "053d7ba9e798e4c09b9c5c1edab153d25ea9643a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/aliyun/aliyun-oss-php-sdk/zipball/053d7ba9e798e4c09b9c5c1edab153d25ea9643a",
+            "reference": "053d7ba9e798e4c09b9c5c1edab153d25ea9643a",
             "shasum": "",
             "mirrors": [
                 {
@@ -27,7 +71,7 @@
             "phpunit/phpunit": "~4.0",
             "satooshi/php-coveralls": "~1.0"
         },
-        "time": "2018-01-08T06:59:35+00:00",
+        "time": "2019-11-15T11:05:42+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -114,6 +158,50 @@
             "qr",
             "qrcode",
             "symfony"
+        ]
+    },
+    {
+        "name": "jiajialu/aliyun-sdk-oss",
+        "version": "2.2.4",
+        "version_normalized": "2.2.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://gitee.com/jiajialu/aliyun-sdk-oss",
+            "reference": "6186549966181b2323b02a0f154ba62334462d33"
+        },
+        "require": {
+            "php": ">=5.3"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.0",
+            "satooshi/php-coveralls": "~1.0"
+        },
+        "time": "2018-12-14T04:59:16+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "AliCloud\\OSS\\": "src/OSS/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Alu",
+                "email": "alu@xdreport.com",
+                "homepage": "https://gitee.com/jiajialu"
+            }
+        ],
+        "description": "aliyun-php-sdk-oss 封装，支持composer方式使用",
+        "homepage": "https://gitee.com/jiajialu/aliyun-sdk-oss",
+        "keywords": [
+            "alicloud",
+            "aliyun",
+            "oss",
+            "sdk"
         ]
     },
     {
@@ -343,6 +431,65 @@
                 "name": "yunwuxin",
                 "email": "448901948@qq.com"
             }
+        ]
+    },
+    {
+        "name": "tufanbarisyildirim/php-apk-parser",
+        "version": "2.0.1",
+        "version_normalized": "2.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/tufanbarisyildirim/php-apk-parser.git",
+            "reference": "27369fef34184a6a50479dfaf03d35af0201d22e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/tufanbarisyildirim/php-apk-parser/zipball/27369fef34184a6a50479dfaf03d35af0201d22e",
+            "reference": "27369fef34184a6a50479dfaf03d35af0201d22e",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "ext-json": "*",
+            "ext-libxml": "*",
+            "ext-mbstring": "*",
+            "ext-simplexml": "*",
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "3.7.*"
+        },
+        "time": "2019-02-13T08:25:39+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "ApkParser": "lib"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Tufan Baris YILDIRIM",
+                "email": "tufanbarisyildirim@gmail.com",
+                "homepage": "http://tufanbarisyildirim.com",
+                "role": "Developer"
+            }
+        ],
+        "description": "Read basic info about an application from .apk file.",
+        "homepage": "https://github.com/tufanbarisyildirim/php-apk-parser",
+        "keywords": [
+            "android",
+            "apk",
+            "parser"
         ]
     },
     {

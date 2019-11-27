@@ -151,6 +151,31 @@
 <script src="__ROOT__/static/plugs/qrcode/jquery.qrcode.js"></script>
 <script src="__ROOT__/static/plugs/qrcode/qrcode.js"></script>
 <script>
+    function createUniqueId(n) {
+        var random = function() { // 生成10-12位不等的字符串
+            return Number(Math.random().toString().substr(2)).toString(36); // 转换成十六进制
+        };
+        var arr = [];
+        function createId() {
+            var num = random();
+            var _bool = false;
+            arr.forEach(v => {
+                if(v === num) _bool = true;
+            });
+            if(_bool) {
+                createId();
+            }else {
+                arr.push(num);
+            }
+        }
+        var i = 0;
+        while(i < n) {
+            createId();
+            i++;
+        }
+        return arr;
+    }
+
     $('.app_ceshi').click(function () {
         jQuery('#qrcode').html('');
         var url = $(this).data('url');
@@ -166,6 +191,7 @@
 
     var upload = layui.upload;
     var element = layui.element;
+    var progressKey = createUniqueId(1)[0];
     element.render('progress', 'demo');
 
     {if sysconf('package_upload_type')=='tx'}
@@ -213,11 +239,17 @@
     {else}
     upload.render({
         elem: '#upload'
-        ,url: "{:url('app/package_upload')}"
+        ,url: "{:url('api.plugs/uploadPackage')}"
         ,accept: 'file' //允许上传的文件类型
         ,size: 5000000 //最大允许上传的文件大小
         ,exts:'apk'
         ,acceptMime:'application/vnd.android.package-archive'
+        ,data: {
+            progressKey: function(){
+                progressKey = createUniqueId(1)[0];
+                return progressKey;
+            }
+        }
         ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
             // layer.load(); //上传loading
             $('.jindu').show(500);
@@ -240,16 +272,28 @@
                 }
             });
         }
-        ,progress: function(n){
-            var percent = n + '%' ;//获取进度百分比
-            element.progress('demo', percent); //可配合 layui 进度条元素使用
-        }
         ,error: function(index, upload){
             console.log(index);
             console.log(upload);
         }
     });
     {/if}
+
+
+
+        setInterval(function () {
+            $.ajax({
+                type: "post",
+                url: "{:url('progress')}",
+                data:{progressKey:progressKey},
+                success: function(rJson) {
+                    var percent = rJson + '%' ;//获取进度百分比
+                    element.progress('demo', percent); //可配合 layui 进度条元素使用
+                }
+            });
+        },10000);
+
+
 </script>
 
 

@@ -22,7 +22,11 @@
     "topthink/framework": "5.1.*",
     "zoujingli/ip2region": "^1.0",
     "zoujingli/think-library": "5.1.*-dev",
-    "zoujingli/weopen-developer": "dev-master"
+    "zoujingli/weopen-developer": "dev-master",
+    "jiajialu/aliyun-sdk-oss": "^2.2",
+    "abbotton/ios-png-parser": "dev-master",
+    "tufanbarisyildirim/php-apk-parser": "^2.0",
+    "aliyuncs/oss-sdk-php": "^2.3"
   },
   "repositories": {
     "packagist": {

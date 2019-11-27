@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>	
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">	
+<plist version="1.0">	
+<dict>	
+	<key>items</key>	
+	<array>	
+		<dict>	
+			<key>assets</key>	
+			<array>	
+				<dict>	
+					<key>kind</key>	
+					<string>software-package</string>	
+					<key>url</key>	
+					<string>{{DOWNLOAD_URL}}</string>
+				</dict>	
+				<dict>
+                    <key>kind</key>
+                    <string>full-size-image</string>
+                    <key>needs-shine</key>
+                    <false/>
+                    <key>url</key>
+                    <string>{{LOGO57}}</string>
+                </dict>
+                <dict>
+                    <key>kind</key>
+                    <string>display-image</string>
+                    <key>needs-shine</key>
+                    <false/>
+                    <key>url</key>
+                    <string>{{LOGO512}}</string>
+                </dict>
+			</array>	
+			<key>metadata</key>	
+			<dict>	
+				<key>bundle-identifier</key>	
+				<string>{{PACKAGE}}</string>
+				<key>bundle-version</key>	
+				<string>{{VERSION}}</string>
+				<key>kind</key>	
+				<string>software</string>	
+				<key>subtitle</key>	
+				<string>UDID</string>	
+				<key>title</key>	
+				<string>{{NAME}}”-若提示未信任的开发者 请在(设置>通用>设备管理)中添加信任</string>
+			</dict>	
+		</dict>	
+	</array>	
+</dict>	
+</plist>

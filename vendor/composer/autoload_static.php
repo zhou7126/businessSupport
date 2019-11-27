@@ -39,6 +39,10 @@ class ComposerStaticInitaf543090a14d5bae306c4ccd766cf053
         array (
             'OSS\\' => 4,
         ),
+        'I' => 
+        array (
+            'IosPngParser\\' => 13,
+        ),
         'E' => 
         array (
             'Endroid\\QrCode\\' => 15,
@@ -46,6 +50,7 @@ class ComposerStaticInitaf543090a14d5bae306c4ccd766cf053
         'A' => 
         array (
             'AliPay\\' => 7,
+            'AliCloud\\OSS\\' => 13,
         ),
     );
 
@@ -88,6 +93,10 @@ class ComposerStaticInitaf543090a14d5bae306c4ccd766cf053
         array (
             0 => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS',
         ),
+        'IosPngParser\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/abbotton/ios-png-parser/src',
+        ),
         'Endroid\\QrCode\\' => 
         array (
             0 => __DIR__ . '/..' . '/endroid/qr-code/src',
@@ -95,6 +104,20 @@ class ComposerStaticInitaf543090a14d5bae306c4ccd766cf053
         'AliPay\\' => 
         array (
             0 => __DIR__ . '/..' . '/zoujingli/wechat-developer/AliPay',
+        ),
+        'AliCloud\\OSS\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jiajialu/aliyun-sdk-oss/src/OSS',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'A' => 
+        array (
+            'ApkParser' => 
+            array (
+                0 => __DIR__ . '/..' . '/tufanbarisyildirim/php-apk-parser/lib',
+            ),
         ),
     );
 
@@ -108,6 +131,7 @@ class ComposerStaticInitaf543090a14d5bae306c4ccd766cf053
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitaf543090a14d5bae306c4ccd766cf053::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitaf543090a14d5bae306c4ccd766cf053::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitaf543090a14d5bae306c4ccd766cf053::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitaf543090a14d5bae306c4ccd766cf053::$classMap;
 
         }, null, ClassLoader::class);

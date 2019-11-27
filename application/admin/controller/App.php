@@ -352,14 +352,27 @@ class App extends Controller
         $appId = $this->request->param('appId');
         if (!$updateData) $this->error('包数据为空');
         if (!$appId) $this->error('appId为空');
+
+
+        switch (sysconf('package_upload_type')){
+            case 'tx' :
+                $path = self::UPLOAD_PACKAGE_DOMAIN . $updateData['package_file'];
+                $iconimage = self::UPLOAD_PACKAGE_DOMAIN . $updateData['iconimage'];
+                break;
+            default:
+                $path = $updateData['ossUrl'] ?? '';
+                $iconimage =  $_SERVER['HTTP_HOST'] . $updateData['iconimage'];
+        }
+        if (!$path) $this->error('上传文件路径为空');
+
         $data = [
             'app_id' => $appId,
-            'path' => self::UPLOAD_PACKAGE_DOMAIN . $updateData['package_file'],
+            'path' => $path,
             'size' => $updateData['size'] . 'M',
             'type' => self::AD,
             'data' => json_encode([
                 'package' => $updateData['signname'],
-                'iconimage' => self::UPLOAD_PACKAGE_DOMAIN . $updateData['iconimage'],
+                'iconimage' => $iconimage,
                 'versionName' => $updateData['version'],
                 'versionCode' => $updateData['version'],
             ]),
@@ -375,6 +388,13 @@ class App extends Controller
         }
     }
 
+
+    public function progress()
+    {
+        $jindu = $this->request->param('progressKey');
+
+        return session($jindu) ?? 0;
+    }
 
     /**
      * @auth true
