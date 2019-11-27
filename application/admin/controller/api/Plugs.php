@@ -143,7 +143,6 @@ class Plugs extends Controller
 
     public function uploadPackage()
     {
-        set_time_limit(0);
         try {
             $rJson = $this->upload();
         } catch (PDOException $e) {
@@ -161,16 +160,6 @@ class Plugs extends Controller
             $this->error($data->error->message);
         }
 
-
-        //上传oss
-        $progressKey = $this->request->param('progressKey');
-        $ossRes = $this->uploadOss(ROOT_PATH . trim($data->key,'/'),$progressKey);
-        var_dump($ossRes);die;
-
-        if(empty($ossRes['url'])){
-            $this->error("上传oss错误");
-        }
-
         $tmp = explode('.',$data->key);
         $suffix = array_pop($tmp);
         $url = $data->key;
@@ -179,11 +168,9 @@ class Plugs extends Controller
         //解析文件
         if ($suffix == 'apk') {
             $apk = $this->readApk($url, $size);
-            array_push($apk,['ossUrl' => $ossRes['url']]);
             $this->success('成功',$apk);
         } else if ($suffix == 'ipa') {
             $ipa = $this->readIpa($url, $size,$domain);
-            array_push($ipa,['ossUrl' => $ossRes['url']]);
             $this->success('成功',$ipa);
         }
     }
@@ -196,13 +183,18 @@ class Plugs extends Controller
         $accessKeySecret = "WfZvPEEuqYvDMUhIGvc2nv1DNFdH2D";
         $endpoint = "http://oss-cn-beijing.aliyuncs.com";
         $bucket = "duke-apk-ipa";
-
         $ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
-       /* $tmp = explode('/',$file);
+        $tmp = explode('/',$file);
         $filename = array_pop($tmp);
-        return $ossClient->uploadFile($bucket, $filename, $file);*/
-
-        return $this->putObjectByRawApis($ossClient,$bucket,'test',$file,$progressKey);
+        return $ossClient->uploadFile($bucket, $filename, $file);
+        /*$obj = 'package';
+        $res = $this->putObjectByRawApis($ossClient,$bucket,$obj,$file,$progressKey);
+        $tmp = explode('/',$file);
+        $filename = array_pop($tmp);
+        if(!empty($res['info']['url'])){
+            return ['url' => $endpoint . '/' .$obj . '/' . $filename] ;
+        }
+        return null;*/
     }
 
 
@@ -262,7 +254,7 @@ class Plugs extends Controller
             }
             //进度
             $tmp = ($i + 1) / $count * 100;
-            session($progressKey, round( $tmp ,2 ));
+            // session($progressKey, round( $tmp ,2 ));
         }
         $uploadParts = array();
         foreach ($responseUploadPart as $i => $eTag) {
@@ -276,7 +268,7 @@ class Plugs extends Controller
          */
         try {
             $res = $ossClient->completeMultipartUpload($bucket, $object, $uploadId, $uploadParts);
-            session($progressKey, null);
+            //session($progressKey, null);
             return $res;
         } catch (OssException $e) {
             $this->error(
