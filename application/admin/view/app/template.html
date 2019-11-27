@@ -78,8 +78,12 @@
     }
 
     .ext_json_value {
-        width: 500px;
+        width: 400px;
         display: inline;
+    }
+
+    .ext_json_desc {
+        margin-left: 20px;
     }
 
     .ext_json_line {
@@ -152,6 +156,8 @@
                                     <input type="text" name="ext_value[]" disabled placeholder="请输入配置值"
                                            value=""
                                            class="layui-input ext_json_value">
+                                    <span class="ext_json_desc"></span>
+                                    <input type="hidden" class="ext_json_desc_txt" disabled name="ext_desc[]" value="" />
                                 </div>
                             </div>
 
@@ -201,8 +207,14 @@
                     let extJsonItem = $(".ext_json_muban").children().clone(true);
                     extJsonItem.find('input').attr('disabled', false);
                     extJsonItem.find('.ext_json_key').val(key);
-                    extJsonItem.find('.ext_json_value').val(tempData[key]);
 
+                    if (typeof tempData[key] == 'string') {
+                        extJsonItem.find('.ext_json_value').val(tempData[key]);
+                    } else {
+                        extJsonItem.find('.ext_json_value').val(tempData[key].val);
+                        extJsonItem.find('.ext_json_desc').html(tempData[key].desc);
+                        extJsonItem.find('.ext_json_desc_txt').val(tempData[key].desc);
+                    }
                     if (key.substr(0, 3) == 'img') {
                         extJsonItem.find('.ext_json_value').addClass('layui-hide');
                         extJsonItem.find('.ext_json_value').uploadOneImage(); // 给每张图片绑定上传事件

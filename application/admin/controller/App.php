@@ -192,7 +192,11 @@ class App extends Controller
         } else {
             foreach ($extData as $k => $v) {
                 if (substr($k, 0, 3) == 'img') {
-                    $extData[$k] = $tempData['package'] . '/' . str_replace("../", "", $v);
+                    if (isset($v['val'])) {
+                        $extData[$k]['val'] = $tempData['package'] . '/' . str_replace("../", "", $v['val'] ?? '');
+                    } else {
+                        $extData[$k] = $tempData['package'] . '/' . str_replace("../", "", $v);
+                    }
                 }
             }
         }
@@ -361,7 +365,7 @@ class App extends Controller
         if (!$appId) $this->error('appId为空');
 
 
-        switch (sysconf('package_upload_type')){
+        switch (sysconf('package_upload_type')) {
             case 'tx' :
                 $path = self::UPLOAD_PACKAGE_DOMAIN . $updateData['package_file'];
                 $iconimage = self::UPLOAD_PACKAGE_DOMAIN . $updateData['iconimage'];
@@ -371,7 +375,7 @@ class App extends Controller
                 break;
             default:
                 $path = "http://" . $_SERVER['HTTP_HOST'] . $updateData['package_file'];
-                $iconimage =  "http://" .$_SERVER['HTTP_HOST'] . $updateData['iconimage'];
+                $iconimage = "http://" . $_SERVER['HTTP_HOST'] . $updateData['iconimage'];
                 $img = $iconimage;
                 $is_oss = 1;
                 $oss_status = 0;
@@ -409,7 +413,7 @@ class App extends Controller
     {
         $jindu = $this->request->param('progressKey');
 
-        return  0;
+        return 0;
     }
 
     /**
@@ -423,7 +427,7 @@ class App extends Controller
         if (!$updateData) $this->error('包数据为空');
         if (!$appId) $this->error('appId为空');
 
-        switch (sysconf('package_upload_type')){
+        switch (sysconf('package_upload_type')) {
             case 'tx' :
                 $path = self::UPLOAD_PACKAGE_DOMAIN . $updateData['package_file'];
                 $iconimage = self::UPLOAD_PACKAGE_DOMAIN . $updateData['iconimage'];
@@ -433,8 +437,8 @@ class App extends Controller
                 break;
             default:
                 $path = "http://" . $_SERVER['HTTP_HOST'] . $updateData['package_file'];
-                $iconimage =  "http://" .$_SERVER['HTTP_HOST'] . $updateData['iconimage'];
-                $plist_path = "http://" .$_SERVER['HTTP_HOST'] . $updateData['plist_path'];
+                $iconimage = "http://" . $_SERVER['HTTP_HOST'] . $updateData['iconimage'];
+                $plist_path = "http://" . $_SERVER['HTTP_HOST'] . $updateData['plist_path'];
                 $is_oss = 1;
                 $oss_status = 0;
         }
@@ -549,6 +553,7 @@ class App extends Controller
 
                 $ext_key = $data['ext_key'];
                 $ext_value = $data['ext_value'];
+                $ext_desc = $data['ext_desc'];
                 if (count($ext_key) != count($ext_value)) {
                     $this->error('扩展数据个数不匹配');
                 }
@@ -556,7 +561,10 @@ class App extends Controller
                     if (empty(trim($ext_key[$i]))) {
                         $this->error('扩展数据不能留空');
                     }
-                    $ext_data[trim($ext_key[$i])] = str_replace($this->request->domain(), '', trim($ext_value[$i]));
+                    $ext_data[trim($ext_key[$i])] = [
+                        'val' => str_replace($this->request->domain(), '', trim($ext_value[$i])),
+                        'desc' => trim($ext_desc[$i] ?? '')
+                    ];
                 }
             }
 
