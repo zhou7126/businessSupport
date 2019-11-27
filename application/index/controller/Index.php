@@ -72,7 +72,7 @@ class Index extends Controller
                         if ($extKey == 'channel_code' && !empty($channelCode)) {
                             continue;
                         }
-                        $fetchData[$extKey] = is_array($extVal) ? json_encode($extVal, JSON_UNESCAPED_UNICODE) : $extVal;
+                        $fetchData[$extKey] = $extVal;
                     }
                 }
 
