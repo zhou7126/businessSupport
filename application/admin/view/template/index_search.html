@@ -11,21 +11,6 @@
             </div>
         </div>
         <div class="layui-form-item layui-inline">
-            <label class="layui-form-label">模板分组</label>
-            <div class="layui-input-inline">
-                <select class="layui-select" name="class_id">
-                    <option value="">全部</option>
-                    {foreach $className as $k=>$v}
-                    {eq name='Think.get.class_id' value='$k.""'}
-                    <option selected value="{$k}">{$v}</option>
-                    {else}
-                    <option value="{$k}">{$v}</option>
-                    {/eq}
-                    {/foreach}
-                </select>
-            </div>
-        </div>
-        <div class="layui-form-item layui-inline">
             <label class="layui-form-label">创建时间</label>
             <div class="layui-input-inline">
                 <input data-date-range name="created_at" value="{$Think.get.created_at|default=''}" placeholder="请选择创建时间" class="layui-input">

@@ -16,25 +16,6 @@
 
         <div class="layui-form-item">
             <label class="relative block">
-                <span class="color-green font-w7">模板分组</span>
-                <span class="color-desc margin-left-5">Classname</span>
-            </label>
-            <div class="layui-clear">
-                <select class="layui-select block" name="class_id">
-                    {foreach tempCate as $v}
-                    {if isset($vo) and isset($vo.class_id)}
-                    <option {if $vo.class_id eq $v.id} selected {/if} value="{$v.id}">{$v.name}</option>
-                    {else}
-                    <option value="{$v.id}">{$v.name}</option>
-                    {/if}
-                    {/foreach}
-                </select>
-            </div>
-            <p class="help-block">请选择模板所在分组。</p>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="relative block">
                 <span class="color-green font-w7">模板压缩包</span>
                 <span class="color-desc margin-left-5">Zip</span>
             </label>

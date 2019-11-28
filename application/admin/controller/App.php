@@ -115,7 +115,7 @@ class App extends Controller
             ->leftJoin('system_template t', 'a.template_id = t.id')
             ->where('a.id', $id)
             ->where(self::authWhere('a.uid'))
-            ->field('a.*,t.name as tem_name,t.class_id')
+            ->field('a.*,t.name as tem_name')
             ->find();
         if ($temId) {
             $temHistory = Db::name('SystemTemplateHistory')
@@ -128,9 +128,6 @@ class App extends Controller
             $this->row['ext_json'] = $extJson ? $extJson['ext_json'] : '';
         }
         $where = [];
-        if (!empty($this->row['class_id'])) {
-            $where['t.class_id'] = $this->row['class_id'];
-        }
 
         $this->templates = Db::name('SystemTemplate')
             ->alias('t')
@@ -147,11 +144,6 @@ class App extends Controller
             ->where(self::authWhere("t.uid"))
             ->field('t.*,h.template_id as hid')
             ->order('t.created_at desc')->select();
-        $this->templateClasss = Db::name('SystemTemplateClass')
-            ->where('is_deleted', 0)
-            ->where(self::authWhere())
-            ->select();
-
 
         if (!empty($this->row['ext_json'])) {
             $this->ext_json = json_decode($this->row['ext_json'], true);
