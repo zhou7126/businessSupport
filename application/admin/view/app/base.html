@@ -5,72 +5,6 @@
     .think-box-shadow {
         min-width: 1250px;
     }
-
-    .app-detail-left {
-        width: 20%;
-        min-height: 700px;
-        background-color: #2C333D;
-        float: left;
-        margin-left: 20px;
-    }
-
-    .app-left-top {
-        margin-top: 10px;
-        text-align: center;
-    }
-
-    .app-left-top img {
-        width: 32%;
-    }
-
-    .app-left-top .app-name {
-        font-size: 16px;
-        color: #fff;
-        margin: 17px 0 6px 0;
-    }
-
-    .app-left-top .app-key {
-        font-size: 17px;
-        color: #fff;
-    }
-
-    .app-left-botton {
-        margin-top: 31px;
-        margin-left: 20px;
-    }
-
-    .app-left-botton-1 {
-        font-size: 16px;
-        color: #7c7c7c;
-    }
-
-    .app-left-botton-title {
-        font-size: 17px;
-        color: #fff;
-    }
-
-    .yuan {
-        width: 14px;
-        height: 14px;
-        border-radius: 8px;
-        background-color: #ccc;
-        margin-right: 7px;
-        display: inline-block;
-    }
-
-    .app-left-botton-title-text {
-        line-height: 34px;
-        cursor: pointer;
-    }
-
-    .app-detail-right {
-        float: left;
-        width: 73%;
-        margin: 0 33px 0 15px;
-        min-height: 700px;
-        /*border: 1px #000000 solid;*/
-    }
-
     .app-detail-right .layui-tab-card {
         padding: 20px 25px;
     }
@@ -127,11 +61,7 @@
         margin-top: 0;
     }
 
-    .fanhui {
-        margin-left: 20px;
-        margin-bottom: 10px;
 
-    }
 
 
     .app-domain-hr {
@@ -172,36 +102,20 @@
 
     .muban-save {
         margin: 50px auto 20PX;
-        text-align: center;
+        text-align: left!important;
     }
+
 </style>
-{/block}
-{block name="button"}
-
-{if auth("add")}
-<button data-modal='{:url("add")}' data-title="添加APP" class='layui-btn layui-btn-sm layui-btn-primary'>添加APP</button>
-{/if}
-
-{if auth("remove")}
-<button data-action='{:url("remove")}' data-rule="id#{key}" data-csrf="{:systoken('remove')}"
-        data-confirm="确定要删除这些APP吗？" class='layui-btn layui-btn-sm layui-btn-primary'>删除APP
-</button>
-{/if}
-
 {/block}
 
 {block name="content"}
 <div class="think-box-shadow">
-    <a data-open="{:url('app/index')}">
-        <button type="button" class="layui-btn layui-btn-primary fanhui">返回</button>
-    </a>
-
     <div class="app-detail">
         {include file="app/left" /}
         <div class="app-detail-right">
-            <form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post"
+            <form class="layui-form" action="{:request()->url()}" data-auto="true" method="post"
                   autocomplete="off">
-                <div class="layui-card-body layui-tab-card">
+                <div class="layui-card-body">
                     <div class="layui-form-item">
                         <label class="relative block">
                             <span class="color-green font-w7">应用名称</span>
@@ -255,7 +169,7 @@
                     </div>
 
 
-                    <div class="app-domain layui-tab-card">
+                    <div class="app-domain">
                         <div class="app-domain-hr">
                             <div class="app-domain-hr1 color-green font-w7">域名</div>
                             <div class="app-domain-hr2 color-green font-w7">渠道号</div>
