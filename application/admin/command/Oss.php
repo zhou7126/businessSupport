@@ -63,7 +63,8 @@ class Oss extends Command
             try {
                 echo "id:{$id}开始上传\n";
                 $uploading($id);
-                $res = $ossClient->uploadFile($bucket, $filename, ROOT_PATH . trim($file,'/'));
+                $object = date('Ymd') .'/'. $filename;
+                $res = $ossClient->uploadFile($bucket, $object, ROOT_PATH . trim($file,'/'));
                 if(empty($res['info']['url']))  {
                     echo "id:{$id}上传失败\n";
                     $restart($id);

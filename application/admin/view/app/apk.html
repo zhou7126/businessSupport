@@ -105,9 +105,11 @@
                 <div class="layui-progress layui-progress-big jindu" hidden lay-filter="demo" lay-showPercent="true">
                     <div class="layui-progress-bar" lay-percent="0%"></div>
                 </div>
+                {if auth("addApk")}
                 <button type="button" id="upload" class="layui-btn layui-btn-primary margin-right-5">
                     <i class="layui-icon layui-icon-vercode font-s14"></i> 上传
                 </button>
+                {/if}
             </div>
             <table class="layui-table" >
                 <colgroup>
@@ -135,7 +137,10 @@
                     <td>{$vo.created_at|format_datetime}</td>
                     <td>
                         <a href="javascript:;" class="layui-btn layui-btn-sm app_ceshi" data-url="{$vo.path}">测试</a>
+                        {if auth("removePackage")}
                         <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要删除该apk吗？" data-action="{:url('removePackage')}" data-value="id#{$vo.id}" data-csrf="{:systoken('removePackage')}">删 除</a>
+                        {/if}
+
                     </td>
                 </tr>
                 {/foreach}

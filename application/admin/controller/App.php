@@ -215,7 +215,7 @@ class App extends Controller
 
 
     /**
-     * ad集成
+     * Android集成
      * @auth true
      *
      * @throws \think\Exception
@@ -255,7 +255,10 @@ class App extends Controller
 
 
     /**
+     * Android配置
+     *
      * @auth true
+     * @menu true
      * @throws \think\Exception
      * @throws \think\exception\PDOException
      */
@@ -290,7 +293,10 @@ class App extends Controller
     }
 
     /**
+     * Ios配置
+     *
      * @auth true
+     * @menu true
      * @throws \think\Exception
      * @throws \think\exception\PDOException
      */
@@ -355,7 +361,9 @@ class App extends Controller
 
 
     /**
+     * 上传apk
      * @auth true
+     * @menu true
      * @throws \think\Exception
      * @throws \think\exception\PDOException
      */
@@ -414,7 +422,12 @@ class App extends Controller
 
 
     /**
+     * 上传ipa
+     *
      * @auth true
+     * @menu true
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
      */
     public function addIpa()
     {
@@ -470,8 +483,9 @@ class App extends Controller
 
 
     /**
-     * 删除Package
+     * 删除包文件
      * @auth true
+     * @auth menu
      * @throws \think\Exception
      * @throws \think\exception\PDOException
      */
@@ -483,7 +497,7 @@ class App extends Controller
 
 
     /**
-     * ios
+     * ios集成
      * @auth true
      * @menu true
      */
@@ -523,6 +537,8 @@ class App extends Controller
             if (empty($data['name'])) $this->error('请输入应用名称！');
             $data['app_key'] = substr(md5(uniqid(rand(), true)), 0, 8);
             $data['uid'] = session('admin_user.id');
+            $data['status'] = 1;
+            $data['download_type'] = 1;
             $data['created_at'] = time();
             $data['updated_at'] = time();
         }
@@ -663,6 +679,7 @@ class App extends Controller
     /**
      * 删除APP
      * @auth true
+     * @auth menu
      * @throws \think\Exception
      * @throws \think\exception\PDOException
      */
