@@ -8,6 +8,7 @@ use think\console\Command;
 use think\console\Input;
 use think\console\Output;
 use think\Exception;
+use think\exception\PDOException;
 
 /**
  * Oss
@@ -29,10 +30,10 @@ class Oss extends Command
             ->order('created_at asc')
             ->limit(10)
             ->select();
-        $accessKeyId = "LTAIatcTnNfZauK5";
-        $accessKeySecret = "WfZvPEEuqYvDMUhIGvc2nv1DNFdH2D";
-        $endpoint = "http://oss-cn-hongkong.aliyuncs.com";
-        $bucket = "ywzclala";
+        $accessKeyId = sysconf('storage_oss_keyid');
+        $accessKeySecret = sysconf('storage_oss_secret');
+        $endpoint = "http://". sysconf('storage_oss_endpoint');
+        $bucket = sysconf('storage_oss_bucket');
         $ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
 
         $uploading = function($id) {
@@ -56,7 +57,6 @@ class Oss extends Command
             $file = $data['path'] ?? '';
             $id = $item['id'];
             if(empty($file)) continue;
-            echo "id:{$id}开始上传\n";
 
             $tmp = explode('/',$file);
             $filename = array_pop($tmp);
