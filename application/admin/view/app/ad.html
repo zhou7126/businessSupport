@@ -56,7 +56,9 @@
                         </ul>
                         <div class="layui-tab-content">
                             {include file="app/apk" /}
+                            {if auth("changeAdConfig")}
                             {include file="app/ad_config" /}
+                            {/if}
                         </div>
                     </div>
 

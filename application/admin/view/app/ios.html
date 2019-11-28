@@ -59,7 +59,9 @@
                         </ul>
                         <div class="layui-tab-content">
                             {include file="app/ipa" /}
+                            {if auth("changeAdConfig")}
                             {include file="app/ios_config" /}
+                            {/if}
                         </div>
                     </div>
 
