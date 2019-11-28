@@ -4,6 +4,11 @@
 <link rel="stylesheet" href="__ROOT__/static/plugs/swiper/swiper.min.css?at={:date('md')}">
 
 <style>
+    .app_form{
+        height: 80%;
+        overflow-y: scroll;
+    }
+
     .app-detail-right .layui-tab-card {
         padding: 20px 25px;
     }
@@ -115,52 +120,55 @@
     <div class="app-detail">
         {include file="app/left" /}
         <div class="app-detail-right">
-            <form class="layui-form" id="temForm" action="{:request()->url()}" data-auto="true" method="post"
-                  autocomplete="off">
-                <div class="layui-card-body">
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">模板ID</span>
-                            <input name="template_id" id="template_id" value='{$row.template_id}'
-                                   oninput="value=value.replace(/[^\d]/g,'')"
-                                   class="layui-input duan-input"
-                                   placeholder="输入模板ID进行搜索">
-                            <span class="muban-search"></span>
-                        </label>
-                    </div>
+            <div class="app_form">
+                <form class="layui-form" id="temForm" action="{:request()->url()}" data-auto="true" method="post"
+                      autocomplete="off">
+                    <div class="layui-card-body">
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">模板ID</span>
+                                <input name="template_id" id="template_id" value='{$row.template_id}'
+                                       oninput="value=value.replace(/[^\d]/g,'')"
+                                       class="layui-input duan-input"
+                                       placeholder="输入模板ID进行搜索">
+                                <span class="muban-search"></span>
+                            </label>
+                        </div>
 
-                    <div class="layui-form-item">
-                        <label class="relative block">
-                            <span class="color-green font-w7 peizhi-title">参数配置</span>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7 peizhi-title">参数配置</span>
 
-                            <div class="layui-hide ext_json_muban">
-                                <div class="layui-input-block ext_json_line">
-                                    <input type="text" name="ext_key[]" readonly disabled placeholder="请输入KEY"
-                                           value=""
-                                           class="layui-input ext_json_key layui-bg-gray">
-                                    <input type="text" name="ext_value[]" disabled placeholder="请输入配置值"
-                                           value=""
-                                           class="layui-input ext_json_value">
-                                    <span class="ext_json_desc"></span>
-                                    <input type="hidden" class="ext_json_desc_txt" disabled name="ext_desc[]" value="" />
+                                <div class="layui-hide ext_json_muban">
+                                    <div class="layui-input-block ext_json_line">
+                                        <input type="text" name="ext_key[]" readonly disabled placeholder="请输入KEY"
+                                               value=""
+                                               class="layui-input ext_json_key layui-bg-gray">
+                                        <input type="text" name="ext_value[]" disabled placeholder="请输入配置值"
+                                               value=""
+                                               class="layui-input ext_json_value">
+                                        <span class="ext_json_desc"></span>
+                                        <input type="hidden" class="ext_json_desc_txt" disabled name="ext_desc[]" value="" />
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="ext_json_list">
+                                <div class="ext_json_list">
 
-                            </div>
-                        </label>
+                                </div>
+                            </label>
+                        </div>
+
+                        <input type='hidden' value='{$row.id}' name='id'>
+
+
+                        <div class="layui-form-item muban-save">
+                            <button class="layui-btn muban-save-btn" type='submit'>保存数据</button>
+                        </div>
                     </div>
 
-                    <input type='hidden' value='{$row.id}' name='id'>
+                </form>
 
-
-                    <div class="layui-form-item muban-save">
-                        <button class="layui-btn muban-save-btn" type='submit'>保存数据</button>
-                    </div>
-                </div>
-
-            </form>
+            </div>
         </div>
         <div class="clear"></div>
     </div>
