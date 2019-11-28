@@ -45,8 +45,6 @@ class Domain extends Controller
     private function authWhere($field = 'uid')
     {
         $user = session('admin_user');
-
-        return ['uid' => 111222];
         return $user['username'] == 'admin' ? [] : [$field => $user['id']];
     }
 
@@ -122,7 +120,7 @@ class Domain extends Controller
                             Db::name($this->table)->where('call_domain', $v['call_domain'])->where(self::authWhere())->delete();
                             $otherNum = Db::name($this->table)->where([
                                 ['call_domain', '=', $v['call_domain']],
-                                ['uid', '!=', self::authWhere()['uid']]
+                                ['uid', '<>', self::authWhere()['uid']]
                             ])->where(self::authWhere())->count();
                             if ($otherNum > 0) {
                                 continue;

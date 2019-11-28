@@ -1,12 +1,6 @@
 {extend name='main'}
 
 
-{block name="left-button"}
-<a data-open='{:url("template_class/index")}'>
-    <button class='layui-btn layui-btn-sm layui-btn-primary'>模板分组</button>
-</a>
-{/block}
-
 {block name="button"}
 {if auth("add")}
 <button data-modal='{:url("add")}' data-title="添加模板" class='layui-btn layui-btn-sm layui-btn-primary'>添加模板</button>
@@ -26,8 +20,10 @@
             </th>
             <th class='text-left nowrap'>ID</th>
             <th class='text-left nowrap'>模板名称</th>
+            {if $isAdmin}
+            <th class='text-left nowrap'>上传者</th>
+            {/if}
             <th class='text-left nowrap'>效果展示</th>
-            <th class='text-center nowrap'>模板分组</th>
             <th class='text-left nowrap'>创建时间</th>
             <th class='text-left nowrap'>操作</th>
         </tr>
@@ -41,10 +37,12 @@
             </td>
             <td class='text-left nowrap'>{$vo.id|default=''}</td>
             <td class='text-left nowrap'>{$vo.name|default=''}</td>
+            {if $isAdmin}
+            <td class='text-left nowrap'>{$vo.owner|default=''}</td>
+            {/if}
             <td class='text-left nowrap'>
                 <a target="_blank" href="{$vo.preview_url}">点击预览</a>
             </td>
-            <td class='text-center nowrap'>{$className[$vo.class_id]|default=''}</td>
             <td class='text-left nowrap'>{$vo.created_at|format_datetime}</td>
             <td class='text-left nowrap'>
 

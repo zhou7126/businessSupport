@@ -42,6 +42,12 @@ class Template extends Controller
         }
     }
 
+    private function authWhere($field = 'uid')
+    {
+        $user = session('admin_user');
+        return $user['username'] == 'admin' ? [] : [$field => $user['id']];
+    }
+
     /**
      * 模板列表
      * @throws \ReflectionException
@@ -55,10 +61,9 @@ class Template extends Controller
 //        $this->fetch();
 
         $this->title = '模板管理';
-        $classData = Db::name('SystemTemplateClass')->order('created_at desc')->select();
-        $this->className = array_column($classData, 'name', 'id');
-        $query = $this->_query($this->table)->like('name')->equal('class_id');
-        $query->timeBetween('created_at')->where(['is_deleted' => '0'])->order('id desc')->page();
+        $this->isAdmin = empty(self::authWhere()) ? 1 : 0;
+        $query = $this->_query($this->table)->like('name');
+        $query->timeBetween('created_at')->where(self::authWhere())->where(['is_deleted' => '0'])->order('id desc')->page();
     }
 
     protected function _index_page_filter(&$data)
@@ -66,6 +71,7 @@ class Template extends Controller
         foreach ($data as &$vo) {
 //            $vo['preview_img'] = $vo['package_img']; // 预览缩略图url
             $vo['preview_url'] = url('preview', '', '') . '?id=' . $vo['id']; //预览页面url
+            $vo['owner'] = Db::name('SystemUser')->where('id', $vo['uid'])->value('username');
         }
     }
 
@@ -133,19 +139,16 @@ class Template extends Controller
         $this->_form($this->table, 'form');
     }
 
-    public function _form_filter(&$data)
+    protected function _form_filter(&$data)
     {
         if ($this->request->isPost()) {
-            $data['class_id'] = isset($data['class_id']) ? intval($data['class_id']) : 0;
-            if (Db::name('SystemTemplateClass')->where(['id' => $data['class_id']])->count() < 1) {
-                $this->error('模板分组不存在');
-            }
+            $uid = session('admin_user.id') ?? 0;
             if (isset($data['package']) && !empty($data['package'])) { // 有上传压缩包
                 $file = str_replace('\\', '/', env('root_path') . "safefile/" . $data['package']);
                 if (!is_file($file)) {
                     $this->error('上传的压缩文件找不到');
                 }
-                $savePath = str_replace('\\', '/', env('root_path') . 'public/tpl/' . $data['class_id'] . '/' . md5_file($file));
+                $savePath = str_replace('\\', '/', env('root_path') . 'public/tpl/' . $uid . '/' . md5_file($file));
                 $zip = new ZipArchive;
                 if ($zip->open($file) === TRUE) {
                     $zip->extractTo($savePath);
@@ -153,7 +156,7 @@ class Template extends Controller
                 } else {
                     $this->error('压缩文件格式错误或已损坏');
                 }
-                $data['package'] = 'tpl/' . $data['class_id'] . '/' . md5_file($file);
+                $data['package'] = 'tpl/' . $uid . '/' . md5_file($file);
                 $data['package_img'] = $data['package'] . '/index.png';
 
                 $extJson = $data['package'] . '/index.json';
@@ -167,11 +170,11 @@ class Template extends Controller
             }
             if (isset($data['id'])) {
                 $data['updated_at'] = time();
+                Db::name('SystemTemplate')->where('id', $data['id'])->where(self::authWhere())->update($data);
             } else {
                 $data['created_at'] = time();
+                $data['uid'] = $uid;
             }
-        } else {
-            $this->tempCate = Db::name('SystemTemplateClass')->order('created_at desc')->select();
         }
     }
 
@@ -183,29 +186,7 @@ class Template extends Controller
     public function remove()
     {
         $this->applyCsrfToken();
-        $this->_delete($this->table);
+        $this->_delete($this->table, '', self::authWhere());
     }
 
-    /**
-     * 模板分组列表
-     */
-    public function cate()
-    {
-
-    }
-
-    public function cate_add()
-    {
-
-    }
-
-    public function cate_edit()
-    {
-
-    }
-
-    public function cate_del()
-    {
-
-    }
 }
