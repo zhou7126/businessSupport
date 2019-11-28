@@ -42,8 +42,7 @@ class App extends Controller
     private function authWhere($field = 'uid')
     {
         $user = session('admin_user');
-
-        return $user['username'] == 'admin' ? [] : [$field=>$user['id']];
+        return $user['id'] == 10000 ? [] : [$field=>$user['id']];
     }
     /**
      * APP管理
