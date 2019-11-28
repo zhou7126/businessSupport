@@ -87,7 +87,7 @@ class Plugs extends Controller
         $this->safe = boolval(input('safe'));
         $this->uptype = $this->getUploadType();
         $this->extend = pathinfo($file->getInfo('name'), PATHINFO_EXTENSION);
-        $name = File::name($file->getPathname(), $this->extend, '', 'md5_file');
+        $name = File::name($file->getPathname(), $this->extend, date('Ymd'), 'create_guid');
         $info = File::instance($this->uptype)->save($name, file_get_contents($file->getRealPath()), $this->safe);
 //        $savePath = ROOT_PATH .
         if (is_array($info) && isset($info['url'])) {
@@ -176,28 +176,6 @@ class Plugs extends Controller
     }
 
 
-    public function uploadOss($file,$progressKey)
-    {
-        //上传OSS
-        $accessKeyId = "LTAIatcTnNfZauK5";;
-        $accessKeySecret = "WfZvPEEuqYvDMUhIGvc2nv1DNFdH2D";
-        $endpoint = "http://oss-cn-beijing.aliyuncs.com";
-        $bucket = "duke-apk-ipa";
-        $ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
-        $tmp = explode('/',$file);
-        $filename = array_pop($tmp);
-        return $ossClient->uploadFile($bucket, $filename, $file);
-        /*$obj = 'package';
-        $res = $this->putObjectByRawApis($ossClient,$bucket,$obj,$file,$progressKey);
-        $tmp = explode('/',$file);
-        $filename = array_pop($tmp);
-        if(!empty($res['info']['url'])){
-            return ['url' => $endpoint . '/' .$obj . '/' . $filename] ;
-        }
-        return null;*/
-    }
-
-
     /**
      * Use basic multipart upload for file upload.
      *
@@ -205,7 +183,7 @@ class Plugs extends Controller
      * @param string $bucket bucket name
      * @throws OssException
      */
-    function putObjectByRawApis($ossClient, $bucket,$object,$uploadFile,$progressKey)
+    function putObjectByRawApis($ossClient, $bucket,$object,$uploadFile)
     {
         /**
          *  step 1. Initialize a block upload event, that is, a multipart upload process to get an upload id

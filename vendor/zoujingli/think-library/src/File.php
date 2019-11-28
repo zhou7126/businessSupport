@@ -162,7 +162,7 @@ class File
         empty($ext) && $ext = pathinfo($url, 4);
         empty($ext) || $ext = trim($ext, '.\\/');
         empty($pre) || $pre = trim($pre, '.\\/');
-        $splits = array_merge([$pre], str_split($fun($url), 16));
+        $splits = array_merge([$pre], str_split($fun($url), 32));
         return trim(join('/', $splits), '/') . '.' . strtolower($ext ? $ext : 'tmp');
     }
 

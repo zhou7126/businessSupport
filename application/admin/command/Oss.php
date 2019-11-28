@@ -7,6 +7,7 @@ use OSS\Core\OssException;
 use think\console\Command;
 use think\console\Input;
 use think\console\Output;
+use think\Exception;
 
 /**
  * Oss
@@ -72,7 +73,13 @@ class Oss extends Command
                 echo "id:{$id}上传成功\n";
 
             } catch (OssException $e) {
+                echo "id:{$id}上传失败\n";
                 echo $e->getMessage() ."\n";
+                $restart($id);
+            } catch (Exception $e){
+                echo "id:{$id}上传失败\n";
+                echo $e->getMessage() ."\n";
+                $restart($id);
             }
         }
         $output->writeln("完毕!");
