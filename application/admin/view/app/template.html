@@ -8,7 +8,6 @@
         height: 80%;
         overflow-y: scroll;
     }
-
     .app-detail-right .layui-tab-card {
         padding: 20px 25px;
     }
@@ -25,6 +24,7 @@
         width: 6%;
         display: inline-block;
         margin-top: 10px;
+        float: left;
     }
 
     .app-upload {
@@ -94,8 +94,17 @@
         margin-top: 50px;
     }
 
-    .muban-search {
-        color: #FF5722;
+
+    .template_id_title {
+        float: left;
+        display: inline-block;
+    }
+
+
+    .template_id_select {
+        width: 100px;
+        float: left;
+        margin-left: 0px;
     }
 
 </style>
@@ -116,7 +125,6 @@
 
 {block name="content"}
 <div class="think-box-shadow">
-
     <div class="app-detail">
         {include file="app/left" /}
         <div class="app-detail-right">
@@ -127,11 +135,23 @@
                         <div class="layui-form-item">
                             <label class="relative block">
                                 <span class="color-green font-w7 peizhi-title">模板ID</span>
-                                <input name="template_id" id="template_id" value='{$row.template_id}'
-                                       oninput="value=value.replace(/[^\d]/g,'')"
-                                       class="layui-input duan-input"
-                                       placeholder="输入模板ID进行搜索">
-                                <span class="muban-search"></span>
+                                <div class="layui-input-block">
+                                    <input type="text" name="template_id" id="template_id" placeholder="请输入KEY"
+                                           value='{$row.template_id}'
+                                           oninput="value=value.replace(/[^\d]/g,'')"
+                                           class="layui-input ext_json_key template_id_title">
+                                    <div class="layui-input-block template_id_select">
+                                        <select class="template_id_change" lay-filter="template_id_change">
+                                            {foreach $hisTempData as $k=>$v}
+                                            {if $v.template_id == $row.template_id}
+                                            <option value="{$v.template_id}" selected>{$v.name}</option>
+                                            {else}
+                                            <option value="{$v.template_id}">{$v.name}</option>
+                                            {/if}
+                                            {/foreach}
+                                        </select>
+                                    </div>
+                                </div>
                             </label>
                         </div>
 
@@ -148,7 +168,7 @@
                                                value=""
                                                class="layui-input ext_json_value">
                                         <span class="ext_json_desc"></span>
-                                        <input type="hidden" class="ext_json_desc_txt" disabled name="ext_desc[]" value="" />
+                                        <input type="hidden" class="ext_json_desc_txt" disabled name="ext_desc[]" value=""/>
                                     </div>
                                 </div>
 
@@ -169,6 +189,7 @@
                 </form>
 
             </div>
+
         </div>
         <div class="clear"></div>
     </div>
@@ -223,9 +244,14 @@
         });
     });
 
-    function test() {
-        $(".ext_json_list .layui-hide").uploadOneImage();
-    }
+    form.on('select(template_id_change)', function (data) {
+        console.log(data.elem); //得到select原始DOM对象
+        console.log(data.value); //得到被选中的值
+        console.log(data.othis); //得到美化后的DOM对象
+        $('#template_id').val(data.value).keyup();
+
+    });
+
 
     $(function () {
         $('#template_id').keyup();
