@@ -42,9 +42,14 @@ class App extends Controller
     private function authWhere($field = 'uid')
     {
         $user = session('admin_user');
-
-        return $user['username'] == 'admin' ? [] : [$field=>$user['id']];
+        return $user['id'] == 10000 ? [] : [$field => $user['id']];
     }
+
+    private function getAdminId()
+    {
+        return 10000;
+    }
+
     /**
      * APP管理
      * @auth true
@@ -110,24 +115,12 @@ class App extends Controller
     public function template()
     {
         $id = $this->request->param('id');
-        $temId = $this->request->param('temId');
         $this->row = Db::name($this->table)->alias('a')
             ->leftJoin('system_template t', 'a.template_id = t.id')
             ->where('a.id', $id)
             ->where(self::authWhere('a.uid'))
             ->field('a.*,t.name as tem_name')
             ->find();
-        if ($temId) {
-            $temHistory = Db::name('SystemTemplateHistory')
-                ->where('app_id', $id)
-                ->where('template_id', $temId)
-                ->where(self::authWhere())
-                ->order('created_at desc')
-                ->value('data');
-            $extJson = json_decode($temHistory, true);
-            $this->row['ext_json'] = $extJson ? $extJson['ext_json'] : '';
-        }
-        $where = [];
 
         $this->templates = Db::name('SystemTemplate')
             ->alias('t')
@@ -140,7 +133,6 @@ class App extends Controller
                 . ' h', 't.id = h.template_id'
             )
             ->where('t.is_deleted', 0)
-            ->where($where)
             ->where(self::authWhere("t.uid"))
             ->field('t.*,h.template_id as hid')
             ->order('t.created_at desc')->select();
@@ -150,6 +142,15 @@ class App extends Controller
         } else {
             $this->ext_json = [];
         }
+        $this->hisTempData = Db::name('SystemTemplateHistory')
+            ->alias('th')
+            ->join('system_template t', 't.id=th.template_id')
+            ->where('app_id', $id)
+            ->where(self::authWhere())
+            ->order('th.id desc')
+            ->field('th.template_id,t.name')
+            ->select();
+
         $this->applyCsrfToken();
         $this->_form($this->table, 'template');
     }
@@ -184,12 +185,12 @@ class App extends Controller
         $tempData = Db::name('systemTemplate')->where([
             'id' => $classId,
             'is_deleted' => 0
-        ])->where(self::authWhere())->field('id,package,ext_json')->find();
+        ])->where(self::authWhere())->whereOr(['uid' => $this->getAdminId()])->field('id,package,ext_json')->find();
         if (empty($tempData)) {
             $this->error('模板不存在');
         }
-        $extData = json_decode($tempData['ext_json'], true);
-        if ($extData === false) {
+        $extData = json_decode($tempData['ext_json'] ?? '', true);
+        if (empty($extData)) {
             $extData = [];
         } else {
             foreach ($extData as $k => $v) {
@@ -493,7 +494,7 @@ class App extends Controller
     public function removePackage()
     {
         $this->applyCsrfToken();
-        $this->_delete($this->tablePackage,'id',self::authWhere());
+        $this->_delete($this->tablePackage, 'id', self::authWhere());
     }
 
 
@@ -587,18 +588,18 @@ class App extends Controller
                 }
             }
 
-            $extData = Db::name('SystemTemplate')->where(self::authWhere())->where('id', $data['template_id'])->value('ext_json');
-            $extData = json_decode($extData, true);
-            if (empty($extData) || count($extData) < 1) {
-                // $this->error('模板配置数据异常');
-                $extData = [];
-            }
-            if (count($ext_data) != count($extData)) {
-                $this->error('提交数据和模板配置数量不匹配');
-            }
-            if (count(array_diff_key($ext_data, $extData)) > 0) {
-                $this->error('提交数据的键和模板配置有冲突');
-            }
+//            $extData = Db::name('SystemTemplate')->where(self::authWhere())->where('id', $data['template_id'])->value('ext_json');
+//            $extData = json_decode($extData, true);
+//            if (empty($extData) || count($extData) < 1) {
+//                // $this->error('模板配置数据异常');
+//                $extData = [];
+//            }
+//            if (count($ext_data) != count($extData)) {
+//                $this->error('提交数据和模板配置数量不匹配');
+//            }
+//            if (count(array_diff_key($ext_data, $extData)) > 0) {
+//                $this->error('提交数据的键和模板配置有冲突');
+//            }
             $data['ext_json'] = json_encode($ext_data, JSON_UNESCAPED_UNICODE);
             unset($data['ext_key'], $data['ext_value']);
             Db::name('SystemTemplateHistory')->insert([
@@ -687,7 +688,7 @@ class App extends Controller
     public function remove()
     {
         $this->applyCsrfToken();
-        $this->_delete($this->table,'id',self::authWhere());
+        $this->_delete($this->table, 'id', self::authWhere());
     }
 
 }
