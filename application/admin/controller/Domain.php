@@ -42,6 +42,14 @@ class Domain extends Controller
         }
     }
 
+    private function authWhere($field = 'uid')
+    {
+        $user = session('admin_user');
+
+        return ['uid' => 111222];
+        return $user['username'] == 'admin' ? [] : [$field => $user['id']];
+    }
+
     /**
      * 域名列表
      * @throws \ReflectionException
@@ -53,7 +61,7 @@ class Domain extends Controller
     {
         $this->title = '域名管理';
         $query = $this->_query($this->table)->like('call_domain,jump_domain,remark')->equal('status');
-        $query->timeBetween('created_at')->order('id desc')->page();
+        $query->where(self::authWhere())->timeBetween('created_at')->order('id desc')->page();
     }
 
     public function add()
@@ -89,11 +97,16 @@ class Domain extends Controller
                 $all = [];
                 $nowTime = time();
                 for ($i = 0; $i < $num; $i++) {
+                    $visitDomain = trim($call_domain[$i], "/");
+                    Db::name($this->table)->where([
+                        ['call_domain', '=', $visitDomain],
+                    ])->where(self::authWhere())->find();
                     $jumpTmp = explode(' ', $jump_domain[$i]);
                     $jumpUrl = empty($jumpTmp[1]) ? trim($jumpTmp[0], "/") : trim($jumpTmp[0], "/") . '?ChannelCode=' . $jumpTmp[1];
                     $all[] = [
-                        'call_domain' => trim($call_domain[$i], "/"),
-                        'jump_domain' => $jumpUrl,
+                        'uid' => session('admin_user.id'),
+                        'call_domain' => trim(trim($call_domain[$i]), "/"),
+                        'jump_domain' => trim($jumpUrl),
                         'remark' => $data['remark'],
                         'created_at' => $nowTime,
                     ];
@@ -101,10 +114,23 @@ class Domain extends Controller
                 Db::startTrans();
                 try {
                     $data = $all;
+                    $insertAll = [];
                     foreach ($all as $k => $v) {
-                        Db::name($this->table)->where('call_domain', $v['call_domain'])->delete();
+                        if (empty(self::authWhere())) {
+                            Db::name($this->table)->where('call_domain', $v['call_domain'])->delete();
+                        } else {
+                            Db::name($this->table)->where('call_domain', $v['call_domain'])->where(self::authWhere())->delete();
+                            $otherNum = Db::name($this->table)->where([
+                                ['call_domain', '=', $v['call_domain']],
+                                ['uid', '!=', self::authWhere()['uid']]
+                            ])->where(self::authWhere())->count();
+                            if ($otherNum > 0) {
+                                continue;
+                            }
+                        }
+                        $insertAll[] = $v;
                     }
-                    Db::name($this->table)->insertAll($all);
+                    Db::name($this->table)->insertAll($insertAll);
                     Db::commit();
                 } catch (Exception $e) {
                     Db::rollback();
@@ -115,6 +141,12 @@ class Domain extends Controller
                 $jump_domain = explode(PHP_EOL, trim($data['jump_domain']));
                 $data['call_domain'] = trim($call_domain[0]);
                 $data['jump_domain'] = trim($jump_domain[0]);
+                $update = [
+                    'call_domain' => $data['call_domain'],
+                    'jump_domain' => $data['jump_domain'],
+                    'remark' => $data['remark']
+                ];
+                Db::name($this->table)->where('id', $data['id'])->where(self::authWhere())->update($update);
             }
         }
     }
@@ -135,7 +167,7 @@ class Domain extends Controller
     public function forbid()
     {
         $this->applyCsrfToken();
-        $this->_save($this->table, ['status' => '0']);
+        $this->_save($this->table, ['status' => '0'], '', self::authWhere());
     }
 
     /**
@@ -147,7 +179,7 @@ class Domain extends Controller
     public function resume()
     {
         $this->applyCsrfToken();
-        $this->_save($this->table, ['status' => '1']);
+        $this->_save($this->table, ['status' => '1'], '', self::authWhere());
     }
 
     /**
@@ -158,7 +190,7 @@ class Domain extends Controller
     public function remove()
     {
         $this->applyCsrfToken();
-        $this->_delete($this->table);
+        $this->_delete($this->table, '', self::authWhere());
     }
 
 }
