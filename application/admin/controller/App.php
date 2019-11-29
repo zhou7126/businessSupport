@@ -96,6 +96,7 @@ class App extends Controller
     {
         $id = $this->request->param('id');
         $this->row = Db::name($this->table)->where('id', $id)->where(self::authWhere())->find();
+        if (!$this->row) $this->error('该应用不存在！');
         $this->bindDomain = Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->select();
         $this->applyCsrfToken();
         $this->_form($this->table, 'base');
@@ -121,6 +122,7 @@ class App extends Controller
             ->where(self::authWhere('a.uid'))
             ->field('a.*,t.name as tem_name')
             ->find();
+        if (!$this->row) $this->error('该应用不存在！');
 
         $this->templates = Db::name('SystemTemplate')
             ->alias('t')
@@ -223,6 +225,8 @@ class App extends Controller
     {
         $id = $this->request->param('id');
         $this->row = Db::name($this->table)->where(self::authWhere())->where('id', $id)->find();
+        if (!$this->row) $this->error('该应用不存在！');
+
         $this->row['ad_config_data'] = json_decode($this->row['ad_config_install_data'], true);
         $apk = Db::name($this->tablePackage)
             ->where('type', self::AD)
@@ -380,8 +384,10 @@ class App extends Controller
                 $oss_status = 0;
                 break;
             default:
-                $path = "http://" . $_SERVER['HTTP_HOST'] . $updateData['package_file'];
-                $iconimage = "http://" . $_SERVER['HTTP_HOST'] . $updateData['iconimage'];
+                $http = sysconf('download_package_http_type');
+                $domain = sysconf('download_package_domain');
+                $path = "{$http}://" . $domain . $updateData['package_file'];
+                $iconimage = "{$http}://" . $domain . $updateData['iconimage'];
                 $img = $iconimage;
                 $is_oss = 1;
                 $oss_status = 0;
@@ -441,9 +447,11 @@ class App extends Controller
                 $oss_status = 0;
                 break;
             default:
-                $path = "http://" . $_SERVER['HTTP_HOST'] . $updateData['package_file'];
-                $iconimage = "http://" . $_SERVER['HTTP_HOST'] . $updateData['iconimage'];
-                $plist_path = "http://" . $_SERVER['HTTP_HOST'] . $updateData['plist_path'];
+                $http = sysconf('download_package_http_type');
+                $domain = sysconf('download_package_domain');
+                $path = "{$http}://" . $domain . $updateData['package_file'];
+                $iconimage = "{$http}://" . $domain . $updateData['iconimage'];
+                $plist_path = "{$http}://" . $domain . $updateData['plist_path'];
                 $is_oss = 1;
                 $oss_status = 0;
         }
@@ -500,6 +508,8 @@ class App extends Controller
     {
         $id = $this->request->param('id');
         $this->row = Db::name($this->table)->where(self::authWhere())->where('id', $id)->find();
+        if (!$this->row) $this->error('该应用不存在！');
+
         $this->row['pg_config_data'] = json_decode($this->row['pg_config_install_data'], true);
 
         $ipa = Db::name($this->tablePackage)
