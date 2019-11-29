@@ -34,14 +34,6 @@ class Domain extends Controller
 
     protected $table = 'SystemDomain';
 
-    public function __construct()
-    {
-        parent::__construct();
-        if (!NodeService::islogin()) {
-            $this->error('未登录', url('@admin/login'));
-        }
-    }
-
     private function authWhere($field = 'uid')
     {
         $user = session('admin_user');
@@ -50,6 +42,8 @@ class Domain extends Controller
 
     /**
      * 域名列表
+     * @auth true
+     * @menu true
      * @throws \ReflectionException
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
@@ -62,6 +56,15 @@ class Domain extends Controller
         $query->where(self::authWhere())->timeBetween('created_at')->order('id desc')->page();
     }
 
+    /**
+     * 添加绑定域名
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
     public function add()
     {
         $this->applyCsrfToken();
@@ -70,6 +73,7 @@ class Domain extends Controller
 
     /**
      * 编辑域名
+     * @auth true
      * @throws \think\Exception
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
@@ -82,7 +86,7 @@ class Domain extends Controller
         $this->_form($this->table, 'form');
     }
 
-    public function _form_filter(&$data)
+    protected function _form_filter(&$data)
     {
         if ($this->request->isPost()) {
             if (!isset($data['id'])) {
@@ -182,6 +186,7 @@ class Domain extends Controller
 
     /**
      * 删除域名
+     * @auth true
      * @throws \think\Exception
      * @throws \think\exception\PDOException
      */

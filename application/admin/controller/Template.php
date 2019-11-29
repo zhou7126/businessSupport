@@ -34,14 +34,6 @@ class Template extends Controller
 
     protected $table = 'systemTemplate';
 
-    public function __construct()
-    {
-        parent::__construct();
-        if (!NodeService::islogin()) {
-            $this->error('未登录', url('@admin/login'));
-        }
-    }
-
     private function authWhere($field = 'uid')
     {
         $user = session('admin_user');
@@ -55,6 +47,8 @@ class Template extends Controller
 
     /**
      * 模板列表
+     * @auth true
+     * @menu true
      * @throws \ReflectionException
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
@@ -123,6 +117,14 @@ class Template extends Controller
         abort(404, '模板不存在');
     }
 
+    /**
+     * 打包模板文件
+     * @auth true
+     * @menu true
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function download()
     {
         $id = input('id');
@@ -195,6 +197,15 @@ class Template extends Controller
     }
 
 
+    /**
+     * 添加模板
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
     public function add()
     {
         $this->applyCsrfToken();
@@ -203,6 +214,7 @@ class Template extends Controller
 
     /**
      * 编辑模板
+     * @auth true
      * @throws \think\Exception
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
@@ -256,6 +268,7 @@ class Template extends Controller
 
     /**
      * 删除模板
+     * @auth true
      * @throws \think\Exception
      * @throws \think\exception\PDOException
      */

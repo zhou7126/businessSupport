@@ -164,20 +164,13 @@ class App extends Controller
         }
     }
 
-    public function getTem()
-    {
-        $res = Db::name('SystemTemplate')
-            ->where('is_deleted', 0)
-            ->where(self::authWhere())
-            ->order('created_at desc')->select();
-        $data = [];
-        $keyStr = '';
-
-        $this->success('success', ['tem' => $data, 'keyStr' => $keyStr]);
-    }
-
-
-    // 获取模板扩展数据和历史配置数据
+    /**
+     * 获取模板扩展数据和历史配置数据
+     * @auth true
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function getTemplateInfo()
     {
         $classId = $this->request->param('classId');
