@@ -66,10 +66,13 @@
     }
 
     .ext_json_key {
-        width: 90px;
+        width: 100px;
         display: inline;
-        border: 0;
         margin-right: 20px;
+    }
+
+    .ext_json_key_noborder {
+        border: 0;
     }
 
     .ext_json_value {
@@ -104,11 +107,15 @@
 
 
     .template_id_select {
-        width: 100px;
+        width: 200px;
         float: left;
-        margin-left: 0px;
+        margin-left: 0;
     }
 
+    .template_id_select-title {
+        float: left;
+        line-height: 40px;
+    }
 </style>
 {/block}
 {block name="button"}
@@ -142,6 +149,7 @@
                                            value='{$row.template_id}'
                                            oninput="value=value.replace(/[^\d]/g,'')"
                                            class="layui-input ext_json_key template_id_title">
+                                    <div class="template_id_select-title">历史模板：</div>
                                     <div class="layui-input-block template_id_select">
                                         <select class="template_id_change" lay-filter="template_id_change">
                                             {foreach $hisTempData as $k=>$v}
@@ -165,7 +173,7 @@
                                     <div class="layui-input-block ext_json_line">
                                         <input type="text" name="ext_key[]" readonly disabled placeholder="请输入KEY"
                                                value=""
-                                               class="layui-input ext_json_key">
+                                               class="layui-input ext_json_key ext_json_key_noborder">
                                         <input type="text" name="ext_value[]" disabled placeholder="请输入配置值"
                                                value=""
                                                class="layui-input ext_json_value">
@@ -222,7 +230,6 @@
                 $(".muban-save-btn").attr('disabled', false);
                 $(".muban-save-btn").removeClass('layui-bg-gray');
                 let tempData = rJson.data;
-                console.log(tempData);
                 for (let key in tempData) {
                     let extJsonItem = $(".ext_json_muban").children().clone(true);
                     extJsonItem.find('input').attr('disabled', false);

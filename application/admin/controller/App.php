@@ -609,13 +609,29 @@ class App extends Controller
 //            }
             $data['ext_json'] = json_encode($ext_data, JSON_UNESCAPED_UNICODE);
             unset($data['ext_key'], $data['ext_value']);
-            Db::name('SystemTemplateHistory')->insert([
-                'app_id' => $data['id'],
-                'uid' => session('admin_user')['id'],
-                'template_id' => $data['template_id'],
-                'data' => $data['ext_json'],
-                'created_at' => time(),
-            ]);
+            $hisExist = Db::name('SystemTemplateHistory')
+                ->where([
+                    'app_id' => $data['id'],
+                    'uid' => session('admin_user')['id'],
+                    'template_id' => $data['template_id'],
+                ])
+                ->find();
+            if (!empty($hisExist)) {
+                Db::name('SystemTemplateHistory')
+                    ->where('id', $hisExist['id'])
+                    ->update([
+                        'data' => $data['ext_json'],
+                    ]);
+            } else {
+                Db::name('SystemTemplateHistory')->insert([
+                    'app_id' => $data['id'],
+                    'uid' => session('admin_user')['id'],
+                    'template_id' => $data['template_id'],
+                    'data' => $data['ext_json'],
+                    'created_at' => time(),
+                ]);
+            }
+
             $data['updated_at'] = time();
             unset($data['tem_name']);
         }
