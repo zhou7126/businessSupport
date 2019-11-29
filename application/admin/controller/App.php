@@ -632,7 +632,7 @@ class App extends Controller
             $id = input('id');
             $data['updated_at'] = time();
             $num = count($data['bind_v1'] ?? []);
-            $insertAll = [];
+            Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->delete();
             if ($num > 0) {
                 if (count($data['bind_v2'] ?? []) < 1 || count($data['bind_v3'] ?? []) < 1) {
                     $this->error('域名配置数量不匹配');
@@ -641,34 +641,27 @@ class App extends Controller
                     $val1 = trim($data['bind_v1'][$i]);
                     $val2 = trim($data['bind_v2'][$i]);
                     $val3 = trim($data['bind_v3'][$i]);
-                    if (empty($val1) || empty($val2) || empty($val3)) {
-                        $this->error('域名配置不能留空');
+                    if (empty($val1)) {
+                        $this->error('域名不能留空');
                     }
-                    $domainExist = Db::name('SystemAppDomain')->where('domain', $val1)->count();
+                    $domainExist = Db::name('SystemAppDomain')->where(self::authWhere())->where('domain', $val1)->count();
                     if ($domainExist > 0) {
                         continue;
                     }
-                    $insertAll[] = [
-                        'app_id' => $id,
-                        'domain' => $val1,
-                        'channel_code' => $val2,
-                        'statistics_code' => $val3,
-                        'created_at' => time(),
-                    ];
-                }
-            }
-            Db::startTrans();
-            try {
-                Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->delete();
-                if (!empty($insertAll)) {
-                    Db::name('SystemAppDomain')->insertAll($insertAll);
-                }
-                Db::commit();
-            } catch (Exception $e) {
-                Db::rollback();
-                $this->error('域名配置保存失败');
-            }
+                    try {
+                        Db::name('SystemAppDomain')->insert([
+                            'app_id' => $id,
+                            'domain' => $val1,
+                            'channel_code' => $val2,
+                            'statistics_code' => $val3,
+                            'created_at' => time(),
+                        ]);
+                    } catch (Exception $e) {
+                        continue;
+                    }
 
+                }
+            }
         }
     }
 
