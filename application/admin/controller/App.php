@@ -626,7 +626,6 @@ class App extends Controller
     {
         if ($this->request->isPost()) {
             $id = input('id');
-            $data['status'] = $data['status'] ?? 0;
             $data['updated_at'] = time();
             $num = count($data['bind_v1'] ?? []);
             $insertAll = [];
