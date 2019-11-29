@@ -109,8 +109,10 @@ class Index extends Controller
                 if (is_file($tempData['package'] . '/m/index.html') && $this->request->isMobile()) {
                     $fetchData['base_url'] .= 'm/';
                     $this->fetch($tempData['package'] . '/m/index.html', $fetchData);
+                    return;
                 } else if (is_file($tempData['package'] . '/index.html')) {
                     $this->fetch($tempData['package'] . '/index.html', $fetchData);
+                    return;
                 }
             }
         }
