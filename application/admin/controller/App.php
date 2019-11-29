@@ -581,8 +581,12 @@ class App extends Controller
                     if (empty(trim($ext_key[$i]))) {
                         $this->error('扩展数据不能留空');
                     }
+                    $tempExtData = str_replace($this->request->domain(), '', trim($ext_value[$i]));
+                    if (substr($tempExtData, 0, 3) == 'tpl') {
+                        $tempExtData = '/' . $tempExtData;
+                    }
                     $ext_data[trim($ext_key[$i])] = [
-                        'val' => str_replace($this->request->domain(), '', trim($ext_value[$i])),
+                        'val' => $tempExtData,
                         'desc' => trim($ext_desc[$i] ?? '')
                     ];
                 }
