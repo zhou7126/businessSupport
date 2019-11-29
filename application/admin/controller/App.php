@@ -177,10 +177,16 @@ class App extends Controller
     {
         $classId = $this->request->param('classId');
         $appId = $this->request->param('appId');
-        $tempData = Db::name('systemTemplate')
-            ->where(['id' => $classId, 'is_deleted' => 0])
-            ->where('uid', ['=', session('admin_user.id')], ['=', $this->getAdminId()], 'or')
-            ->field('id,package,ext_json')->find();
+        if (empty(self::authWhere())) {
+            $tempData = Db::name('systemTemplate')
+                ->where(['id' => $classId, 'is_deleted' => 0])
+                ->field('id,package,ext_json')->find();
+        } else {
+            $tempData = Db::name('systemTemplate')
+                ->where(['id' => $classId, 'is_deleted' => 0])
+                ->where('uid', ['=', session('admin_user.id')], ['=', $this->getAdminId()], 'or')
+                ->field('id,package,ext_json')->find();
+        }
         if (empty($tempData)) {
             $this->error('模板不存在');
         }
