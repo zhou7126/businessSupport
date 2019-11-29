@@ -66,7 +66,7 @@
     }
 
     .ext_json_key {
-        width: 100px;
+        width: 150px;
         display: inline;
         margin-right: 20px;
     }
@@ -171,7 +171,9 @@
 
                                 <div class="layui-hide ext_json_muban">
                                     <div class="layui-input-block ext_json_line">
-                                        <input type="text" name="ext_key[]" readonly disabled placeholder="请输入KEY"
+                                        <input type="hidden" name="ext_key[]" readonly disabled placeholder="请输入KEY"
+                                               value="" class="ext_json_key_hide">
+                                        <input type="text" readonly disabled placeholder="参数名称"
                                                value=""
                                                class="layui-input ext_json_key ext_json_key_noborder">
                                         <input type="text" name="ext_value[]" disabled placeholder="请输入配置值"
@@ -230,9 +232,11 @@
                 $(".muban-save-btn").attr('disabled', false);
                 $(".muban-save-btn").removeClass('layui-bg-gray');
                 let tempData = rJson.data;
+                console.log(tempData);
                 for (let key in tempData) {
                     let extJsonItem = $(".ext_json_muban").children().clone(true);
                     extJsonItem.find('input').attr('disabled', false);
+                    extJsonItem.find('.ext_json_key_hide').val(key);
                     if (tempData[key].title == undefined) {
                         extJsonItem.find('.ext_json_key').val(key);
                     } else {

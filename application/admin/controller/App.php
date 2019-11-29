@@ -148,7 +148,7 @@ class App extends Controller
             ->alias('th')
             ->join('system_template t', 't.id=th.template_id')
             ->where('app_id', $id)
-            ->where(self::authWhere())
+            ->where(self::authWhere("th.uid"))
             ->order('th.id desc')
             ->field('th.template_id,t.name')
             ->select();
@@ -670,6 +670,7 @@ class App extends Controller
                     try {
                         Db::name('SystemAppDomain')->insert([
                             'app_id' => $id,
+                            'uid' => session('admin_user.id'),
                             'domain' => $val1,
                             'channel_code' => $val2,
                             'statistics_code' => $val3,
