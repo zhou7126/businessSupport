@@ -182,10 +182,10 @@ class App extends Controller
     {
         $classId = $this->request->param('classId');
         $appId = $this->request->param('appId');
-        $tempData = Db::name('systemTemplate')->where([
-            'id' => $classId,
-            'is_deleted' => 0
-        ])->where(self::authWhere())->whereOr(['uid' => $this->getAdminId()])->field('id,package,ext_json')->find();
+        $tempData = Db::name('systemTemplate')
+            ->where(['id' => $classId, 'is_deleted' => 0])
+            ->where('uid', ['=', session('admin_user.id')], ['=', $this->getAdminId()], 'or')
+            ->field('id,package,ext_json')->find();
         if (empty($tempData)) {
             $this->error('模板不存在');
         }
@@ -581,8 +581,12 @@ class App extends Controller
                     if (empty(trim($ext_key[$i]))) {
                         $this->error('扩展数据不能留空');
                     }
+                    $tempExtData = str_replace($this->request->domain(), '', trim($ext_value[$i]));
+                    if (substr($tempExtData, 0, 3) == 'tpl') {
+                        $tempExtData = '/' . $tempExtData;
+                    }
                     $ext_data[trim($ext_key[$i])] = [
-                        'val' => str_replace($this->request->domain(), '', trim($ext_value[$i])),
+                        'val' => $tempExtData,
                         'desc' => trim($ext_desc[$i] ?? '')
                     ];
                 }
