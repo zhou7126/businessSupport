@@ -34,14 +34,6 @@ class Template extends Controller
 
     protected $table = 'systemTemplate';
 
-    public function __construct()
-    {
-        parent::__construct();
-        if (!NodeService::islogin()) {
-            $this->error('未登录', url('@admin/login'));
-        }
-    }
-
     private function authWhere($field = 'uid')
     {
         $user = session('admin_user');
@@ -55,6 +47,8 @@ class Template extends Controller
 
     /**
      * 模板列表
+     * @auth true
+     * @menu true
      * @throws \ReflectionException
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
@@ -103,9 +97,9 @@ class Template extends Controller
             'base_url' => $schemeDomain . '/' . $tempData['package'] . '/', // 页面默认URL
             'download_type' => 1, // 应用下载方式，1普通下载，2openinstall
             'ad_config_install_type' => 1, // 安卓安装方式，1托管APK，2外部APK
-            'ad_download_url' => '', // 安卓安装地址
+            'ad_download_url' => $this->request->url(), // 安卓安装地址，预览时不需要下载
             'pg_config_install_type' => 1, // 苹果安装方式，1托管IPA，2外部IPA，3AppStore及其他，4外部plist
-            'pg_download_url' => '', // 苹果安装地址
+            'pg_download_url' => $this->request->url(), // 苹果安装地址，预览时不需要下载
         ];
         $extData = json_decode($tempData['ext_json'], true);
         if (!empty($extData)) {
@@ -123,6 +117,14 @@ class Template extends Controller
         abort(404, '模板不存在');
     }
 
+    /**
+     * 打包模板文件
+     * @auth true
+     * @menu true
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function download()
     {
         $id = input('id');
@@ -195,6 +197,15 @@ class Template extends Controller
     }
 
 
+    /**
+     * 添加模板
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
     public function add()
     {
         $this->applyCsrfToken();
@@ -203,6 +214,7 @@ class Template extends Controller
 
     /**
      * 编辑模板
+     * @auth true
      * @throws \think\Exception
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
@@ -256,6 +268,7 @@ class Template extends Controller
 
     /**
      * 删除模板
+     * @auth true
      * @throws \think\Exception
      * @throws \think\exception\PDOException
      */
