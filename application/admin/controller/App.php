@@ -644,6 +644,10 @@ class App extends Controller
                     if (empty($val1) || empty($val2) || empty($val3)) {
                         $this->error('域名配置不能留空');
                     }
+                    $domainExist = Db::name('SystemAppDomain')->where('domain', $val1)->count();
+                    if ($domainExist > 0) {
+                        continue;
+                    }
                     $insertAll[] = [
                         'app_id' => $id,
                         'domain' => $val1,
