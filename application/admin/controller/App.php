@@ -387,8 +387,10 @@ class App extends Controller
                 $oss_status = 0;
                 break;
             default:
-                $path = "http://" . $_SERVER['HTTP_HOST'] . $updateData['package_file'];
-                $iconimage = "http://" . $_SERVER['HTTP_HOST'] . $updateData['iconimage'];
+                $http = sysconf('download_package_http_type');
+                $domain = sysconf('download_package_domain');
+                $path = "{$http}://" . $domain . $updateData['package_file'];
+                $iconimage = "{$http}://" . $domain . $updateData['iconimage'];
                 $img = $iconimage;
                 $is_oss = 1;
                 $oss_status = 0;
@@ -448,9 +450,11 @@ class App extends Controller
                 $oss_status = 0;
                 break;
             default:
-                $path = "http://" . $_SERVER['HTTP_HOST'] . $updateData['package_file'];
-                $iconimage = "http://" . $_SERVER['HTTP_HOST'] . $updateData['iconimage'];
-                $plist_path = "http://" . $_SERVER['HTTP_HOST'] . $updateData['plist_path'];
+                $http = sysconf('download_package_http_type');
+                $domain = sysconf('download_package_domain');
+                $path = "{$http}://" . $domain . $updateData['package_file'];
+                $iconimage = "{$http}://" . $domain . $updateData['iconimage'];
+                $plist_path = "{$http}://" . $domain . $updateData['plist_path'];
                 $is_oss = 1;
                 $oss_status = 0;
         }
