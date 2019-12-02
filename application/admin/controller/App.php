@@ -148,7 +148,7 @@ class App extends Controller
             ->alias('th')
             ->join('system_template t', 't.id=th.template_id')
             ->where('app_id', $id)
-            ->where(self::authWhere())
+            ->where(self::authWhere("th.uid"))
             ->order('th.id desc')
             ->field('th.template_id,t.name')
             ->select();
@@ -177,10 +177,16 @@ class App extends Controller
     {
         $classId = $this->request->param('classId');
         $appId = $this->request->param('appId');
-        $tempData = Db::name('systemTemplate')
-            ->where(['id' => $classId, 'is_deleted' => 0])
-            ->where('uid', ['=', session('admin_user.id')], ['=', $this->getAdminId()], 'or')
-            ->field('id,package,ext_json')->find();
+        if (empty(self::authWhere())) {
+            $tempData = Db::name('systemTemplate')
+                ->where(['id' => $classId, 'is_deleted' => 0])
+                ->field('id,package,ext_json')->find();
+        } else {
+            $tempData = Db::name('systemTemplate')
+                ->where(['id' => $classId, 'is_deleted' => 0])
+                ->where('uid', ['=', session('admin_user.id')], ['=', $this->getAdminId()], 'or')
+                ->field('id,package,ext_json')->find();
+        }
         if (empty($tempData)) {
             $this->error('模板不存在');
         }
@@ -609,13 +615,29 @@ class App extends Controller
 //            }
             $data['ext_json'] = json_encode($ext_data, JSON_UNESCAPED_UNICODE);
             unset($data['ext_key'], $data['ext_value']);
-            Db::name('SystemTemplateHistory')->insert([
-                'app_id' => $data['id'],
-                'uid' => session('admin_user')['id'],
-                'template_id' => $data['template_id'],
-                'data' => $data['ext_json'],
-                'created_at' => time(),
-            ]);
+            $hisExist = Db::name('SystemTemplateHistory')
+                ->where([
+                    'app_id' => $data['id'],
+                    'uid' => session('admin_user')['id'],
+                    'template_id' => $data['template_id'],
+                ])
+                ->find();
+            if (!empty($hisExist)) {
+                Db::name('SystemTemplateHistory')
+                    ->where('id', $hisExist['id'])
+                    ->update([
+                        'data' => $data['ext_json'],
+                    ]);
+            } else {
+                Db::name('SystemTemplateHistory')->insert([
+                    'app_id' => $data['id'],
+                    'uid' => session('admin_user')['id'],
+                    'template_id' => $data['template_id'],
+                    'data' => $data['ext_json'],
+                    'created_at' => time(),
+                ]);
+            }
+
             $data['updated_at'] = time();
             unset($data['tem_name']);
         }
@@ -654,6 +676,7 @@ class App extends Controller
                     try {
                         Db::name('SystemAppDomain')->insert([
                             'app_id' => $id,
+                            'uid' => session('admin_user.id'),
                             'domain' => $val1,
                             'channel_code' => $val2,
                             'statistics_code' => $val3,
