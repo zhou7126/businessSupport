@@ -165,12 +165,30 @@ class Plugs extends Controller
         $url = $data->key;
         $size = strlen(file_get_contents(ROOT_PATH . $url));
         $domain = "http://".$_SERVER['HTTP_HOST'];
+
+        $accessKeyId = sysconf('storage_oss_keyid');
+        $accessKeySecret = sysconf('storage_oss_secret');
+        $endpoint = "http://". sysconf('storage_oss_endpoint');
+        $bucket = sysconf('storage_oss_bucket');
+        $ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
+
+        $file = $url;
+        $tmp = explode('/',$file);
+        $filename = array_pop($tmp);
+        $object = date('Ymd') .'/'. $filename;
+        $res = $ossClient->uploadFile($bucket, $object, ROOT_PATH . trim($file,'/'));
+        if(empty($res['info']['url']))  {
+            $this->error('上传oss失败');
+        }
+        $ossPath = str_replace('http://','https://',$res['info']['url']);
         //解析文件
         if ($suffix == 'apk') {
             $apk = $this->readApk($url, $size);
+            $apk['oss_path'] = $ossPath;
             $this->success('成功',$apk);
         } else if ($suffix == 'ipa') {
-            $ipa = $this->readIpa($url, $size,$domain);
+            $ipa = $this->readIpa($url, $size,$domain,$ossPath);
+            $ipa['oss_path'] = $ossPath;
             $this->success('成功',$ipa);
         }
     }
@@ -257,7 +275,7 @@ class Plugs extends Controller
     }
 
 
-    public function readIpa($url, $size, $domain)
+    public function readIpa($url, $size, $domain,$oss)
     {
         $filepath = ROOT_PATH . $url;
         include_once EXTEND_PATH . 'parseapp/IpaParser.php';
@@ -308,7 +326,7 @@ class Plugs extends Controller
             '{{VERSION}}',
             '{{NAME}}'),
             array(
-                $domain . $url,
+                $oss,
                 $domain . $arr['iconimage'],
                 $domain . $arr['iconimage'],
                 $arr['signname'],
