@@ -97,7 +97,7 @@
 
     .muban-save {
         margin: 50px auto 20PX;
-        text-align: left !important;
+        text-align: center !important;
     }
 
 </style>
@@ -203,15 +203,7 @@ bbbb.com daili02" class="layui-textarea"
     </div>
 </div>
 <script>
-    $(".app-domain-del").click(function (obj) {
-        $(this).parent().parent().remove();
-    });
 
-    $(".app-domain-add").click(function (obj) {
-        $item = $(".app-domain-muban").children().eq(0).clone(true);
-        $item.find('input,textarea').attr('disabled', false);
-        $('.app-domain-box').append($item);
-    });
 
 
 </script>

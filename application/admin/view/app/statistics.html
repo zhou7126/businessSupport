@@ -1,0 +1,171 @@
+{extend name='main'}
+
+{block name="style"}
+<style>
+    .app-detail-right .layui-tab-card {
+        padding: 20px 25px;
+    }
+
+    .duan-input {
+        width: 24%;
+        height: 30px;
+        display: inline-block;
+        margin-right: 33px;
+        margin-left: 19px;
+    }
+
+    .d-submit {
+        width: 8%;
+        height: 30px;
+        border-radius: 3px;
+        border: 1px #000 solid;
+        background-color: #fff;
+    }
+
+    .chang-input {
+        width: 60%;
+        display: inline-block;
+        margin-left: 67px;
+        margin-right: 33px;
+    }
+
+    .fabu {
+        display: inline-block;
+        margin-left: 19px;
+    }
+
+    .app-upload {
+        margin-left: 19px;
+    }
+
+    .app-upload-text {
+        margin: 0 19px;
+    }
+
+    .shangchuan {
+        margin-left: 68px;
+    }
+
+    .layui-form-switch {
+        margin-top: 0;
+    }
+
+    .layui-input-block {
+        margin-left: 67px;
+    }
+
+    .layui-form-radio {
+        margin-top: 0;
+    }
+
+
+    .app-domain-hr {
+        /*text-align: center;*/
+
+    }
+
+    .app-domain-hr1 {
+        float: left;
+        width: 150px;
+        margin-right: 40px;
+    }
+
+    .app-domain-hr2 {
+        float: left;
+        width: 150px;
+        margin-right: 40px;
+    }
+
+    .app-domain-hr3 {
+        float: left;
+        width: 250px;
+        margin-right: 40px;
+    }
+
+    .app-domain-textarea {
+        height: 38px;
+        min-height: 38px;
+    }
+
+    .app-domain-add {
+        clear: both;
+    }
+
+    .app-domain-contain {
+        margin: 10px auto;
+    }
+
+    .muban-save {
+        margin: 50px auto 20PX;
+        text-align: center !important;
+    }
+
+    .statistics_item {
+        clear: both;
+        margin: 20px auto;
+    }
+
+    .statistics_left {
+        width: 200px;
+        float: left;
+        text-align: center;
+    }
+
+    .statistics_right {
+        width: 300px;
+        float: left;
+        /*text-align: center;*/
+    }
+</style>
+{/block}
+
+{block name="content"}
+<div class="think-box-shadow">
+    <div class="app-detail">
+        {include file="app/left" /}
+        <div class="app-detail-right">
+            <form class="layui-form" action="{:request()->url()}" data-auto="true" method="post"
+                  autocomplete="off">
+                <div class="layui-card-body">
+                    <div class="statistics_item">
+                        <div class="color-green font-w7 statistics_left">域名</div>
+                        <div class="color-green font-w7 statistics_right">统计代码</div>
+                        <div class="clear"></div>
+                    </div>
+
+                    {foreach $bindDomainData as $k=>$v}
+                    <div class="statistics_item">
+                        <div class="statistics_left">
+                            <input type="hidden" value='{$v.id}' name="ids[]"
+                                   class="layui-input duan-input app-value">
+                            <span>{$v.domain|default=""}</span>
+                        </div>
+                        <div class="statistics_right">
+                        <textarea placeholder="" class="layui-textarea"
+                                  name="statistics_code[]">{$v.statistics_code|default=""}</textarea>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    {/foreach}
+
+                    <input type="hidden" name="id" value="{$row.id}">
+
+                    <div class="layui-form-item muban-save">
+                        <button class="layui-btn muban-save-btn" type='submit' lay-filter="formDemo">保存数据</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<script>
+
+
+</script>
+{/block}
+{block name='script'}
+<script>
+    form.render();
+</script>
+{/block}

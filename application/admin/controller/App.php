@@ -698,6 +698,51 @@ class App extends Controller
         }
     }
 
+    /**
+     * 统计代码配置
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
+    public function statistics()
+    {
+        $id = $this->request->param('id');
+        $this->row = Db::name($this->table)->where('id', $id)->where(self::authWhere())->find();
+        if (!$this->row) $this->error('该应用不存在！');
+        $this->bindDomainData = Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->select();
+//        $domains = [];
+//        foreach ($bindDomainData as $k => $v) {
+//            $domains[] = empty($v['channel_code']) ? $v['domain'] : $v['domain'] . ' ' . $v['channel_code'];
+//        }
+//        $this->bindDomains = implode("\n", $domains);
+
+
+        $this->applyCsrfToken();
+        $this->_form($this->table, 'statistics');
+    }
+
+    protected function _statistics_form_filter(&$data)
+    {
+        if ($this->request->isPost()) {
+            $id = input('id');
+            $appData = Db::name('SystemApp')->where(self::authWhere())->where('id', $id)->find();
+            if (empty($appData)) {
+                $this->error('应用不存在');
+            }
+            $ids = input('ids');
+            $statisticsCode = input('statistics_code');
+            foreach ($ids as $k => $v) {
+                Db::name('SystemAppDomain')->where('id', $v)->where(self::authWhere())->where('app_id', $id)->update([
+                    'statistics_code' => $statisticsCode[$k] ?? '',
+                ]);
+            }
+        }
+
+    }
+
 
     /**
      * 启用APP

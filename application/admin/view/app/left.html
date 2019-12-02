@@ -109,6 +109,9 @@
             {if auth("base")}
             <p class="app-left-botton-title-text jichu"><span class="yuan"></span><span data-open="{:url('base')}?id={$row.id}" data-menu-node="app-jichu-{:time()}">基础信息</span></p>
             {/if}
+            {if auth("statistics")}
+            <p class="app-left-botton-title-text statistics"><span class="yuan"></span><span data-open="{:url('statistics')}?id={$row.id}" data-menu-node="app-statistics-{:time()}">统计配置</span></p>
+            {/if}
             {if auth("template")}
             <p class="app-left-botton-title-text moban"><span class="yuan"></span><span data-open="{:url('template')}?id={$row.id}" data-menu-node="app-moban-{:time()}">模板配置</span></p>
             {/if}
@@ -139,6 +142,9 @@
         }else if (param.spm.indexOf("app-ios") !== -1 ){
             $('.ios').css('color','#5D8AFF');
             $('.ios .yuan').css('background-color','#5D8AFF');
+        }else if (param.spm.indexOf("statistics") !== -1 ){
+            $('.statistics').css('color','#5D8AFF');
+            $('.statistics .yuan').css('background-color','#5D8AFF');
         }
     }catch (e) {
         console.log(e);

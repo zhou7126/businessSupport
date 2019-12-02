@@ -68,7 +68,7 @@ class Index extends Controller
                     'ad_download_url' => '', // 安卓安装地址
                     'pg_config_install_type' => $bindData['pg_config_install_type'], // 苹果安装方式，1托管IPA，2外部IPA，3AppStore及其他，4外部plist
                     'pg_download_url' => '', // 苹果安装地址
-                    'statistics_code' => $bindData['statistics_code'], // 统计代码
+                    'statistics_code' => empty($bindData['statistics_code']) ? $bindData['default_statistics_code'] : $bindData['statistics_code'], // 统计代码
                 ];
                 if (!empty($bindData['ext_json']) && !empty(json_decode($bindData['ext_json'], true))) {
                     foreach (json_decode($bindData['ext_json'], true) as $extKey => $extVal) {
