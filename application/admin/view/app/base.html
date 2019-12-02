@@ -59,8 +59,6 @@
     }
 
 
-
-
     .app-domain-hr {
         /*text-align: center;*/
 
@@ -99,7 +97,7 @@
 
     .muban-save {
         margin: 50px auto 20PX;
-        text-align: left!important;
+        text-align: left !important;
     }
 
 </style>
@@ -165,79 +163,33 @@
                         </div>
                     </div>-->
 
-
-                    <div class="app-domain">
-                        <div class="app-domain-hr">
-                            <div class="app-domain-hr1 color-green font-w7">域名</div>
-                            <div class="app-domain-hr2 color-green font-w7">渠道号</div>
-                            <div class="app-domain-hr3 color-green font-w7">统计代码</div>
-                            <div class="clear"></div>
+                    <div class="layui-form-item" style="width:500px;">
+                        <label class="relative block" style="float: left">
+                            <span class="color-green font-w7">域名</span>
+                        </label>
+                        <div class="layui-input-block">
+                            <textarea placeholder="格式
+1、域名+空格+渠道号
+2、渠道号不写则是默认渠道：default
+3、举例：
+aaaa.com daili01
+bbbb.com daili02" class="layui-textarea"
+                                      name="domains">{$bindDomains|default=""}</textarea>
                         </div>
-
-                        <div class="app-domain-muban layui-hide">
-                            <div class="app-domain-contain">
-                                <div class="app-domain-hr1">
-                                    <input value='' disabled name="bind_v1[]" placeholder="请输入域名"
-                                           class="layui-input">
-                                </div>
-                                <div class="app-domain-hr2">
-                                    <input value='' disabled name="bind_v2[]" placeholder="请输入渠道号"
-                                           class="layui-input">
-                                </div>
-                                <div class="app-domain-hr3">
-                                <textarea placeholder="请输入统计代码" disabled class="layui-textarea app-domain-textarea"
-                                          name="bind_v3[]"></textarea>
-                                </div>
-                                <div>
-                                    <button type="button" class="layui-btn layui-btn-danger app-domain-del">删除</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="app-domain-item app-domain-box">
-                            {if count($bindDomain)==0}
-                            <div class="app-domain-contain">
-                                <div class="app-domain-hr1">
-                                    <input value='' name="bind_v1[]" placeholder="请输入域名" class="layui-input">
-                                </div>
-                                <div class="app-domain-hr2">
-                                    <input value='' name="bind_v2[]" placeholder="请输入渠道号"
-                                           class="layui-input">
-                                </div>
-                                <div class="app-domain-hr3">
-                                <textarea placeholder="请输入统计代码" class="layui-textarea app-domain-textarea"
-                                          name="bind_v3[]"></textarea>
-                                </div>
-                                <div>
-                                    <button type="button" class="layui-btn layui-btn-danger app-domain-del">删除</button>
-                                </div>
-                            </div>
-                            {/if}
-                            {foreach $bindDomain as $k=>$v}
-                            <div class="app-domain-contain">
-                                <div class="app-domain-hr1">
-                                    <input value='{$v.domain}' name="bind_v1[]" placeholder="请输入域名" class="layui-input">
-                                </div>
-                                <div class="app-domain-hr2">
-                                    <input value='{$v.channel_code}' name="bind_v2[]" placeholder="请输入渠道号"
-                                           class="layui-input">
-                                </div>
-                                <div class="app-domain-hr3">
-                                <textarea placeholder="请输入统计代码" class="layui-textarea app-domain-textarea"
-                                          name="bind_v3[]">{$v.statistics_code}</textarea>
-                                </div>
-                                <div>
-                                    <button type="button" class="layui-btn layui-btn-danger app-domain-del">删除</button>
-                                </div>
-                            </div>
-                            {/foreach}
-
-                        </div>
-                        <div>
-                            <button type="button" class="layui-btn  app-domain-add">新增</button>
-                        </div>
-                        <div class="clear"></div>
                     </div>
+
+                    <div class="layui-form-item" style="width:500px;">
+                        <label class="relative block" style="float: left">
+                            <span class="color-green font-w7">统计代码</span>
+                        </label>
+                        <div class="layui-input-block">
+                            <textarea placeholder="1、支持多个统计代码（百度、cnzz）同时存在,多个回车换行
+2、所有域名默认共享同一个
+3、如果想单独设置请到统计代码里面单独管理" class="layui-textarea"
+                                      name="default_statistics_code">{$vo.default_statistics_code|default=""}</textarea>
+                        </div>
+                    </div>
+
 
                     <input type="hidden" name="id" value="{$row.id}">
 

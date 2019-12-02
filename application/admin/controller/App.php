@@ -97,7 +97,12 @@ class App extends Controller
         $id = $this->request->param('id');
         $this->row = Db::name($this->table)->where('id', $id)->where(self::authWhere())->find();
         if (!$this->row) $this->error('该应用不存在！');
-        $this->bindDomain = Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->select();
+        $bindDomainData = Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->select();
+        $domains = [];
+        foreach ($bindDomainData as $k => $v) {
+            $domains[] = empty($v['channel_code']) ? $v['domain'] : $v['domain'] . ' ' . $v['channel_code'];
+        }
+        $this->bindDomains = implode("\n", $domains);
         $this->applyCsrfToken();
         $this->_form($this->table, 'base');
     }
@@ -656,36 +661,38 @@ class App extends Controller
         if ($this->request->isPost()) {
             $id = input('id');
             $data['updated_at'] = time();
-            $num = count($data['bind_v1'] ?? []);
+            $appData = Db::name('SystemApp')->where(self::authWhere())->where('id', $id)->find();
+            if (empty($appData)) {
+                $this->error('应用不存在');
+            }
             Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->delete();
-            if ($num > 0) {
-                if (count($data['bind_v2'] ?? []) < 1 || count($data['bind_v3'] ?? []) < 1) {
-                    $this->error('域名配置数量不匹配');
+            $domains = input('domains');
+            $domainsArr = explode("\n", trim($domains));
+            if (empty($domainsArr)) {
+                return;
+            }
+            foreach ($domainsArr as $k => $v) {
+                $lineDomain = explode(" ", trim($v));
+                $lineDomainKey = trim($lineDomain[0] ?? '');
+                $lineDomainVal = trim($lineDomain[1] ?? '');
+                if (empty($lineDomainKey)) {
+                    continue;
                 }
-                for ($i = 0; $i < $num; $i++) {
-                    $val1 = trim($data['bind_v1'][$i]);
-                    $val2 = trim($data['bind_v2'][$i]);
-                    $val3 = trim($data['bind_v3'][$i]);
-                    if (empty($val1)) {
-                        $this->error('域名不能留空');
-                    }
-                    $domainExist = Db::name('SystemAppDomain')->where(self::authWhere())->where('domain', $val1)->count();
-                    if ($domainExist > 0) {
-                        continue;
-                    }
-                    try {
-                        Db::name('SystemAppDomain')->insert([
-                            'app_id' => $id,
-                            'uid' => session('admin_user.id'),
-                            'domain' => $val1,
-                            'channel_code' => $val2,
-                            'statistics_code' => $val3,
-                            'created_at' => time(),
-                        ]);
-                    } catch (Exception $e) {
-                        continue;
-                    }
-
+                $domainExist = Db::name('SystemAppDomain')->where(self::authWhere())->where('domain', $lineDomainKey)->count();
+                if ($domainExist > 0) {
+                    continue;
+                }
+                try {
+                    Db::name('SystemAppDomain')->insert([
+                        'app_id' => $id,
+                        'uid' => session('admin_user.id'),
+                        'domain' => $lineDomainKey,
+                        'channel_code' => $lineDomainVal,
+                        'statistics_code' => '',
+                        'created_at' => time(),
+                    ]);
+                } catch (\Exception $e) {
+                    continue;
                 }
             }
         }
