@@ -23,7 +23,7 @@ class Oss extends Command
 
     protected function execute(Input $input, Output $output)
     {
-        $table = "SystemPackage";
+        /*$table = "SystemPackage";
         $package = Db::name($table)
             ->where('is_oss',1)
             ->where('oss_status',0)
@@ -83,7 +83,7 @@ class Oss extends Command
                 $restart($id);
             }
         }
-        $output->writeln("完毕!");
+        $output->writeln("完毕!");*/
     }
 
     public function ossUpload()

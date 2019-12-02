@@ -377,20 +377,20 @@ class App extends Controller
 
         switch (sysconf('package_upload_type')) {
             case 'tx' :
-                $path = self::UPLOAD_PACKAGE_DOMAIN . $updateData['package_file'];
+                $path = $updateData['oss_path'];
                 $iconimage = self::UPLOAD_PACKAGE_DOMAIN . $updateData['iconimage'];
                 $img = $iconimage;
-                $is_oss = 0;
-                $oss_status = 0;
+                $is_oss = 1;
+                $oss_status = 2;
                 break;
             default:
                 $http = sysconf('download_package_http_type');
                 $domain = sysconf('download_package_domain');
-                $path = "{$http}://" . $domain . $updateData['package_file'];
+                $path = $updateData['oss_path'];
                 $iconimage = "{$http}://" . $domain . $updateData['iconimage'];
                 $img = $iconimage;
                 $is_oss = 1;
-                $oss_status = 0;
+                $oss_status = 2;
         }
         if (!$path) $this->error('上传文件路径为空');
 
@@ -440,20 +440,20 @@ class App extends Controller
 
         switch (sysconf('package_upload_type')) {
             case 'tx' :
-                $path = self::UPLOAD_PACKAGE_DOMAIN . $updateData['package_file'];
+                $path = $updateData['oss_path'];
                 $iconimage = self::UPLOAD_PACKAGE_DOMAIN . $updateData['iconimage'];
                 $plist_path = self::UPLOAD_PACKAGE_DOMAIN . $updateData['plist_path'];
-                $is_oss = 0;
-                $oss_status = 0;
+                $is_oss = 1;
+                $oss_status = 2;
                 break;
             default:
                 $http = sysconf('download_package_http_type');
                 $domain = sysconf('download_package_domain');
-                $path = "{$http}://" . $domain . $updateData['package_file'];
+                $path = $updateData['oss_path'];
                 $iconimage = "{$http}://" . $domain . $updateData['iconimage'];
                 $plist_path = "{$http}://" . $domain . $updateData['plist_path'];
                 $is_oss = 1;
-                $oss_status = 0;
+                $oss_status = 2;
         }
         if (!$path) $this->error('上传文件路径为空');
 
