@@ -37,7 +37,7 @@ class Domain extends Controller
     private function authWhere($field = 'uid')
     {
         $user = session('admin_user');
-        return $user['id'] == 10000 ? [] : [$field=>$user['id']];
+        return $user['id'] == 10000 ? [] : [$field => $user['id']];
     }
 
     /**
@@ -99,16 +99,10 @@ class Domain extends Controller
                 $all = [];
                 $nowTime = time();
                 for ($i = 0; $i < $num; $i++) {
-                    $visitDomain = trim($call_domain[$i], "/");
-                    Db::name($this->table)->where([
-                        ['call_domain', '=', $visitDomain],
-                    ])->where(self::authWhere())->find();
-                    $jumpTmp = explode(' ', $jump_domain[$i]);
-                    $jumpUrl = empty($jumpTmp[1]) ? trim($jumpTmp[0], "/") : trim($jumpTmp[0], "/") . '?ChannelCode=' . $jumpTmp[1];
                     $all[] = [
                         'uid' => session('admin_user.id'),
                         'call_domain' => trim(trim($call_domain[$i]), "/"),
-                        'jump_domain' => trim($jumpUrl),
+                        'jump_domain' => trim(trim($jump_domain[$i]), "/"),
                         'remark' => $data['remark'],
                         'created_at' => $nowTime,
                     ];

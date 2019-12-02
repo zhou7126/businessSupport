@@ -5,7 +5,7 @@
             <label class="relative block">
                 <span class="color-green font-w7">访问域名</span>
                 <span class="color-desc margin-left-5">CallDomain</span>
-                <textarea placeholder="请输入访问域名，例：https://www.baidu.com/" class="layui-textarea" required
+                <textarea placeholder="请输入访问域名，例：www.baidu.com" class="layui-textarea" required
                           name="call_domain">{$vo.call_domain|default=""}</textarea>
             </label>
         </div>
@@ -14,10 +14,10 @@
             <label class="relative block">
                 <span class="color-green font-w7">跳转域名</span>
                 <span class="color-desc margin-left-5">JumpDomain</span>
-                <textarea placeholder="请输入跳转域名，例：https://www.google.com/ code88888" class="layui-textarea" required
+                <textarea placeholder="请输入跳转域名，例：www.google.com" class="layui-textarea" required
                           name="jump_domain">{$vo.jump_domain|default=""}</textarea>
             </label>
-            <p class="help-block">访问域名和跳转域名支持多行添加，一一对应，跳转域名可带参数值，用空格隔开。</p>
+            <p class="help-block">访问域名和跳转域名支持多行添加，一一对应。</p>
         </div>
 
         <div class="layui-form-item">
