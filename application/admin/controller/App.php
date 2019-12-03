@@ -712,13 +712,21 @@ class App extends Controller
         $id = $this->request->param('id');
         $this->row = Db::name($this->table)->where('id', $id)->where(self::authWhere())->find();
         if (!$this->row) $this->error('该应用不存在！');
-        $this->bindDomainData = Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->select();
+        $domains = Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->select();;
+        if (!empty($domains)) {
+            foreach ($domains as $k => $v) {
+                if (empty(trim($v['statistics_code']))) {
+                    $domains[$k]['statistics_code'] = $this->row['default_statistics_code'];
+                }
+            }
+        }
 //        $domains = [];
 //        foreach ($bindDomainData as $k => $v) {
 //            $domains[] = empty($v['channel_code']) ? $v['domain'] : $v['domain'] . ' ' . $v['channel_code'];
 //        }
 //        $this->bindDomains = implode("\n", $domains);
 
+        $this->bindDomainData = $domains;
 
         $this->applyCsrfToken();
         $this->_form($this->table, 'statistics');
