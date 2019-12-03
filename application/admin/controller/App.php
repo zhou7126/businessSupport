@@ -734,6 +734,9 @@ class App extends Controller
             }
             $ids = input('ids');
             $statisticsCode = input('statistics_code');
+            if (!is_array($ids) || count($ids) < 1) {
+                return;
+            }
             foreach ($ids as $k => $v) {
                 Db::name('SystemAppDomain')->where('id', $v)->where(self::authWhere())->where('app_id', $id)->update([
                     'statistics_code' => $statisticsCode[$k] ?? '',
