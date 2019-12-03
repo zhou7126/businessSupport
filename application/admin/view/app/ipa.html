@@ -133,6 +133,7 @@
                     <td>{$vo.created_at|format_datetime}</td>
                     <td>
                         <a href="javascript:;" class="layui-btn layui-btn-sm app_ceshi" data-url="itms-services://?action=download-manifest&url={$vo.data.plist_path ?? ''}">测试</a>
+                        <a href="javascript:;" data-copy="itms-services://?action=download-manifest&url={$vo.data.plist_path ?? ''}" class="layui-btn layui-btn-sm layui-bg-blue fa fa-copy">复制URL</a>
                         {if auth("removePackage")}
                         <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要删除该ipa吗？" data-action="{:url('removePackage')}" data-value="id#{$vo.id}" data-csrf="{:systoken('removePackage')}">删 除</a>
                         {/if}
