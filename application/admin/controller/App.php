@@ -165,7 +165,7 @@ class App extends Controller
     protected function _template_form_result()
     {
         if ($this->request->isPost()) {
-            $url = '/bet365bet.php#' . $_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING'];
+            $url = '/vszdi6yw.php#' . $_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING'];
             $url = preg_replace("/&temId=[0-9]*/", '', $url);
             $this->success('保存成功', ['url' => $url]);
         }

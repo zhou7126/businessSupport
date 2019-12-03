@@ -108,7 +108,7 @@ class Plugs extends Controller
             $file = File::instance('qiniu');
             return ['url' => $file->upload(true), 'token' => $file->buildUploadToken(), 'uptype' => $this->getUploadType()];
         } else {
-            return ['url' => '/bet365bet.php/api.plugs/upload', 'token' => uniqid('local_upload_'), 'uptype' => $this->getUploadType()];
+            return ['url' => '/vszdi6yw.php/api.plugs/upload', 'token' => uniqid('local_upload_'), 'uptype' => $this->getUploadType()];
         }
     }
 
