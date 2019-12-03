@@ -62,7 +62,11 @@ class Template extends Controller
         $this->title = '模板管理';
         $this->isAdmin = empty(self::authWhere()) ? 1 : 0;
         $query = $this->_query($this->table)->like('name');
-        $query->timeBetween('created_at')->where(self::authWhere())->where(['is_deleted' => '0'])->order('id desc')->page();
+        $query->timeBetween('created_at')
+            ->where('uid', ['=', session('admin_user.id')], ['=', $this->getAdminId()], 'or')
+            ->where(['is_deleted' => '0'])
+            ->order('id desc')
+            ->page();
     }
 
     protected function _index_page_filter(&$data)
