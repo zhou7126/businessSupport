@@ -56,14 +56,20 @@ class Template extends Controller
      */
     public function index()
     {
-//        $this->title = '模板管理';
-//        $this->fetch();
-
         $this->title = '模板管理';
+        $searchType = input('type');
         $this->isAdmin = empty(self::authWhere()) ? 1 : 0;
         $query = $this->_query($this->table)->like('name');
+        if ($searchType == 1) {
+            $query->where('uid', $this->getAdminId());
+        } elseif ($searchType == 2) {
+            $query->where('uid', session('admin_user.id'));
+        } else {
+            if (!$this->isAdmin) {
+                $query->where('uid', ['=', session('admin_user.id')], ['=', $this->getAdminId()], 'or');
+            }
+        }
         $query->timeBetween('created_at')
-            ->where('uid', ['=', session('admin_user.id')], ['=', $this->getAdminId()], 'or')
             ->where(['is_deleted' => '0'])
             ->order('id desc')
             ->page();
@@ -71,8 +77,10 @@ class Template extends Controller
 
     protected function _index_page_filter(&$data)
     {
+        $adminId = $this->getAdminId();
         foreach ($data as &$vo) {
 //            $vo['preview_img'] = $vo['package_img']; // 预览缩略图url
+            $vo['type_name'] = $vo['uid'] == $adminId ? "官网模板" : "我的模板";
             $vo['preview_url'] = url('preview', '', '') . '?id=' . $vo['id']; //预览页面url
             $vo['owner'] = Db::name('SystemUser')->where('id', $vo['uid'])->value('username');
         }

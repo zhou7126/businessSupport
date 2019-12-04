@@ -2,7 +2,8 @@
 
     <legend>条件搜索</legend>
 
-    <form class="layui-form layui-form-pane form-search" action="{:request()->url()}" onsubmit="return false" method="get" autocomplete="off">
+    <form class="layui-form layui-form-pane form-search" action="{:request()->url()}" onsubmit="return false"
+          method="get" autocomplete="off">
 
         <div class="layui-form-item layui-inline">
             <label class="layui-form-label">模板名称</label>
@@ -10,10 +11,23 @@
                 <input name="name" value="{$Think.get.name|default=''}" placeholder="请输入模板名称" class="layui-input">
             </div>
         </div>
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label">模板分类</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="type">
+                    <option value="">-- 全部 --</option>
+                    <option {if $Think.get.type == 1} selected {/if} value="1">官方模板</option>
+                    <option {if $Think.get.type == 2} selected {/if} value="2">我的模板</option>
+                </select>
+            </div>
+        </div>
+
         <div class="layui-form-item layui-inline">
             <label class="layui-form-label">创建时间</label>
             <div class="layui-input-inline">
-                <input data-date-range name="created_at" value="{$Think.get.created_at|default=''}" placeholder="请选择创建时间" class="layui-input">
+                <input data-date-range name="created_at" value="{$Think.get.created_at|default=''}"
+                       placeholder="请选择创建时间" class="layui-input">
             </div>
         </div>
 
