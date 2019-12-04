@@ -38,6 +38,7 @@
             <td class='text-left nowrap'><img src="{$vo.img}" style="max-width: 42px;"></td>
             <td class='text-center nowrap'>{$vo.app_key|default=''}</td>
             <td class='text-left nowrap'>
+                <a target="_blank" href="/?app_id={$vo.id}"  class="layui-btn layui-btn-sm layui-btn-normal" data-title="预览">预览</a>
                 <a data-open="{:url('base')}?id={$vo.id}" data-menu-node="app-jichu-{$vo.id}"  class="layui-btn layui-btn-sm" data-title="详情">详情</a>
                 {if auth("remove")}
                 <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要删除该APP吗？" data-action="{:url('remove')}" data-value="id#{$vo.id}" data-csrf="{:systoken('remove')}">删 除</a>
