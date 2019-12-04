@@ -97,6 +97,10 @@ class App extends Controller
         $id = $this->request->param('id');
         $this->row = Db::name($this->table)->where('id', $id)->where(self::authWhere())->find();
         if (!$this->row) $this->error('该应用不存在！');
+
+        $userCname = Db::name('SystemUser')->where('id', session('admin_user.id'))->value('cname');
+        $this->cname = empty($userCname) ? sysconf('default_cname') : $userCname;
+
         $bindDomainData = Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->select();
         $domains = [];
         foreach ($bindDomainData as $k => $v) {

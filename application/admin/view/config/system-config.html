@@ -55,7 +55,15 @@
                 <span class="color-green font-w7">下载包域名</span>
                 <input name="download_package_domain" required placeholder="下载包域名" value="{:sysconf('download_package_domain')}" class="layui-input">
             </label>
-            <p class="help-block">下载包域名 不要填写http:// 或 https:// 例如ppzload.com</p>
+            <p class="help-block">下载包域名 不要带http:// 或 https:// 例如：ppzload.com</p>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="relative block">
+                <span class="color-green font-w7">默认CNAME域名</span>
+                <input name="default_cname" required placeholder="默认CNAME域名" value="{:sysconf('default_cname')}" class="layui-input">
+            </label>
+            <p class="help-block">默认CNAME域名 不要带http:// 或 https:// 例如：common.qudao868.com</p>
         </div>
 
         <div class="layui-form-item">

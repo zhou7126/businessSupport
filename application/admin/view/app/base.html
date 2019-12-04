@@ -100,6 +100,14 @@
         text-align: center !important;
     }
 
+    .bind-domain-cname {
+        float: left;
+        width: 200px;
+        position: relative;
+        top: -90px;
+        left: 520px;
+    }
+
 </style>
 {/block}
 
@@ -176,6 +184,7 @@ aaaa.com daili01
 bbbb.com daili02" class="layui-textarea"
                                       name="domains">{$bindDomains|default=""}</textarea>
                         </div>
+                        <div class="bind-domain-cname">请将域名以cname方式解析到：{$cname}</div>
                     </div>
 
                     <div class="layui-form-item" style="width:500px;">
@@ -203,7 +212,6 @@ bbbb.com daili02" class="layui-textarea"
     </div>
 </div>
 <script>
-
 
 
 </script>
