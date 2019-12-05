@@ -81,6 +81,10 @@ class Http
             curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, self::buildQueryData($options['data']));
         }
+        // DELETE 方式设置
+        if(strtolower($method) === 'delete'){
+            curl_setopt ($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+        }
         // 请求超时设置
         if (isset($options['timeout']) && is_numeric($options['timeout'])) {
             curl_setopt($curl, CURLOPT_TIMEOUT, $options['timeout']);

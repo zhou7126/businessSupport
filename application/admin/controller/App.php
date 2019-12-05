@@ -18,7 +18,9 @@ namespace app\admin\controller;
 use app\admin\service\NodeService;
 use library\Controller;
 use library\tools\Data;
+use library\tools\Http;
 use think\Db;
+use think\Exception;
 
 /**
  * APP管理
@@ -669,6 +671,12 @@ class App extends Controller
             if (empty($appData)) {
                 $this->error('应用不存在');
             }
+            $deleteData = Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->select();
+            foreach ($deleteData as $k => $v) {
+                if (!empty($v['cf_id'])) {
+                    $this->del_cf_domain($v['cf_id']);
+                }
+            }
             Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->delete();
             $domains = input('domains');
             $domainsArr = explode("\n", trim($domains));
@@ -682,24 +690,75 @@ class App extends Controller
                 if (empty($lineDomainKey)) {
                     continue;
                 }
-                $domainExist = Db::name('SystemAppDomain')->where(self::authWhere())->where('domain', $lineDomainKey)->count();
+                $domainExist = Db::name('SystemAppDomain')->where('domain', $lineDomainKey)->count();
                 if ($domainExist > 0) {
                     continue;
                 }
+                Db::startTrans();
                 try {
-                    Db::name('SystemAppDomain')->insert([
-                        'app_id' => $id,
-                        'uid' => session('admin_user.id'),
-                        'domain' => $lineDomainKey,
-                        'channel_code' => $lineDomainVal,
-                        'statistics_code' => '',
-                        'created_at' => time(),
-                    ]);
+                    $rs = $this->add_cf_domain($lineDomainKey);
+                    if (isset($rs['result']['id']) && !empty($rs['result']['id'])) {
+                        Db::name('SystemAppDomain')->insertGetId([
+                            'app_id' => $id,
+                            'uid' => session('admin_user.id'),
+                            'domain' => $lineDomainKey,
+                            'channel_code' => $lineDomainVal,
+                            'statistics_code' => '',
+                            'cf_id' => $rs['result']['id'],
+                            'created_at' => time(),
+                        ]);
+                        Db::commit();
+                    } else {
+                        Db::rollback();
+                    }
                 } catch (\Exception $e) {
-                    continue;
+                    Db::rollback();
                 }
             }
         }
+    }
+
+    private function add_cf_domain($domain)
+    {
+        $url = 'https://api.cloudflare.com/client/v4/zones/2121005e53ca2747970cee04f2256911/custom_hostnames';
+        $options = [
+            'headers' => [
+                sysconf('cloudflare_auth'),
+                'Content-Type:application/json'
+            ]
+        ];
+        $data = [
+            'hostname' => $domain,
+            'custom_origin_server' => '',
+            'ssl' => [
+                'method' => 'http',
+                'type' => 'dv',
+                'settings' => [
+                    'http2' => 'on',
+                    'http3' => 'on',
+                    'min_tls_version' => '1.2',
+                    'tls_1_3' => 'on',
+                    'ciphers' => ['ECDHE-RSA-AES128-GCM-SHA256', 'AES128-SHA'],
+                ],
+            ]
+        ];
+        $userCname = Db::name('SystemUser')->where('id', session('admin_user.id'))->value('cname');
+        $data['custom_origin_server'] = empty($userCname) ? sysconf('default_cname') : $userCname;
+        $rs = Http::post($url, json_encode($data), $options);
+        return json_decode($rs, true);
+    }
+
+    private function del_cf_domain($cfId)
+    {
+        $url = 'https://api.cloudflare.com/client/v4/zones/2121005e53ca2747970cee04f2256911/custom_hostnames/' . $cfId;
+        $options = [
+            'headers' => [
+                sysconf('cloudflare_auth'),
+                'Content-Type:application/json'
+            ]
+        ];
+        $rs = Http::request('delete', $url, $options);
+        return json_decode($rs, true);
     }
 
     /**
