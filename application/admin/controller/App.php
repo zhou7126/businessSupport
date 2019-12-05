@@ -103,7 +103,7 @@ class App extends Controller
         $userCname = Db::name('SystemUser')->where('id', session('admin_user.id'))->value('cname');
         $this->cname = empty($userCname) ? sysconf('default_cname') : $userCname;
 
-        $bindDomainData = Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->select();
+        $bindDomainData = Db::name('SystemAppDomain')->where('app_id', $id)->select();
         $domains = [];
         foreach ($bindDomainData as $k => $v) {
             $domains[] = empty($v['channel_code']) ? $v['domain'] : $v['domain'] . ' ' . $v['channel_code'];
@@ -671,13 +671,13 @@ class App extends Controller
             if (empty($appData)) {
                 $this->error('应用不存在');
             }
-            $deleteData = Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->select();
+            $deleteData = Db::name('SystemAppDomain')->where('app_id', $id)->select();
             foreach ($deleteData as $k => $v) {
                 if (!empty($v['cf_id'])) {
                     $this->del_cf_domain($v['cf_id']);
                 }
             }
-            Db::name('SystemAppDomain')->where(self::authWhere())->where('app_id', $id)->delete();
+            Db::name('SystemAppDomain')->where('app_id', $id)->delete();
             $domains = input('domains');
             $domainsArr = explode("\n", trim($domains));
             if (empty($domainsArr)) {
@@ -694,25 +694,22 @@ class App extends Controller
                 if ($domainExist > 0) {
                     continue;
                 }
-                Db::startTrans();
                 try {
                     $rs = $this->add_cf_domain($lineDomainKey);
+                    $installData = [
+                        'app_id' => $id,
+                        'uid' => session('admin_user.id'),
+                        'domain' => $lineDomainKey,
+                        'channel_code' => $lineDomainVal,
+                        'statistics_code' => '',
+                        'created_at' => time(),
+                    ];
                     if (isset($rs['result']['id']) && !empty($rs['result']['id'])) {
-                        Db::name('SystemAppDomain')->insertGetId([
-                            'app_id' => $id,
-                            'uid' => session('admin_user.id'),
-                            'domain' => $lineDomainKey,
-                            'channel_code' => $lineDomainVal,
-                            'statistics_code' => '',
-                            'cf_id' => $rs['result']['id'],
-                            'created_at' => time(),
-                        ]);
-                        Db::commit();
-                    } else {
-                        Db::rollback();
+                        $installData['cf_id'] = $rs['result']['id'];
                     }
+                    Db::name('SystemAppDomain')->insertGetId($installData);
                 } catch (\Exception $e) {
-                    Db::rollback();
+
                 }
             }
         }
