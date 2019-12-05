@@ -57,7 +57,7 @@ class Index extends Controller
             ];
         } else {
             $domainData = Db::name('SystemAppDomain')
-                ->where('app_id', $appId)
+                ->where('domain', 'like', "%{$domain}%")
                 ->field('app_id,domain,channel_code,statistics_code')
                 ->find();
         }
