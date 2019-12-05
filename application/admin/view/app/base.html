@@ -133,7 +133,7 @@
                     </div>
                     <div class="layui-form-item">
                         <label class="relative block">
-                            <span class="color-green font-w7">AppKey</span>
+                            <span class="color-green font-w7">应用Key</span>
                             <input value='{$row.app_key}' class="layui-input duan-input" disabled>
                         </label>
                     </div>
@@ -161,6 +161,24 @@
                         </div>
                     </div>
 
+                    <div class="openinstall_config {$row.download_type== 1?'layui-hide':''}">
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7">默认app_key</span>
+                                <input value='{$row.default_openinstall_app_key}' name="default_openinstall_app_key"
+                                       class="layui-input duan-input app-value">
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="relative block">
+                                <span class="color-green font-w7">默认渠道号&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                <input value='{$row.default_channel_code}' name="default_channel_code"
+                                       class="layui-input duan-input app-value">
+                            </label>
+                        </div>
+                    </div>
+
+
                     <!--<div class="layui-form-item">
                         <label class="relative block" style="float: left">
                             <span class="color-green font-w7">开关</span>
@@ -184,7 +202,7 @@ aaaa.com daili01
 bbbb.com daili02" class="layui-textarea"
                                       name="domains">{$bindDomains|default=""}</textarea>
                         </div>
-                        <div class="bind-domain-cname">请将域名以cname方式解析到：{$cname}</div>
+                        <div class="bind-domain-cname">请将域名以cname方式解析到：{$cname}，解析后即可生效。</div>
                     </div>
 
                     <div class="layui-form-item" style="width:500px;">
@@ -219,5 +237,17 @@ bbbb.com daili02" class="layui-textarea"
 {block name='script'}
 <script>
     form.render();
+
+    form.on("radio(download_type)", function (data) {
+        var download_type = data.value;
+        if (this.value == '1') {
+            $('.openinstall_config').addClass('layui-hide');
+            $('.openinstall_config').find('input').attr('disabled', true);
+        } else if (this.value == '2') {
+            $('.openinstall_config').removeClass('layui-hide');
+            $('.openinstall_config').find('input').attr('disabled', false);
+        }
+    });
+
 </script>
 {/block}

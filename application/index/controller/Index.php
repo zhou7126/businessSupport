@@ -68,36 +68,39 @@ class Index extends Controller
                 ['id', '=', $domainData['app_id']],
                 ['status', '=', 1]
             ])->find();
-            var_dump(2);
         }
-
         if (!empty($bindData)) {
             $bindData = array_merge($bindData, $domainData);
-            $channelCode = $bindData['channel_code'];
+            $channelCode = empty($bindData['channel_code']) ? $bindData['default_channel_code'] : $bindData['channel_code'];
+            $openinstallKey = empty($bindData['openinstall_app_key']) ? $bindData['default_openinstall_app_key'] : $bindData['openinstall_app_key'];
+            $statisticsCode = empty($bindData['statistics_code']) ? $bindData['default_statistics_code'] : $bindData['statistics_code'];
             $tempData = Db::name('SystemTemplate')->where(['id' => $bindData['template_id'], 'is_deleted' => 0])->find();
             if (!empty($tempData)) {
-                $fetchData = [
+                $coprData = $fetchData = [
                     'base_url' => $schemeDomain . '/' . $tempData['package'] . '/', // 页面默认URL
                     'download_type' => $bindData['download_type'], // 应用下载方式，1普通下载，2openinstall
                     'channel_code' => [
                         "val" => $channelCode,
                         "desc" => ""
                     ], // 渠道号
+                    'openintsall_app_key' => [
+                        "val" => $openinstallKey,
+                        "desc" => ""
+                    ], // 渠道号
                     'ad_config_install_type' => $bindData['ad_config_install_type'], // 安卓安装方式，1托管APK，2外部APK
                     'ad_download_url' => '', // 安卓安装地址
                     'pg_config_install_type' => $bindData['pg_config_install_type'], // 苹果安装方式，1托管IPA，2外部IPA，3AppStore及其他，4外部plist
                     'pg_download_url' => '', // 苹果安装地址
-                    'statistics_code' => empty($bindData['statistics_code']) ? $bindData['default_statistics_code'] : $bindData['statistics_code'], // 统计代码
+                    'statistics_code' => $statisticsCode, // 统计代码
                 ];
                 if (!empty($bindData['ext_json']) && !empty(json_decode($bindData['ext_json'], true))) {
                     foreach (json_decode($bindData['ext_json'], true) as $extKey => $extVal) {
-                        if ($extKey == 'channel_code' && !empty($channelCode)) { // 优先使用后台配置的渠道号
+                        if (isset($coprData[$extKey])) {
                             continue;
                         }
                         $fetchData[$extKey] = $extVal;
                     }
                 }
-
                 // 查询安卓下载地址
                 $adInstallArr = json_decode($bindData['ad_config_install_data'], true);
                 if ($fetchData['ad_config_install_type'] == 1) {
