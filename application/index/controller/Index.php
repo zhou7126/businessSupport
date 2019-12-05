@@ -47,24 +47,30 @@ class Index extends Controller
         }
 
         // 域名绑定
-        $appId = input('app_id');
-        if (!empty($appId)) { // 从后台预览app时给默认值
+        $appKey = input('appkey');
+        if (!empty($appKey)) {
             $domainData = [
-                'app_id' => $appId,
+                'app_id' => '',
                 'domain' => '',
                 'channel_code' => '',
                 'statistics_code' => '',
             ];
+            $bindData = Db::name('SystemApp')->where([
+                ['app_key', '=', $appKey],
+                ['status', '=', 1]
+            ])->find();
         } else {
             $domainData = Db::name('SystemAppDomain')
                 ->where('domain', 'like', "%{$domain}%")
                 ->field('app_id,domain,channel_code,statistics_code')
                 ->find();
+            $bindData = Db::name('SystemApp')->where([
+                ['id', '=', $domainData['app_id']],
+                ['status', '=', 1]
+            ])->find();
+            var_dump(2);
         }
-        $bindData = Db::name('SystemApp')->where([
-            ['id', '=', $domainData['app_id']],
-            ['status', '=', 1]
-        ])->find();
+
         if (!empty($bindData)) {
             $bindData = array_merge($bindData, $domainData);
             $channelCode = $bindData['channel_code'];
