@@ -674,7 +674,7 @@ class App extends Controller
             $deleteData = Db::name('SystemAppDomain')->where('app_id', $id)->select();
             foreach ($deleteData as $k => $v) {
                 if (!empty($v['cf_id'])) {
-                    $this->del_cf_domain($v['cf_id']);
+                    //$this->del_cf_domain($v['cf_id']);
                 }
             }
             Db::name('SystemAppDomain')->where('app_id', $id)->delete();
@@ -695,7 +695,7 @@ class App extends Controller
                     continue;
                 }
                 try {
-                    $rs = $this->add_cf_domain($lineDomainKey);
+                    //$rs = $this->add_cf_domain($lineDomainKey);
                     $installData = [
                         'app_id' => $id,
                         'uid' => session('admin_user.id'),
