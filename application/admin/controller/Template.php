@@ -117,6 +117,10 @@ class Template extends Controller
                 "val" => "预览渠道号",
                 "desc" => ""
             ], // 渠道号
+            'openintsall_app_key' => [
+                "val" => "预览app_key",
+                "desc" => ""
+            ], // openintsall_app_key
         ];
         $extData = json_decode($tempData['ext_json'], true);
         if (!empty($extData)) {
