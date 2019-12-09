@@ -42,7 +42,13 @@ class Index extends Controller
         //dump($jumpData);
         if (!empty($jumpData) && !empty($jumpData['jump_domain'])) {
             $jumpUrl = stripos($jumpData['jump_domain'], 'http') !== false ? $jumpData['jump_domain'] : "http://" . $jumpData['jump_domain'];
-            echo "<script language='JavaScript'>self.location='{$jumpUrl}';</script>";
+            if (empty($jumpData['jump_status'])) {
+                echo "<script language='JavaScript'>self.location='{$jumpUrl}';</script>";
+                exit();
+            } else {
+                $this->jumpUrl = $jumpUrl;
+                $this->fetch();
+            }
             exit();
         }
 

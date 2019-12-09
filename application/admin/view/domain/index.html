@@ -20,6 +20,7 @@
             <th class='text-left nowrap'>跳转域名</th>
             <th class='text-left nowrap'>备注</th>
             <th class='text-left nowrap'>创建时间</th>
+            <th class='text-left nowrap'>二次跳转页</th>
             <th class='text-left nowrap'>状态</th>
             <th class='text-left nowrap'>操作</th>
         </tr>
@@ -35,6 +36,15 @@
             <td class='text-left nowrap'>{$vo.jump_domain|default=''}</td>
             <td class='text-left nowrap'>{$vo.remark|default=''}</td>
             <td class='text-left nowrap'>{$vo.created_at|format_datetime}</td>
+            <td class='text-left nowrap'>
+                {eq name='vo.jump_status' value='0'}<span class="color-red">已关闭</span>{else}<span class="color-green">启用中</span>{/eq}
+                &nbsp;
+                {if $vo.jump_status eq 1 and auth("close_jump")}
+                <a class="layui-btn layui-btn-sm layui-btn-danger" data-action="{:url('close_jump')}" data-value="id#{$vo.id};status#0" data-csrf="{:systoken('close_jump')}">关闭</a>
+                {elseif $vo.jump_status eq 0 and auth("open_jump")}
+                <a class="layui-btn layui-btn-sm" data-action="{:url('open_jump')}" data-value="id#{$vo.id};status#1" data-csrf="{:systoken('open_jump')}">开启</a>
+                {/if}
+            </td>
             <td class='text-left nowrap'>{eq name='vo.status' value='0'}<span class="color-red">已禁用</span>{else}<span class="color-green">使用中</span>{/eq}</td>
             <td class='text-left nowrap'>
 

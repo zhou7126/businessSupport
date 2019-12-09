@@ -179,6 +179,30 @@ class Domain extends Controller
     }
 
     /**
+     * 开启二次跳转
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
+     */
+    public function open_jump()
+    {
+        $this->applyCsrfToken();
+        $this->_save($this->table, ['jump_status' => '1'], '', self::authWhere());
+    }
+
+    /**
+     * 关闭二次跳转
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
+     */
+    public function close_jump()
+    {
+        $this->applyCsrfToken();
+        $this->_save($this->table, ['jump_status' => '0'], '', self::authWhere());
+    }
+
+    /**
      * 删除域名
      * @auth true
      * @throws \think\Exception
