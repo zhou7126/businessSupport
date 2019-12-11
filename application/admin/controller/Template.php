@@ -113,6 +113,7 @@ class Template extends Controller
             'pg_config_install_type' => 1, // 苹果安装方式，1托管IPA，2外部IPA，3AppStore及其他，4外部plist
             'pg_download_url' => $this->request->url(), // 苹果安装地址，预览时不需要下载
             'statistics_code' => '', // 统计代码
+            'show_xr' => 0, // 是否显示ios安装提示
             'channel_code' => [
                 "val" => "预览渠道号",
                 "desc" => ""
