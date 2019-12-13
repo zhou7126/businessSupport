@@ -159,7 +159,7 @@ class NodeService
      */
     public static function forceAuth($node = null)
     {
-        if (session('admin_user.username') === 'admin') return true;
+        if (session('admin_user.id') === 10000) return true;
         $real = is_null($node) ? self::current() : self::full($node);
         list($module, $controller, $action) = explode('/', $real);
         if (class_exists($class = App::parseClass($module, 'controller', $controller))) {
@@ -182,7 +182,7 @@ class NodeService
      */
     public static function checkAuth($node = null)
     {
-        if (session('admin_user.username') === 'admin') return true;
+        if (session('admin_user.id') === 10000) return true;
         $real = is_null($node) ? self::current() : self::full($node);
         if (isset(self::getAuthList()[$real])) {
             return in_array($real, (array)session('admin_user.nodes'));

@@ -44,7 +44,7 @@ class Queue extends Controller
      */
     public function index()
     {
-        if (session('admin_user.username') === 'admin') try {
+        if (session('admin_user.id') === 10000) try {
             $this->cmd = 'php ' . env('root_path') . 'think xtask:start';
             $this->message = Console::call('xtask:state')->fetch();
         } catch (\Exception $exception) {
