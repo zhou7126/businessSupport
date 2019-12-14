@@ -697,7 +697,7 @@ class App extends Controller
                         continue;
                     } else {
                         //$rs = $this->add_cf_domain($lineDomainKey);
-                        $updateDta = [
+                        $updateData = [
                             'channel_code' => $lineDomainVal,
                         ];
 //                        if (isset($rs['result']['id']) && !empty($rs['result']['id'])) {
@@ -707,7 +707,7 @@ class App extends Controller
                             ->where('app_id', $id)
                             ->where('domain', $lineDomainKey)
                             ->where(self::authWhere())
-                            ->update($updateDta);
+                            ->update($updateData);
                         $dealDomainList[] = $lineDomainKey;
                     }
                 } else { // 不存在时创建
