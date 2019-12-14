@@ -665,7 +665,7 @@ class App extends Controller
     protected function _base_form_filter(&$data)
     {
         if ($this->request->isPost()) {
-            $id = input('id');
+            $id = input('id'); // 应用的id
             $data['updated_at'] = time();
             $appData = Db::name('SystemApp')->where(self::authWhere())->where('id', $id)->find();
             if (empty($appData)) {
@@ -677,12 +677,13 @@ class App extends Controller
                     //$this->del_cf_domain($v['cf_id']);
                 }
             }
-            Db::name('SystemAppDomain')->where('app_id', $id)->delete();
             $domains = input('domains');
             $domainsArr = explode("\n", trim($domains));
             if (empty($domainsArr)) {
                 return;
             }
+            $uid = session('admin_user.id');
+            $dealDomainList = []; // 记录已处理的域名
             foreach ($domainsArr as $k => $v) {
                 $lineDomain = explode(" ", trim($v));
                 $lineDomainKey = trim($lineDomain[0] ?? '');
@@ -690,26 +691,53 @@ class App extends Controller
                 if (empty($lineDomainKey)) {
                     continue;
                 }
-                $domainExist = Db::name('SystemAppDomain')->where('domain', $lineDomainKey)->count();
-                if ($domainExist > 0) {
-                    continue;
-                }
-                try {
-                    //$rs = $this->add_cf_domain($lineDomainKey);
-                    $installData = [
-                        'app_id' => $id,
-                        'uid' => session('admin_user.id'),
-                        'domain' => $lineDomainKey,
-                        'channel_code' => $lineDomainVal,
-                        'statistics_code' => '',
-                        'created_at' => time(),
-                    ];
-                    if (isset($rs['result']['id']) && !empty($rs['result']['id'])) {
-                        $installData['cf_id'] = $rs['result']['id'];
+                $domainExist = Db::name('SystemAppDomain')->where('domain', $lineDomainKey)->find();
+                if (!empty($domainExist)) { // 存在时，是自己的就更新，不是自己的就跳过
+                    if ($domainExist['uid'] != $uid) {
+                        continue;
+                    } else {
+                        //$rs = $this->add_cf_domain($lineDomainKey);
+                        $updateDta = [
+                            'channel_code' => $lineDomainVal,
+                        ];
+//                        if (isset($rs['result']['id']) && !empty($rs['result']['id'])) {
+//                            $installData['cf_id'] = $rs['result']['id'];
+//                        }
+                        Db::name('SystemAppDomain')
+                            ->where('app_id', $id)
+                            ->where('domain', $lineDomainKey)
+                            ->where(self::authWhere())
+                            ->update($updateDta);
+                        $dealDomainList[] = $lineDomainKey;
                     }
-                    Db::name('SystemAppDomain')->insertGetId($installData);
-                } catch (\Exception $e) {
+                } else { // 不存在时创建
+                    try {
+                        //$rs = $this->add_cf_domain($lineDomainKey);
+                        $installData = [
+                            'app_id' => $id,
+                            'uid' => $uid,
+                            'domain' => $lineDomainKey,
+                            'channel_code' => $lineDomainVal,
+                            'statistics_code' => '',
+                            'created_at' => time(),
+                        ];
+//                        if (isset($rs['result']['id']) && !empty($rs['result']['id'])) {
+//                            $installData['cf_id'] = $rs['result']['id'];
+//                        }
+                        Db::name('SystemAppDomain')->insertGetId($installData);
+                        $dealDomainList[] = $lineDomainKey;
+                    } catch (\Exception $e) {
 
+                    }
+                }
+            }
+            // 删除不存在处理列表里的记录
+            foreach ($deleteData as $k => $v) {
+                if (!in_array($v['domain'], $dealDomainList)) {
+                    Db::name('SystemAppDomain')
+                        ->where('id', $v['id'])
+                        ->where('app_id', $id)
+                        ->delete();
                 }
             }
         }
