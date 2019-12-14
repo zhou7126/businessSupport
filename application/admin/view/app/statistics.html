@@ -128,7 +128,8 @@
     <div class="app-detail">
         {include file="app/left" /}
         <div class="app-detail-right">
-            <form class="layui-form" action="{:request()->url()}" data-auto="true" method="post"
+            <div class="app_form">
+                <form class="layui-form" action="{:request()->url()}" data-auto="true" method="post"
                   autocomplete="off">
                 <div class="layui-card-body">
                     <div class="statistics_item">
@@ -159,6 +160,7 @@
                     </div>
                 </div>
             </form>
+            </div>
         </div>
         <div class="clear"></div>
     </div>
