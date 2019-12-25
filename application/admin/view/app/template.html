@@ -171,6 +171,26 @@
                             </label>
                         </div>
 
+                        <div class="mobileconfig_muban layui-hide">
+                            <div class="layui-input-block ext_json_line">
+                                <input type="hidden" name="ext_key[]" disabled placeholder="请输入KEY"
+                                       value="" class="ext_json_key_hide">
+                                <input type="text" readonly disabled placeholder="参数名称"
+                                       value=""
+                                       class="layui-input ext_json_key ext_json_key_noborder">
+                                <input type="text" name="ext_value[]" disabled readonly placeholder="请输入配置值"
+                                       value=""
+                                       class="layui-input ext_json_value">
+                                &nbsp;&nbsp;
+                                <button type="button" class="layui-btn upload_mobileconfig" data-field="mobileconfig">
+                                    <i class="layui-icon">&#xe67c;</i>上传
+                                </button>
+                                <span class="ext_json_desc"></span>
+                                <input type="hidden" class="ext_json_desc_txt" disabled name="ext_desc[]"
+                                       value=""/>
+                            </div>
+                        </div>
+
                         <div class="layui-form-item">
                             <label class="relative block">
                                 <span class="color-green font-w7 peizhi-title">参数配置</span>
@@ -247,12 +267,26 @@
                     } else {
                         extJsonItem.find('.ext_json_key').val(tempData[key].title);
                     }
+                    if (key.substr(0, 4) == 'tool') {
+                        // 为mobileconfig上传时重新设置html内容
+                        extJsonItem = $(".mobileconfig_muban").children().clone(true);
+                        extJsonItem.find('input').attr('disabled', false);
+                        extJsonItem.find('.ext_json_key_hide').val(key);
+                        if (tempData[key].title == undefined) {
+                            extJsonItem.find('.ext_json_key').val(key);
+                        } else {
+                            extJsonItem.find('.ext_json_key').val(tempData[key].title);
+                        }
+                        extJsonItem.find('.ext_json_value').addClass('mobileconfig');
+                    }
+
                     if (typeof tempData[key] == 'string') {
                         extJsonItem.find('.ext_json_value').val(tempData[key]);
                     } else {
                         extJsonItem.find('.ext_json_value').val(tempData[key].val);
                         extJsonItem.find('.ext_json_desc').html(tempData[key].desc);
                         extJsonItem.find('.ext_json_desc_txt').val(tempData[key].desc);
+                        console.log(extJsonItem.find('.ext_json_value').val());
                     }
                     if (key.substr(0, 3) == 'img') {
                         extJsonItem.find('.ext_json_value').addClass('layui-hide');
@@ -302,31 +336,32 @@
         $('#template_id').keyup();
     });
 
-    layui.use(['upload'], function () {
+    layui.use(['upload'], function(){
         var upload = layui.upload;
+        var element = layui.element;
         upload.render({
-            elem: '.ext_img'
-            , url: "{:url('api.plugs/upload')}"
-            , exts: 'jpg|png|gif|bmp|jpeg'
-            , accept: 'images'
-            , acceptMime: "image/*"
-            , progress: function (n) {
-                var percent = n + '%' //获取进度百分比
+            elem: '.upload_mobileconfig'
+            , url: "{:url('api.plugs/upload','','',true)}"
+            , exts: 'mobileconfig'
+            , accept: 'file'
+            , data:{safe: '0'}
+            , choose: function (ret) {
+                // $(".template_package").removeClass('layui-hide');
             }
-            , done: function (ret, index, upload) {
+            , progress: function (n) {
+                // element.progress('.template_package', n + '%'); //设置进度百分比
+            }
+            ,done: function(ret, index, upload){
                 this.multiple || $.msg.close(this.proindex);
-                // console.log(ret);
                 if (ret.uploaded) {
-                    $(this.item).prev().val('/upload/' + ret.filename);
-                    $(this.item).prev().prev().attr('src', ret.url);
-                    $.msg.success('上传成功');
+                    $('.mobileconfig').val(ret.key);
+                    layer.msg('上传成功');
                 } else {
                     $.msg.error(ret.info || ret.error.message || '文件上传出错！');
                 }
             }
         });
     });
-
 
 </script>
 
